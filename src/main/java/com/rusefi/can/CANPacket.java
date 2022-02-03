@@ -11,6 +11,10 @@ public class CANPacket {
         this.data = data;
     }
 
+    public int getTwoBytes(int index) {
+        return getUnsigned(index + 1) * 256 + getUnsigned(index);
+    }
+
     public double getTimeStamp() {
         return timeStamp;
     }
@@ -21,5 +25,9 @@ public class CANPacket {
 
     public byte[] getData() {
         return data;
+    }
+
+    public int getUnsigned(int i) {
+        return Byte.toUnsignedInt(data[i]);
     }
 }
