@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+apply from: 'dependencies.gradle'
+
+group 'org.rusefi'
+version '0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation libs.junit
+}
