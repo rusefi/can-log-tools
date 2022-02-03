@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BmwRegistry {
-    BmwRegistry INSTANCE = new BmwRegistry();
+    public static final BmwRegistry INSTANCE = new BmwRegistry();
 
     public Map<Integer, PacketDecoder> decoderMap = new HashMap<>();
 

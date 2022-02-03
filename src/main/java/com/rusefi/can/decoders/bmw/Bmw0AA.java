@@ -14,7 +14,10 @@ public class Bmw0AA extends AbstractPacketDecoder {
     @Override
     public PacketPayload decode(CANPacket packet) {
         SensorValue pedal = new SensorValue(SensorType.PPS, packet.getUnsigned(3) * 0.39063);
-        SensorValue rpm = new SensorValue(SensorType.RPM, packet.getTwoBytes(4) * 0.25);
+        int rawRpm = packet.getTwoBytes(4);
+        if (rawRpm == 0xFFFF)
+            return null;
+        SensorValue rpm = new SensorValue(SensorType.RPM, rawRpm * 0.25);
         return new PacketPayload(packet.getTimeStamp(), pedal, rpm);
     }
 

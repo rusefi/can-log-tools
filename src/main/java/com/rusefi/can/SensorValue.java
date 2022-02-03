@@ -16,4 +16,12 @@ public class SensorValue {
     public double getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                type +
+                ", value=" + value +
+                '}';
+    }
 }
