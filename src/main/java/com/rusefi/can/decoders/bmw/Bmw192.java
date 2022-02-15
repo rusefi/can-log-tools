@@ -11,7 +11,10 @@ import com.rusefi.can.decoders.AbstractPacketDecoder;
  */
 public class Bmw192 extends AbstractPacketDecoder {
     enum Value {
-        NOTHING
+        NOTHING,
+        NEUTRAL,
+        REVERSE,
+        DRIVE,
     }
 
     public static final int ID = 0x192;
@@ -31,6 +34,19 @@ public class Bmw192 extends AbstractPacketDecoder {
 
         if (packet.getUnsignedInt(0) == 0x6A && packet.getUnsignedInt(1) == 0)
             return new PacketPayload(0, new SensorValue(SensorType.GEAR_CHANGE_REQUEST, Value.NOTHING.ordinal()));
+        if (packet.getUnsignedInt(0) == 0x6A && packet.getUnsignedInt(1) == 0x40)
+            return new PacketPayload(0, new SensorValue(SensorType.GEAR_CHANGE_REQUEST, Value.NOTHING.ordinal()));
+        if (packet.getUnsignedInt(0) == 0x6A && packet.getUnsignedInt(1) == 0x50)
+            return new PacketPayload(0, new SensorValue(SensorType.GEAR_CHANGE_REQUEST, Value.NOTHING.ordinal()));
+
+        if (packet.getUnsignedInt(0) == 0x47 && packet.getUnsignedInt(1) == 1)
+            return new PacketPayload(0, new SensorValue(SensorType.GEAR_CHANGE_REQUEST, Value.NEUTRAL.ordinal()));
+
+        if (packet.getUnsignedInt(0) == 0x2D && packet.getUnsignedInt(1) == 4)
+            return new PacketPayload(0, new SensorValue(SensorType.GEAR_CHANGE_REQUEST, Value.REVERSE.ordinal()));
+
+        if (packet.getUnsignedInt(0) == 0x74 && packet.getUnsignedInt(1) == 3)
+            return new PacketPayload(0, new SensorValue(SensorType.GEAR_CHANGE_REQUEST, Value.DRIVE.ordinal()));
 
 
         throwUnexpected("unhandled", packet);

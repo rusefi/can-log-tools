@@ -1,7 +1,8 @@
-package com.rusefi.can.reader;
+package com.rusefi.can.reader.impl;
 
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.reader.impl.CANoeReader;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
