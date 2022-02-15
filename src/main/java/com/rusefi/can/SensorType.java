@@ -6,5 +6,6 @@ public enum SensorType {
     PPS,
     MAP,
     FUEL_AMOUNT,
-    GEAR_CHANGE_REQUEST
+    GEAR_CHANGE_REQUEST,
+    GEAR,
 }

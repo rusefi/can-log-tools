@@ -10,6 +10,8 @@ import com.rusefi.can.decoders.AbstractPacketDecoder;
  * Gear change request
  */
 public class Bmw192 extends AbstractPacketDecoder {
+    public static final Bmw192 INSTANCE = new Bmw192();
+
     enum Value {
         NOTHING,
         NEUTRAL,
@@ -19,7 +21,7 @@ public class Bmw192 extends AbstractPacketDecoder {
 
     public static final int ID = 0x192;
 
-    public Bmw192() {
+    private Bmw192() {
         super(ID);
     }
 

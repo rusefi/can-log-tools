@@ -19,6 +19,10 @@ public abstract class AbstractPacketDecoder implements PacketDecoder {
     }
 
     protected void throwUnexpected(String reason, CANPacket packet) {
-        throw new IllegalStateException(reason + ": " + bytesToHexWithSpaces(packet.getData()));
+        throw unexpected(reason, packet);
+    }
+
+    protected IllegalStateException unexpected(String reason, CANPacket packet) {
+        return new IllegalStateException(reason + ": " + bytesToHexWithSpaces(packet.getData()));
     }
 }
