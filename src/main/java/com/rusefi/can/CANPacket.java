@@ -1,5 +1,10 @@
 package com.rusefi.can;
 
+import java.util.Arrays;
+
+import static com.rusefi.can.Utils.bytesToHex;
+import static com.rusefi.can.Utils.bytesToHexWithSpaces;
+
 public class CANPacket {
     private final double timeStamp;
     private final int id;
@@ -29,5 +34,18 @@ public class CANPacket {
 
     public int getUnsigned(int i) {
         return Byte.toUnsignedInt(data[i]);
+    }
+
+    public void assertThat(String msg, PackerAssertion assertion) {
+        if (!assertion.test(this))
+            throw new IllegalStateException("Not " + msg + " " + bytesToHexWithSpaces(data));
+    }
+
+    public int getUnsignedInt(int index) {
+        return Byte.toUnsignedInt(data[index]);
+    }
+
+    public interface PackerAssertion {
+        boolean test(CANPacket packet);
     }
 }
