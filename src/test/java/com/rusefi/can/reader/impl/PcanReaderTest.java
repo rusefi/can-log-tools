@@ -10,7 +10,7 @@ import static junit.framework.TestCase.assertEquals;
 public class PcanReaderTest {
     @Test
     public void testLine() {
-        CANLineReader reader = new PcanReader();
+        CANLineReader reader = PcanReader.INSTANCE;
         CANPacket packet = reader.readLine("  15883  77333097.212 DT     0192 Rx 4  2D 04 80 F9 ");
         assertEquals(4, packet.getData().length);
         assertEquals(Bmw192.ID, packet.getId());

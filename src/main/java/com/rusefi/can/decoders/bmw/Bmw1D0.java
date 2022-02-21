@@ -15,7 +15,7 @@ public class Bmw1D0 extends AbstractPacketDecoder {
     public PacketPayload decode(CANPacket packet) {
         SensorValue clt = new SensorValue(SensorType.CLT, packet.getUnsigned(0) - 48);
         SensorValue map = new SensorValue(SensorType.MAP, packet.getUnsigned(3) * 0.2 + 59.8);
-        SensorValue fuel = new SensorValue(SensorType.FUEL_AMOUNT, packet.getTwoBytes(4));
+        SensorValue fuel = new SensorValue(SensorType.FUEL_AMOUNT, packet.getTwoBytesByByteIndex(4));
         return new PacketPayload(packet.getTimeStamp(), clt, map, fuel);
     }
 }

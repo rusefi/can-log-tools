@@ -13,6 +13,10 @@ public abstract class AbstractPacketDecoder implements PacketDecoder {
         this.id = id;
     }
 
+    public static int mask(int bitWidth) {
+        return (1 << bitWidth) - 1;
+    }
+
     @Override
     public int getId() {
         return id;

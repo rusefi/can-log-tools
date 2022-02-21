@@ -1,8 +1,7 @@
 package com.rusefi.can;
 
-import java.util.Arrays;
+import com.rusefi.can.decoders.AbstractPacketDecoder;
 
-import static com.rusefi.can.Utils.bytesToHex;
 import static com.rusefi.can.Utils.bytesToHexWithSpaces;
 
 public class CANPacket {
@@ -16,8 +15,21 @@ public class CANPacket {
         this.data = data;
     }
 
-    public int getTwoBytes(int index) {
-        return getUnsigned(index + 1) * 256 + getUnsigned(index);
+    /**
+     * @param index, starting from zero
+     */
+    public int getTwoBytesByByteIndex(int index) {
+        return getByBitIndex(index * 8, 16);
+    }
+
+    public int getByBitIndex(int bitIndex, int bitWidth) {
+        int byteIndex = bitIndex / 8;
+        int shift = bitIndex - byteIndex * 8;
+        int value = getUnsigned(byteIndex);
+        if (shift + bitIndex > 8) {
+            value = value + getUnsigned(byteIndex + 1) * 256;
+        }
+        return value >> shift & AbstractPacketDecoder.mask(bitWidth);
     }
 
     public double getTimeStamp() {

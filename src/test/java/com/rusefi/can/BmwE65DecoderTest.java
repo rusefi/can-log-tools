@@ -1,6 +1,7 @@
 package com.rusefi.can;
 
 import com.rusefi.can.decoders.bmw.Bmw0AA;
+import com.rusefi.can.decoders.bmw.Bmw0B5;
 import com.rusefi.can.decoders.bmw.Bmw1D0;
 import org.junit.Test;
 
@@ -28,6 +29,16 @@ public class BmwE65DecoderTest {
         assertValue(SensorType.CLT, 50.0, payload.getValues()[0]);
         assertValue(SensorType.MAP, 99.4, payload.getValues()[1]);
         assertValue(SensorType.FUEL_AMOUNT, 24443, payload.getValues()[2]);
+    }
+
+    @Test
+    public void decodeTorqueRequestEGS() {
+        CANPacket packet = new CANPacket(1,
+                -1, new byte[]{(byte) 0x9F, 0x01, 0x32, 0x20, 0x23, 0x30, (byte) 0xFF, 0x43});
+        PacketPayload payload = Bmw0B5.INSTANCE.decode(packet);
+        assertValue(SensorType.GEARBOX_CURRENT_TORQUE, 400.0, payload.getValues()[0]);
+        assertValue(SensorType.GEARBOX_TORQUE_CHANGE_REQUEST, 2, payload.getValues()[1]);
+
     }
 
     private void assertValue(SensorType expectedType, double v, SensorValue value) {
