@@ -19,4 +19,4 @@ jobs:
         run: javac -version
 
       - name: Gradle
-        run: bash gradlew
+        run: bash gradlew jar
