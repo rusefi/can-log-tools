@@ -5,8 +5,10 @@ import com.rusefi.can.decoders.bmw.Bmw192;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.impl.CANoeReader;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.TreeMap;
 
 public class CANoeCanValidator {
     public static void main(String[] args) throws IOException {
@@ -19,7 +21,10 @@ public class CANoeCanValidator {
     public static void validate(String fileName, CANLineReader reader) throws IOException {
         List<CANPacket> packetList = reader.readFile(fileName);
 
+        TreeMap<Integer, Object> allIds = new TreeMap<>();
+
         for (CANPacket packet : packetList) {
+            allIds.put(packet.getId(), packet.getId());
 
             if (packet.getId() == Bmw192.ID)
                 Bmw192.INSTANCE.decode(packet);
@@ -27,6 +32,12 @@ public class CANoeCanValidator {
             if (packet.getId() == Bmw0BA.ID)
                 Bmw0BA.INSTANCE.decode(packet);
 
+        }
+
+        try (FileWriter fw = new FileWriter("all_ids.txt")) {
+            for (Integer id : allIds.keySet()) {
+                fw.write(Integer.toHexString(id) + "\r\n");
+            }
         }
     }
 }

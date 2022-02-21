@@ -7,8 +7,10 @@ import com.rusefi.can.SensorValue;
 import com.rusefi.can.decoders.AbstractPacketDecoder;
 
 public class Bmw0AA extends AbstractPacketDecoder {
+    public static final int ID = 0xAA;
+
     public Bmw0AA() {
-        super(0xAA);
+        super(ID);
     }
 
     @Override
