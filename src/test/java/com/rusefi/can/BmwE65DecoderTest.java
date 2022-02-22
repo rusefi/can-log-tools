@@ -1,5 +1,6 @@
 package com.rusefi.can;
 
+import com.rusefi.can.decoders.bmw.Bmw0A9;
 import com.rusefi.can.decoders.bmw.Bmw0AA;
 import com.rusefi.can.decoders.bmw.Bmw0B5;
 import com.rusefi.can.decoders.bmw.Bmw1D0;
@@ -29,6 +30,14 @@ public class BmwE65DecoderTest {
         assertValue(SensorType.CLT, 50.0, payload.getValues()[0]);
         assertValue(SensorType.MAP, 99.4, payload.getValues()[1]);
         assertValue(SensorType.FUEL_AMOUNT, 24443, payload.getValues()[2]);
+    }
+
+    @Test
+    public void decodeTorque2() {
+        CANPacket packet = new CANPacket(1,
+                -1, new byte[]{(byte) 0x9C, 0x07, 0x42, 0x7F, 0x2E, (byte) 0xE9, 0x0F, 0x03});
+        PacketPayload payload = Bmw0A9.INSTANCE.decode(packet);
+        assertValue(SensorType.TORQ_AVL_MAX, 371, payload.getValues()[0]);
     }
 
     @Test

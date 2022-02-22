@@ -10,4 +10,5 @@ public enum SensorType {
     GEAR,
     GEARBOX_CURRENT_TORQUE,
     GEARBOX_TORQUE_CHANGE_REQUEST,
+    TORQ_AVL_MAX,
 }

@@ -7,7 +7,7 @@ import com.rusefi.can.SensorValue;
 import com.rusefi.can.decoders.AbstractPacketDecoder;
 
 public class Bmw0B5 extends AbstractPacketDecoder {
-    public static final Bmw0B5 INSTANCE = new Bmw0B5();
+    public static final AbstractPacketDecoder INSTANCE = new Bmw0B5();
 
     public Bmw0B5() {
         super(0xBA);
