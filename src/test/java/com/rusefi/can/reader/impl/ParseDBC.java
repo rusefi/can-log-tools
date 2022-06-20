@@ -12,6 +12,22 @@ import java.io.StringReader;
 import static junit.framework.TestCase.assertEquals;
 
 public class ParseDBC {
+    public static final String VAG_MOTOR_1 = "BO_ 640 Motor_1: 8 XXX\n" +
+            " SG_ Fahrerwunschmoment : 56|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
+            " SG_ mechanisches_Motor_Verlustmomen : 48|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
+            " SG_ Fahrpedalwert_oder_Drosselklapp : 40|8@1+ (0.4,0) [0|101.6] \"%\" XXX\n" +
+            " SG_ inneres_Motor_Moment_ohne_exter : 32|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
+            " SG_ RPM : 16|16@1+ (0.25,0) [0|16256] \"U/min\" XXX\n" +
+            " SG_ inneres_Motor_Moment : 8|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
+            " SG_ Momentenangaben_ungenau : 7|1@1+ (1,0) [0|0] \"\" XXX\n" +
+            " SG_ Fehlerstatus_Getriebe_Momentene : 6|1@1+ (1,0) [0|0] \"\" XXX\n" +
+            " SG_ Fehlerstatus_Brems_Momenteneing : 5|1@1+ (1,0) [0|0] \"\" XXX\n" +
+            " SG_ Time_Out_Bremsen_Botschaft : 4|1@1+ (1,0) [0|0] \"\" XXX\n" +
+            " SG_ Kupplungsschalter : 3|1@1+ (1,0) [0|0] \"\" XXX\n" +
+            " SG_ Kickdownschalter : 2|1@1+ (1,0) [0|0] \"\" XXX\n" +
+            " SG_ Fahrpedalwert_ungenau__Motor_1_ M : 1|1@1+ (1,0) [0|0] \"\" XXX\n" +
+            " SG_ Leergasinformation : 0|1@1+ (1,0) [0|0] \"\" XXX" +
+            "";
     public static final String RPM_DBC = "VERSION \"\"\n" +
             "\n" +
             "\n" +
@@ -73,22 +89,7 @@ public class ParseDBC {
             "" +
             "" +
             "\n" +
-            "BO_ 640 Motor_1: 8 XXX\n" +
-            " SG_ Fahrerwunschmoment : 56|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
-            " SG_ mechanisches_Motor_Verlustmomen : 48|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
-            " SG_ Fahrpedalwert_oder_Drosselklapp : 40|8@1+ (0.4,0) [0|101.6] \"%\" XXX\n" +
-            " SG_ inneres_Motor_Moment_ohne_exter : 32|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
-            " SG_ RPM : 16|16@1+ (0.25,0) [0|16256] \"U/min\" XXX\n" +
-            " SG_ inneres_Motor_Moment : 8|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
-            " SG_ Momentenangaben_ungenau : 7|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Fehlerstatus_Getriebe_Momentene : 6|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Fehlerstatus_Brems_Momenteneing : 5|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Time_Out_Bremsen_Botschaft : 4|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Kupplungsschalter : 3|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Kickdownschalter : 2|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Fahrpedalwert_ungenau__Motor_1_ M : 1|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Leergasinformation : 0|1@1+ (1,0) [0|0] \"\" XXX" +
-            "";
+            VAG_MOTOR_1;
 
     @Test
     public void parse() throws IOException {
