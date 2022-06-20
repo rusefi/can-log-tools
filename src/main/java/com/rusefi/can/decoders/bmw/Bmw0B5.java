@@ -10,7 +10,7 @@ public class Bmw0B5 extends AbstractPacketDecoder {
     public static final AbstractPacketDecoder INSTANCE = new Bmw0B5();
 
     public Bmw0B5() {
-        super(0xBA);
+        super(0xB5);
     }
 
     @Override
