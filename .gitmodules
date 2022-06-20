@@ -1,0 +1,4 @@
+[submodule "opendbc"]
+	path = opendbc
+	url = https://github.com/rusefi/opendbc.git
+	branch = rusefi_prod
