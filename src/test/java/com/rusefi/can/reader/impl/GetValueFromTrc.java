@@ -1,5 +1,7 @@
 package com.rusefi.can.reader.impl;
 
+import com.rusefi.can.CANPacket;
+import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import org.junit.Test;
 
@@ -8,17 +10,32 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import static com.rusefi.can.reader.impl.ParseDBC.VAG_MOTOR_1;
+import static org.junit.Assert.assertEquals;
 
 public class GetValueFromTrc {
     @Test
     public void test() throws IOException {
-        BufferedReader reader = new BufferedReader(new StringReader(VAG_MOTOR_1));
-
         DbcFile dbc = new DbcFile();
-        dbc.read(reader);
-
+        {
+            BufferedReader reader = new BufferedReader(new StringReader(VAG_MOTOR_1));
+            dbc.read(reader);
+        }
 
         String trcLine = "  3769)      2117.7  Rx         0280  8  01 1D DF 12 1E 00 1A 1E ";
 
+        PcanTrcReader reader = new PcanTrcReader();
+        CANPacket packet = reader.readLine(trcLine);
+        assertEquals(8, packet.getData().length);
+        assertEquals(640, packet.getId());
+
+        assertEquals(0xDF1D, DbcField.getBitIndex(packet.getData(), 8, 16));
+
+        assertEquals(1, DbcField.getBitIndex(packet.getData(), 0, 3));
+
+        assertEquals(0x1D, DbcField.getBitIndex(packet.getData(), 8, 8));
+        assertEquals(13 , DbcField.getBitIndex(packet.getData(), 8, 4));
+
+
+        System.out.println(packet);
     }
 }

@@ -38,4 +38,15 @@ public class DbcField {
                 ", mult=" + mult +
                 '}';
     }
+
+    public static int getBitIndex(byte[] data, int bitIndex, int bitWidth) {
+        int byteIndex = bitIndex >> 3;
+        int shift = bitIndex - byteIndex * 8;
+        int value = data[byteIndex];
+        if (shift + bitWidth > 8) {
+            value = value + data[1 + byteIndex] * 256;
+        }
+        int mask = (1 << bitWidth) - 1;
+        return (value >> shift) & mask;
+    }
 }
