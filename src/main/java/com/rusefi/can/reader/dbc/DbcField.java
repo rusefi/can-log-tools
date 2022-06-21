@@ -1,5 +1,7 @@
 package com.rusefi.can.reader.dbc;
 
+import com.rusefi.can.CANPacket;
+
 public class DbcField {
     private final String name;
     private final int startOffset;
@@ -42,11 +44,15 @@ public class DbcField {
     public static int getBitIndex(byte[] data, int bitIndex, int bitWidth) {
         int byteIndex = bitIndex >> 3;
         int shift = bitIndex - byteIndex * 8;
-        int value = data[byteIndex];
+        int value = data[byteIndex] & 0xff;
         if (shift + bitWidth > 8) {
             value = value + data[1 + byteIndex] * 256;
         }
         int mask = (1 << bitWidth) - 1;
         return (value >> shift) & mask;
+    }
+
+    public double getValue(CANPacket packet) {
+        return getBitIndex(packet.getData(), startOffset, length) * mult;
     }
 }
