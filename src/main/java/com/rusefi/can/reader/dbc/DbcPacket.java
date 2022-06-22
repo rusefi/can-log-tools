@@ -21,6 +21,10 @@ public class DbcPacket {
         return name;
     }
 
+    public List<DbcField> getFields() {
+        return fields;
+    }
+
     @Override
     public String toString() {
         return "DbcPacket{" +
