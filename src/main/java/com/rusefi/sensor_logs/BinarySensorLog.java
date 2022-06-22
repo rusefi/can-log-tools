@@ -12,6 +12,7 @@ import java.util.function.Function;
 public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog {
     private final Function<T, Double> valueProvider;
     private final Collection<T> entries;
+    private final TimeProvider timeProvider;
     private DataOutputStream stream;
 
     private String fileName;
@@ -19,8 +20,17 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog {
     private int counter;
 
     public BinarySensorLog(Function<T, Double> valueProvider, Collection<T> sensors) {
-        this.valueProvider = valueProvider;
+        this(valueProvider, sensors, System::currentTimeMillis);
+    }
+
+    public BinarySensorLog(Function<T, Double> valueProvider, Collection<T> sensors, TimeProvider timeProvider) {
+        this.valueProvider = Objects.requireNonNull(valueProvider, "valueProvider");
         this.entries = Objects.requireNonNull(sensors, "entries");
+        this.timeProvider = timeProvider;
+    }
+
+    public interface TimeProvider {
+        long currentTimestamp();
     }
 
     @Override
@@ -46,13 +56,15 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog {
             try {
                 stream.write(0);
                 stream.write(counter++);
-                stream.writeShort((int) (System.currentTimeMillis() * 100));
+                stream.writeShort((int) (timeProvider.currentTimestamp() * 100));
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 DataOutputStream dos = new DataOutputStream(baos);
 
                 for (T sensor : entries) {
-                    double value = valueProvider.apply(sensor);
+                    Double value = valueProvider.apply(sensor);
+                    if (value == null)
+                        throw new NullPointerException("No value for " + sensor);
                     sensor.writeToLog(dos, value);
                 }
 

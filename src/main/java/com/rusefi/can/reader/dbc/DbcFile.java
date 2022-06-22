@@ -54,4 +54,13 @@ public class DbcFile {
         if (currentState != null)
             this.packets.add(currentState);
     }
+
+    // todo: performance optimization SOON
+    public DbcPacket findPacket(int i) {
+        for (DbcPacket packet : packets) {
+            if (packet.getId() == i)
+                return packet;
+        }
+        return null;
+    }
 }

@@ -12,12 +12,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.rusefi.can.reader.impl.ParseDBC.VAG_MOTOR_1;
 
 public class TrcToMlqSandbox {
+
+    //    private static final String fileName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\VAG\\2006-Passat-B6\\passat-b6-stock-ecu-ecu-ptcan-not-running-pedal-up-and-down.trc";
+    private static final String fileName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\VAG\\2006-Passat-B6\\passat-b6-stock-ecu-ecu-ptcan-parked-revving.trc";
+
     public static void main(String[] args) throws IOException {
         DbcFile dbc = new DbcFile();
         {
@@ -48,24 +54,42 @@ public class TrcToMlqSandbox {
                     public void writeToLog(DataOutputStream dos, double value) throws IOException {
                         dos.writeFloat((float) value);
                     }
-                });
 
+                    @Override
+                    public String toString() {
+                        return getName();
+                    }
+                });
             }
         }
 
         PcanTrcReader reader = new PcanTrcReader();
-        List<CANPacket> packets = reader.readFile("C:\\stuff\\rusefi_documentation\\OEM-Docs\\VAG\\2006-Passat-B6\\passat-b6-stock-ecu-ecu-ptcan-not-running-pedal-up-and-down.trc");
+        List<CANPacket> packets = reader.readFile(fileName);
         System.out.println(packets.size() + " packets");
 
 
-        BinarySensorLog log = new BinarySensorLog(new Function<BinaryLogEntry, Double>() {
-            @Override
-            public Double apply(BinaryLogEntry o) {
-                System.out.println("apply");
-                return null;
+        Map<String, Double> values = new HashMap<>();
+
+        AtomicReference<Long> time = new AtomicReference<>();
+        BinarySensorLog<BinaryLogEntry> log = new BinarySensorLog<>(o -> {
+            Double value = values.get(o.getName());
+            if (value == null)
+                return 0.0;
+            return value;
+        }, entries, time::get);
+
+
+        for (CANPacket packetContent : packets) {
+            DbcPacket packetMeta = dbc.findPacket(packetContent.getId());
+            if (packetMeta == null)
+                continue;
+
+            time.set((long) (packetContent.getTimeStamp() * 1000));
+            for (DbcField field : packetMeta.getFields()) {
+                values.put(field.getName(), field.getValue(packetContent));
             }
-        }, entries);
-
-
+            log.writeSensorLogLine();
+        }
+        log.close();
     }
 }

@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import static com.rusefi.can.reader.impl.ParseDBC.VAG_MOTOR_1;
+import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class GetValueFromTrc {
 
@@ -23,6 +25,8 @@ public class GetValueFromTrc {
             BufferedReader reader = new BufferedReader(new StringReader(VAG_MOTOR_1));
             dbc.read(reader);
         }
+        assertNotNull(dbc.findPacket(640));
+        assertNull(dbc.findPacket(1640));
 
         String trcLine = "  3769)      2117.7  Rx         0280  8  01 1D DF 12 1E 00 1A 1E ";
 
