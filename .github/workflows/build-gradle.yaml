@@ -19,4 +19,11 @@ jobs:
         run: javac -version
 
       - name: Gradle
-        run: bash gradlew build
+        run: bash gradlew jar
+
+      - name: Upload .jar file
+        if: ${{ github.event_name != 'push' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: can-log-tools jar
+          path: build/libs/can-log-tools-0.1-SNAPSHOT.jar
