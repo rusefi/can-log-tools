@@ -22,7 +22,6 @@ jobs:
         run: bash gradlew jar
 
       - name: Upload .jar file
-        if: ${{ github.event_name != 'push' }}
         uses: actions/upload-artifact@v2
         with:
           name: can-log-tools jar
