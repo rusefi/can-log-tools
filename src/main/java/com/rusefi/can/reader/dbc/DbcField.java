@@ -42,10 +42,16 @@ public class DbcField {
     }
 
     public static int getBitIndex(byte[] data, int bitIndex, int bitWidth) {
+        if (bitIndex < 0)
+            throw new IllegalArgumentException("Huh? " + bitIndex + " " + bitWidth);
         int byteIndex = bitIndex >> 3;
         int shift = bitIndex - byteIndex * 8;
+        if (byteIndex >= data.length)
+            return 0;
         int value = data[byteIndex] & 0xff;
         if (shift + bitWidth > 8) {
+            if (byteIndex + 1 >= data.length)
+                return 0;
             value = value + data[1 + byteIndex] * 256;
         }
         int mask = (1 << bitWidth) - 1;

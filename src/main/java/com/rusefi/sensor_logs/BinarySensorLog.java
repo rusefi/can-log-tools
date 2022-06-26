@@ -9,13 +9,13 @@ import java.util.function.Function;
  * </p>
  * Andrey Belomutskiy, (c) 2013-2020
  */
-public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog {
+public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, AutoCloseable {
     private final Function<T, Double> valueProvider;
     private final Collection<T> entries;
     private final TimeProvider timeProvider;
     private DataOutputStream stream;
 
-    private String fileName;
+    private final String fileName = System.getProperty("mlq_file_name", "gauges.mlg");
 
     private int counter;
 
@@ -41,7 +41,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog {
     @Override
     public void writeSensorLogLine() {
         if (stream == null) {
-            fileName = "gauges_" + ".mlg";
+            System.out.println("Writing to " + fileName);
 
             try {
                 stream = new DataOutputStream(new FileOutputStream(fileName));
