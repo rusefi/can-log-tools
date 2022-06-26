@@ -1,12 +1,24 @@
 package com.rusefi.can.reader.dbc;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DbcFile {
     public final List<DbcPacket> packets = new ArrayList<>();
+
+    private static final boolean debugEnabled = false;
+
+    public static DbcFile readFromFile(String fileName) throws IOException {
+        DbcFile dbc = new DbcFile();
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            dbc.read(reader);
+        }
+        return dbc;
+    }
 
     public void read(BufferedReader reader) throws IOException {
         DbcPacket currentState = null;
@@ -32,7 +44,8 @@ public class DbcFile {
                     index++;
 
 
-                System.out.println(line);
+                if (debugEnabled)
+                    System.out.println(line);
                 int startOffset;
                 try {
                     startOffset = Integer.parseInt(tokens[index]);
@@ -44,7 +57,8 @@ public class DbcFile {
                 double mult = Double.parseDouble(tokens[index + 3]);
 
                 DbcField field = new DbcField(name, startOffset, length, mult);
-                System.out.println("Found " + field);
+                if (debugEnabled)
+                    System.out.println("Found " + field);
                 currentState.add(field);
 
             } else {
@@ -53,6 +67,8 @@ public class DbcFile {
         }
         if (currentState != null)
             this.packets.add(currentState);
+
+        System.out.println(getClass().getSimpleName() + ": Total " + packets.size() + " packets");
     }
 
     // todo: performance optimization SOON

@@ -14,3 +14,13 @@ repositories {
 dependencies {
     testImplementation libs.junit
 }
+
+defaultTasks 'jar'
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.rusefi.can.TrcToMlq'
+        )
+    }
+}
