@@ -106,14 +106,14 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
         // 0008h Timestamp
         stream.writeInt((int) (System.currentTimeMillis() / 1000));
         // 000ch
-        int offsetToText = Fields.MLQ_HEADER_SIZE + Fields.MLQ_FIELD_HEADER_SIZE * entries.size();
+        int infoDataStart = Fields.MLQ_HEADER_SIZE + Fields.MLQ_FIELD_HEADER_SIZE * entries.size();
         System.out.println("Total " + entries.size() + " fields");
-        if (offsetToText > 32000)
-            throw new IllegalStateException("Too much header " + offsetToText);
-        stream.writeShort(offsetToText);
+        if (infoDataStart > 32000)
+            throw new IllegalStateException("Too much header " + infoDataStart);
+        stream.writeShort(infoDataStart);
         stream.writeShort(0); // reserved?
         // 0010h = offset_to_data
-        stream.writeShort(offsetToText + headerText.length());
+        stream.writeShort(infoDataStart + headerText.length());
         // 0012h
         stream.writeShort(fieldsDataSize);
         // 0014h number of fields
@@ -136,7 +136,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             // 0036h precision
             stream.write(2);
         }
-        if (stream.size() != offsetToText)
+        if (stream.size() != infoDataStart)
             throw new IllegalStateException("We are doing something wrong :( stream.size=" + stream.size());
         writeLine(stream, headerText, headerText.length());
     }
