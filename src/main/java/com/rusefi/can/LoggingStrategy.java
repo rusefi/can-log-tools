@@ -26,6 +26,11 @@ public class LoggingStrategy {
                     }
 
                     @Override
+                    public String getCategory() {
+                        return field.getCategory();
+                    }
+
+                    @Override
                     public String getUnit() {
                         return "x";
                     }

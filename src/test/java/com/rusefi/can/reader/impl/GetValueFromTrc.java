@@ -9,7 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
-import static com.rusefi.can.reader.impl.ParseDBC.VAG_MOTOR_1;
+import static com.rusefi.can.reader.impl.ParseDBCTest.VAG_MOTOR_1;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

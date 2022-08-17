@@ -7,12 +7,18 @@ public class DbcField {
     private final int startOffset;
     private final int length;
     private final double mult;
+    private String category;
 
-    public DbcField(String name, int startOffset, int length, double mult) {
+    public DbcField(String name, int startOffset, int length, double mult, String category) {
         this.name = name;
         this.startOffset = startOffset;
         this.length = length;
         this.mult = mult;
+        this.category = category;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public String getName() {

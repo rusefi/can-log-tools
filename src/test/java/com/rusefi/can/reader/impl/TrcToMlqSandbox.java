@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
-import static com.rusefi.can.reader.impl.ParseDBC.VAG_MOTOR_1;
+import static com.rusefi.can.reader.impl.ParseDBCTest.VAG_MOTOR_1;
 
 public class TrcToMlqSandbox {
 

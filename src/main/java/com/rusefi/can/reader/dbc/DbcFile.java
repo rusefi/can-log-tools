@@ -21,18 +21,18 @@ public class DbcFile {
     }
 
     public void read(BufferedReader reader) throws IOException {
-        DbcPacket currentState = null;
+        DbcPacket currentPacket = null;
         String line;
         while ((line = reader.readLine()) != null) {
             line = line.trim();
             if (line.startsWith("BO_")) {
-                if (currentState != null)
-                    this.packets.add(currentState);
+                if (currentPacket != null)
+                    this.packets.add(currentPacket);
                 line = line.replaceAll(":", "");
                 String[] tokens = line.split(" ");
                 int decId = Integer.parseInt(tokens[1]);
-                String name = tokens[2];
-                currentState = new DbcPacket(decId, name);
+                String packetName = tokens[2];
+                currentPacket = new DbcPacket(decId, packetName);
 
             } else if (line.startsWith("SG_")) {
                 line = line.replaceAll("[|+@(,)\\[\\]]", " ");
@@ -56,17 +56,17 @@ public class DbcFile {
 
                 double mult = Double.parseDouble(tokens[index + 3]);
 
-                DbcField field = new DbcField(name, startOffset, length, mult);
+                DbcField field = new DbcField(name, startOffset, length, mult, currentPacket.getName());
                 if (debugEnabled)
                     System.out.println("Found " + field);
-                currentState.add(field);
+                currentPacket.add(field);
 
             } else {
                 // skipping useless line
             }
         }
-        if (currentState != null)
-            this.packets.add(currentState);
+        if (currentPacket != null)
+            this.packets.add(currentPacket);
 
         System.out.println(getClass().getSimpleName() + ": Total " + packets.size() + " packets");
     }

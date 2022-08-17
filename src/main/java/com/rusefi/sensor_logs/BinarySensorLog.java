@@ -136,7 +136,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             stream.writeFloat(0);
             // 0036h precision digits
             stream.write(2);
-            writeLine(stream, "Category", MLQ_FIELD_HEADER_NAME_OR_CATEGORY);
+            writeLine(stream, sensor.getCategory(), MLQ_FIELD_HEADER_NAME_OR_CATEGORY);
         }
         if (stream.size() != infoDataStart)
             throw new IllegalStateException("We are doing something wrong :( stream.size=" + stream.size() + "/" + infoDataStart);

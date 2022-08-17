@@ -11,7 +11,7 @@ import java.io.StringReader;
 
 import static junit.framework.TestCase.assertEquals;
 
-public class ParseDBC {
+public class ParseDBCTest {
     public static final String VAG_MOTOR_1 = "BO_ 640 Motor_1: 8 XXX\n" +
             " SG_ Fahrerwunschmoment : 56|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
             " SG_ mechanisches_Motor_Verlustmomen : 48|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
@@ -105,5 +105,6 @@ public class ParseDBC {
 
         DbcField rpm = motorPacket.find("RPM");
         assertEquals(0.25, rpm.getMult());
+        assertEquals("Motor_1", rpm.getCategory());
     }
 }
