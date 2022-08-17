@@ -6,6 +6,9 @@ import java.util.function.Function;
 
 /**
  * MLV .mlq binary log file
+ * https://www.efianalytics.com/TunerStudio/docs/MLG_Binary_LogFormat_1.0.pdf
+ * https://www.efianalytics.com/TunerStudio/docs/MLG_Binary_LogFormat_2.0.pdf
+ *
  * </p>
  * Andrey Belomutskiy, (c) 2013-2020
  */
@@ -123,17 +126,18 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             String name = sensor.getName();
             String unit = sensor.getUnit();
 
-            // 0000h
-            stream.write(sensor.getByteSize());
+            // 0000h type enum
+            stream.write(7);
             // 0001h
             writeLine(stream, name, 34);
             // 0023h
-            writeLine(stream, unit, 11);
-            // 002Eh scale
-            stream.writeFloat(1); // todo: multiplier?
-            // 0032h zeroes
-            stream.writeInt(0);
-            // 0036h precision
+            writeLine(stream, unit, 10);
+            stream.write(0); // Display Style, 0=Float
+            // 002Eh 46 scale
+            stream.writeFloat(1);
+            // 0032h 50 transform
+            stream.writeFloat(0);
+            // 0036h precision digits
             stream.write(2);
         }
         if (stream.size() != infoDataStart)
