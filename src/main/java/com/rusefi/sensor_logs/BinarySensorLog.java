@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.rusefi.sensor_logs.Fields.MLQ_FIELD_HEADER_NAME_OR_CATEGORY;
+
 /**
  * MLV .mlq binary log file
  * https://www.efianalytics.com/TunerStudio/docs/MLG_Binary_LogFormat_1.0.pdf
@@ -103,20 +105,15 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             fieldsDataSize += entry.getByteSize();
         }
 
-        // 0006h Format version = 01
-        stream.write(0);
-        stream.write(1);
+        // 0006h Format version = 02
+        stream.writeShort(2);
         // 0008h Timestamp
         stream.writeInt((int) (System.currentTimeMillis() / 1000));
         // 000ch
         int infoDataStart = Fields.MLQ_HEADER_SIZE + Fields.MLQ_FIELD_HEADER_SIZE * entries.size();
         System.out.println("Total " + entries.size() + " fields");
-        if (infoDataStart > 32000)
-            throw new IllegalStateException("Too much header " + infoDataStart);
-        stream.writeShort(infoDataStart);
-        stream.writeShort(0); // reserved?
-        // 0010h = offset_to_data
-        stream.writeShort(infoDataStart + headerText.length());
+        stream.writeInt(infoDataStart);
+        stream.writeInt(infoDataStart + headerText.length());
         // 0012h
         stream.writeShort(fieldsDataSize);
         // 0014h number of fields
@@ -129,7 +126,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             // 0000h type enum
             stream.write(7);
             // 0001h
-            writeLine(stream, name, 34);
+            writeLine(stream, name, MLQ_FIELD_HEADER_NAME_OR_CATEGORY);
             // 0023h
             writeLine(stream, unit, 10);
             stream.write(0); // Display Style, 0=Float
@@ -139,9 +136,10 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             stream.writeFloat(0);
             // 0036h precision digits
             stream.write(2);
+            writeLine(stream, "Category", MLQ_FIELD_HEADER_NAME_OR_CATEGORY);
         }
         if (stream.size() != infoDataStart)
-            throw new IllegalStateException("We are doing something wrong :( stream.size=" + stream.size());
+            throw new IllegalStateException("We are doing something wrong :( stream.size=" + stream.size() + "/" + infoDataStart);
         writeLine(stream, headerText, headerText.length());
     }
 
