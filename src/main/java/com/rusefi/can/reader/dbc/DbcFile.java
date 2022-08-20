@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class DbcFile {
-    public final List<DbcPacket> packets = new ArrayList<>();
+    public final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
 
     private static final boolean debugEnabled = false;
 
@@ -26,17 +28,26 @@ public class DbcFile {
         while ((line = reader.readLine()) != null) {
             line = line.trim();
             if (line.startsWith("BO_")) {
-                if (currentPacket != null)
-                    this.packets.add(currentPacket);
+                purgePacket(currentPacket);
                 line = line.replaceAll(":", "");
                 String[] tokens = line.split(" ");
                 int decId = Integer.parseInt(tokens[1]);
                 String packetName = tokens[2];
                 currentPacket = new DbcPacket(decId, packetName);
+            } else if (line.startsWith("CM_")) {
+                purgePacket(currentPacket);
+                line = replaceSpecialWithSpaces(line);
+                String[] tokens = line.split(" ");
+                int id = Integer.parseInt(tokens[2]);
+                DbcPacket packet = packets.get(id);
+                Objects.requireNonNull(packet, "packet for " + id);
+                String originalName = tokens[3];
+                String niceName = merge(tokens, 4);
+                packet.replaceName(originalName, niceName);
+
 
             } else if (line.startsWith("SG_")) {
-                line = line.replaceAll("[|+@(,)\\[\\]]", " ");
-                line = line.replaceAll(" +", " ");
+                line = replaceSpecialWithSpaces(line);
                 String[] tokens = line.split(" ");
                 String name = tokens[1];
                 int index = 1;
@@ -65,18 +76,33 @@ public class DbcFile {
                 // skipping useless line
             }
         }
-        if (currentPacket != null)
-            this.packets.add(currentPacket);
+        purgePacket(currentPacket);
 
         System.out.println(getClass().getSimpleName() + ": Total " + packets.size() + " packets");
     }
 
-    // todo: performance optimization SOON
-    public DbcPacket findPacket(int i) {
-        for (DbcPacket packet : packets) {
-            if (packet.getId() == i)
-                return packet;
+    private static String merge(String[] tokens, int position) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = position; i < tokens.length; i++) {
+            if (sb.length() > 0)
+                sb.append(" ");
+            sb.append(tokens[i]);
         }
-        return null;
+        return sb.toString();
+    }
+
+    private void purgePacket(DbcPacket currentPacket) {
+        if (currentPacket != null)
+            packets.put(currentPacket.getId(), currentPacket);
+    }
+
+    private String replaceSpecialWithSpaces(String line) {
+        line = line.replaceAll("[|+@(,)\\[\\]]", " ");
+        line = line.replaceAll(" +", " ");
+        return line;
+    }
+
+    public DbcPacket findPacket(int canId) {
+        return packets.get(canId);
     }
 }

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LoggingStrategy {
     public static List<BinaryLogEntry> getFieldNameEntries(DbcFile dbc) {
         List<BinaryLogEntry> entries = new ArrayList<>();
-        for (DbcPacket packet : dbc.packets) {
+        for (DbcPacket packet : dbc.packets.values()) {
             for (DbcField field : packet.getFields()) {
                 entries.add(new BinaryLogEntry() {
                     @Override

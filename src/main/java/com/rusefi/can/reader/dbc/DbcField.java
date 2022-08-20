@@ -3,11 +3,12 @@ package com.rusefi.can.reader.dbc;
 import com.rusefi.can.CANPacket;
 
 public class DbcField {
-    private final String name;
+    private String name;
     private final int startOffset;
     private final int length;
     private final double mult;
     private String category;
+    private boolean isNiceName;
 
     public DbcField(String name, int startOffset, int length, double mult, String category) {
         this.name = name;
@@ -19,6 +20,10 @@ public class DbcField {
 
     public String getCategory() {
         return category;
+    }
+
+    public boolean isNiceName() {
+        return isNiceName;
     }
 
     public String getName() {
@@ -66,5 +71,10 @@ public class DbcField {
 
     public double getValue(CANPacket packet) {
         return getBitIndex(packet.getData(), startOffset, length) * mult;
+    }
+
+    public void rename(String niceName) {
+        name = niceName;
+        isNiceName = true;
     }
 }
