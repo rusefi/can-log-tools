@@ -25,7 +25,9 @@ public class DbcFile {
     public void read(BufferedReader reader) throws IOException {
         DbcPacket currentPacket = null;
         String line;
+        int lineIndex = -1;
         while ((line = reader.readLine()) != null) {
+            lineIndex++;
             line = line.trim();
             if (line.startsWith("BO_")) {
                 purgePacket(currentPacket);
@@ -38,6 +40,12 @@ public class DbcFile {
                 purgePacket(currentPacket);
                 line = replaceSpecialWithSpaces(line);
                 String[] tokens = line.split(" ");
+                if (tokens.length == 1) {
+                    // skipping header line
+                    continue;
+                }
+                if (tokens.length < 4)
+                    throw new IllegalStateException("Failing to parse comment: " + line + " at " + lineIndex);
                 int id = Integer.parseInt(tokens[2]);
                 DbcPacket packet = packets.get(id);
                 Objects.requireNonNull(packet, "packet for " + id);
