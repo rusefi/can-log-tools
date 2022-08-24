@@ -1,6 +1,5 @@
 package com.rusefi.can.reader.dbc;
 
-import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,6 +54,10 @@ public class DbcPacket {
             niceName = niceName.substring(0, niceName.length() - 1);
         niceName = unquote(niceName);
         DbcField field = find(originalName);
+        if (field == null) {
+            System.err.println("Field not found by [" + originalName + "]");
+            return;
+        }
         Objects.requireNonNull(field, "By " + originalName);
         field.rename(niceName);
     }
