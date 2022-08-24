@@ -8,6 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * todo: kill this one?
+ * @see TrcToMlq
+ */
 public class CAN2TS {
     public static void main(String[] args) throws IOException {
         CANoeReader reader = CANoeReader.INSTANCE;
