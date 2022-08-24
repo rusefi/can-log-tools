@@ -18,6 +18,7 @@ public class TrcToMlq {
 
         DbcFile dbc = DbcFile.readFromFile(dbcFileName);
 
+        LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS = true;
         List<BinaryLogEntry> entries = LoggingStrategy.getFieldNameEntries(dbc);
 
         List<CANPacket> packets = new PcanTrcReader().readFile(trcFileName);

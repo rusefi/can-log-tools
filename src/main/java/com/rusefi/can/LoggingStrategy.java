@@ -15,10 +15,14 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LoggingStrategy {
+    public static boolean LOG_ONLY_TRANSLATED_FIELDS;
+
     public static List<BinaryLogEntry> getFieldNameEntries(DbcFile dbc) {
         List<BinaryLogEntry> entries = new ArrayList<>();
         for (DbcPacket packet : dbc.packets.values()) {
             for (DbcField field : packet.getFields()) {
+                if (LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS && !field.isNiceName())
+                    continue;
                 entries.add(new BinaryLogEntry() {
                     @Override
                     public String getName() {
