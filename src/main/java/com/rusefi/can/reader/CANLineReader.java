@@ -27,6 +27,7 @@ public interface CANLineReader {
                 if (packet != null)
                     result.add(packet);
             });
+            System.out.println("Got " + result.size() + " CAN packets from " + fileName);
             return result;
         }
     }

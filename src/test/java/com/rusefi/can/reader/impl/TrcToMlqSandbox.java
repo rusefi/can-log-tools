@@ -24,13 +24,10 @@ public class TrcToMlqSandbox {
             dbc.read(reader);
         }
 
-        List<BinaryLogEntry> entries = LoggingStrategy.getFieldNameEntries(dbc);
-
         List<CANPacket> packets = new PcanTrcReader().readFile(trcFileName);
         System.out.println(packets.size() + " packets");
 
-
-        LoggingStrategy.writeLog(dbc, entries, packets);
+        LoggingStrategy.writeLog(dbc, packets, "gauges.mlg");
     }
 
 }

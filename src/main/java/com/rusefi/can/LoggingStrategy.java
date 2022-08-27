@@ -59,8 +59,9 @@ public class LoggingStrategy {
         return entries;
     }
 
-    public static void writeLog(DbcFile dbc, List<BinaryLogEntry> entries, List<CANPacket> packets) {
+    public static void writeLog(DbcFile dbc, List<CANPacket> packets, String outputFileName) {
         Map<String, Double> values = new HashMap<>();
+        List<BinaryLogEntry> entries = dbc.getFieldNameEntries();
 
         AtomicReference<Long> time = new AtomicReference<>();
         BinarySensorLog<BinaryLogEntry> log = new BinarySensorLog<>(o -> {
@@ -68,8 +69,7 @@ public class LoggingStrategy {
             if (value == null)
                 return 0.0;
             return value;
-        }, entries, time::get);
-
+        }, entries, time::get, outputFileName);
 
         for (CANPacket packetContent : packets) {
             DbcPacket packetMeta = dbc.findPacket(packetContent.getId());

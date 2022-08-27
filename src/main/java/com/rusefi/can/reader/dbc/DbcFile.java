@@ -1,5 +1,8 @@
 package com.rusefi.can.reader.dbc;
 
+import com.rusefi.can.LoggingStrategy;
+import com.rusefi.sensor_logs.BinaryLogEntry;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,6 +15,8 @@ public class DbcFile {
     public final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
 
     private static final boolean debugEnabled = false;
+
+    private List<BinaryLogEntry> list;
 
     public static DbcFile readFromFile(String fileName) throws IOException {
         DbcFile dbc = new DbcFile();
@@ -112,5 +117,13 @@ public class DbcFile {
 
     public DbcPacket findPacket(int canId) {
         return packets.get(canId);
+    }
+
+
+    public List<BinaryLogEntry> getFieldNameEntries() {
+        if (list == null) {
+            list = LoggingStrategy.getFieldNameEntries(this);
+        }
+        return list;
     }
 }

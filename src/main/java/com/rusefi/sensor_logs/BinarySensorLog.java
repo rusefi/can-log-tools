@@ -20,18 +20,15 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
     private final TimeProvider timeProvider;
     private DataOutputStream stream;
 
-    private final String fileName = System.getProperty("mlq_file_name", "gauges.mlg");
+    private final String fileName;
 
     private int counter;
 
-    public BinarySensorLog(Function<T, Double> valueProvider, Collection<T> sensors) {
-        this(valueProvider, sensors, System::currentTimeMillis);
-    }
-
-    public BinarySensorLog(Function<T, Double> valueProvider, Collection<T> sensors, TimeProvider timeProvider) {
+    public BinarySensorLog(Function<T, Double> valueProvider, Collection<T> sensors, TimeProvider timeProvider, String fileName) {
         this.valueProvider = Objects.requireNonNull(valueProvider, "valueProvider");
         this.entries = Objects.requireNonNull(sensors, "entries");
         this.timeProvider = timeProvider;
+        this.fileName = fileName;
     }
 
     public interface TimeProvider {
