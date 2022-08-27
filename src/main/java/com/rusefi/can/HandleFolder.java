@@ -23,7 +23,7 @@ public class HandleFolder {
 
             List<CANPacket> packets = new PcanTrcReader().readFile(fullInputFile);
 
-            String outputFileName = outputFolder + File.separator + inputFile;
+            String outputFileName = outputFolder + File.separator + inputFile + ".mlg";
 
             LoggingStrategy.writeLog(dbc, packets, outputFileName);
         }

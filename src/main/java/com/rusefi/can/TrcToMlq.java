@@ -13,7 +13,7 @@ public class TrcToMlq {
         if (args.length == 3) {
             String dbcFileName = args[0];
             String inputFolder = args[1];
-            String outputFolder = args[1];
+            String outputFolder = args[2];
             HandleFolder.doJob(dbcFileName, inputFolder, outputFolder);
         } else if (args.length != 2) {
             System.err.println("Two arguments expected - DBC file name and TRC file name");
