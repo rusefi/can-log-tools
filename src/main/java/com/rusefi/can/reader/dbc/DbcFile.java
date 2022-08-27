@@ -6,7 +6,6 @@ import com.rusefi.sensor_logs.BinaryLogEntry;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +13,7 @@ import java.util.Objects;
 public class DbcFile {
     public final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
 
-    private static final boolean debugEnabled = false;
+    public static final boolean debugEnabled = false;
 
     private List<BinaryLogEntry> list;
 
@@ -60,27 +59,7 @@ public class DbcFile {
 
 
             } else if (line.startsWith("SG_")) {
-                line = replaceSpecialWithSpaces(line);
-                String[] tokens = line.split(" ");
-                String name = tokens[1];
-                int index = 1;
-                while (!tokens[index - 1].equals(":"))
-                    index++;
-
-
-                if (debugEnabled)
-                    System.out.println(line);
-                int startOffset;
-                try {
-                    startOffset = Integer.parseInt(tokens[index]);
-                } catch (NumberFormatException e) {
-                    throw new IllegalStateException("While " + line, e);
-                }
-                int length = Integer.parseInt(tokens[index + 1]);
-
-                double mult = Double.parseDouble(tokens[index + 3]);
-
-                DbcField field = new DbcField(name, startOffset, length, mult, currentPacket.getName());
+                DbcField field = DbcField.parseField(currentPacket, line);
                 if (debugEnabled)
                     System.out.println("Found " + field);
                 currentPacket.add(field);
@@ -109,7 +88,7 @@ public class DbcFile {
             packets.put(currentPacket.getId(), currentPacket);
     }
 
-    private String replaceSpecialWithSpaces(String line) {
+    public static String replaceSpecialWithSpaces(String line) {
         line = line.replaceAll("[|+@(,)\\[\\]]", " ");
         line = line.replaceAll(" +", " ");
         return line;

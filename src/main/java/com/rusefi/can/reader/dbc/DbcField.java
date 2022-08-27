@@ -7,15 +7,42 @@ public class DbcField {
     private final int startOffset;
     private final int length;
     private final double mult;
+    private final double offset;
     private String category;
     private boolean isNiceName;
 
-    public DbcField(String name, int startOffset, int length, double mult, String category) {
+    public DbcField(String name, int startOffset, int length, double mult, double offset, String category) {
         this.name = name;
         this.startOffset = startOffset;
         this.length = length;
         this.mult = mult;
+        this.offset = offset;
         this.category = category;
+    }
+
+    public static DbcField parseField(DbcPacket parent, String line) {
+        line = DbcFile.replaceSpecialWithSpaces(line);
+        String[] tokens = line.split(" ");
+        String name = tokens[1];
+        int index = 1;
+        while (!tokens[index - 1].equals(":"))
+            index++;
+
+
+        if (DbcFile.debugEnabled)
+            System.out.println(line);
+        int startOffset;
+        try {
+            startOffset = Integer.parseInt(tokens[index]);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("While " + line, e);
+        }
+        int length = Integer.parseInt(tokens[index + 1]);
+
+        double mult = Double.parseDouble(tokens[index + 3]);
+        double offset = Double.parseDouble(tokens[index + 4]);
+
+        return new DbcField(name, startOffset, length, mult, offset, parent.getName());
     }
 
     public String getCategory() {
@@ -40,6 +67,10 @@ public class DbcField {
 
     public double getMult() {
         return mult;
+    }
+
+    public double getOffset() {
+        return offset;
     }
 
     @Override
@@ -70,7 +101,7 @@ public class DbcField {
     }
 
     public double getValue(CANPacket packet) {
-        return getBitIndex(packet.getData(), startOffset, length) * mult;
+        return getBitIndex(packet.getData(), startOffset, length) * mult + offset;
     }
 
     public void rename(String niceName) {
