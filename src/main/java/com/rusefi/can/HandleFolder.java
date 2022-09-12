@@ -1,7 +1,7 @@
 package com.rusefi.can;
 
+import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.dbc.DbcFile;
-import com.rusefi.can.reader.impl.PcanTrcReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,11 +21,12 @@ public class HandleFolder {
 
             String fullInputFile = inputFolderName + File.separator + inputFile;
 
-            List<CANPacket> packets = new PcanTrcReader().readFile(fullInputFile);
+            List<CANPacket> packets = CANLineReader.getReader().readFile(fullInputFile);
 
             String outputFileName = outputFolder + File.separator + inputFile + ".mlg";
 
             LoggingStrategy.writeLog(dbc, packets, outputFileName);
         }
     }
+
 }
