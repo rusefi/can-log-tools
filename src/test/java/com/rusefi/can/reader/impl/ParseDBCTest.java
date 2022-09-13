@@ -8,8 +8,10 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ParseDBCTest {
     public static final String VAG_MOTOR_1 = "BO_ 640 Motor_1: 8 XXX\n" +
@@ -95,12 +97,13 @@ public class ParseDBCTest {
     public void parse() throws IOException {
         BufferedReader reader = new BufferedReader(new StringReader(RPM_DBC));
 
-        DbcFile dbc = new DbcFile();
+        DbcFile dbc = new DbcFile(false);
         dbc.read(reader);
 
         assertEquals(dbc.packets.size(), 3);
 
-        DbcPacket motorPacket = dbc.packets.get(2);
+        DbcPacket motorPacket = dbc.getPacketByIndexSlow(2);
+        assertNotNull(motorPacket);
         assertEquals(motorPacket.getId(), 640);
 
         DbcField rpm = motorPacket.find("RPM");

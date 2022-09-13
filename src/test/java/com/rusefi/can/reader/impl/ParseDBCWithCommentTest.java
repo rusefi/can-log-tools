@@ -1,5 +1,6 @@
 package com.rusefi.can.reader.impl;
 
+import com.rusefi.can.LoggingStrategy;
 import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;
@@ -56,7 +57,7 @@ public class ParseDBCWithCommentTest {
     public void parse() throws IOException {
         BufferedReader reader = new BufferedReader(new StringReader(RPM_DBC));
 
-        DbcFile dbc = new DbcFile();
+        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
         dbc.read(reader);
 
         assertEquals(dbc.packets.size(), 1);

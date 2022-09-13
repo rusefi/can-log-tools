@@ -30,21 +30,6 @@ public enum CANoeReader implements CANLineReader {
 
     @Override
     public List<CANPacket> readFile(String fileName) throws IOException {
-        List<CANPacket> result = new ArrayList<>();
-        try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-            stream.forEach(new Consumer<String>() {
-                int index = 0;
-
-                @Override
-                public void accept(String s) {
-                    if (index++ < 5)
-                        return;
-                    CANPacket packet = readLine(s);
-                    if (packet != null)
-                        result.add(packet);
-                }
-            });
-            return result;
-        }
+        return skipHeaderAndRead(fileName, 5);
     }
 }

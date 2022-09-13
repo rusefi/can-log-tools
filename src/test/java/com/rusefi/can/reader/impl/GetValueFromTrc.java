@@ -1,6 +1,7 @@
 package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.LoggingStrategy;
 import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import org.junit.Test;
@@ -20,7 +21,7 @@ public class GetValueFromTrc {
 
     @Test
     public void test() throws IOException {
-        DbcFile dbc = new DbcFile();
+        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
         {
             BufferedReader reader = new BufferedReader(new StringReader(VAG_MOTOR_1));
             dbc.read(reader);
@@ -44,7 +45,7 @@ public class GetValueFromTrc {
         assertEquals(13 , DbcField.getBitIndex(packet.getData(), 8, 4));
 
 
-        DbcField bf = dbc.packets.get(0).find("rpm");
+        DbcField bf = dbc.getPacketByIndexSlow(0).find("rpm");
 
         assertEquals(1207.75, bf.getValue(packet), EPS);
 

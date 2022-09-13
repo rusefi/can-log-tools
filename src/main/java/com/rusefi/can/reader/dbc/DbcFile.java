@@ -6,6 +6,7 @@ import com.rusefi.sensor_logs.BinaryLogEntry;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
@@ -17,8 +18,14 @@ public class DbcFile {
 
     private List<BinaryLogEntry> list;
 
+    boolean logOnlyTranslatedFields;
+
+    public DbcFile(boolean logOnlyTranslatedFields) {
+        this.logOnlyTranslatedFields = logOnlyTranslatedFields;
+    }
+
     public static DbcFile readFromFile(String fileName) throws IOException {
-        DbcFile dbc = new DbcFile();
+        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
         {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             dbc.read(reader);
@@ -51,7 +58,7 @@ public class DbcFile {
                 if (tokens.length < 4)
                     throw new IllegalStateException("Failing to parse comment: " + line + " at " + lineIndex);
                 int id = Integer.parseInt(tokens[2]);
-                DbcPacket packet = packets.get(id);
+                DbcPacket packet = findPacket(id);
                 Objects.requireNonNull(packet, "packet for " + id);
                 String originalName = tokens[3];
                 String niceName = merge(tokens, 4);
@@ -101,8 +108,12 @@ public class DbcFile {
 
     public List<BinaryLogEntry> getFieldNameEntries() {
         if (list == null) {
-            list = LoggingStrategy.getFieldNameEntries(this);
+            list = LoggingStrategy.getFieldNameEntries(this, logOnlyTranslatedFields);
         }
         return list;
+    }
+
+    public DbcPacket getPacketByIndexSlow(int index) {
+        return new ArrayList<>(packets.values()).get(index);
     }
 }

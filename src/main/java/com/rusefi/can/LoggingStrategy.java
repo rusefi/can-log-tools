@@ -17,11 +17,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LoggingStrategy {
     public static boolean LOG_ONLY_TRANSLATED_FIELDS;
 
-    public static List<BinaryLogEntry> getFieldNameEntries(DbcFile dbc) {
+    public static List<BinaryLogEntry> getFieldNameEntries(DbcFile dbc, boolean logOnlyTranslatedFields) {
         List<BinaryLogEntry> entries = new ArrayList<>();
         for (DbcPacket packet : dbc.packets.values()) {
             for (DbcField field : packet.getFields()) {
-                if (LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS && !field.isNiceName())
+                if (logOnlyTranslatedFields && !field.isNiceName())
                     continue;
                 entries.add(new BinaryLogEntry() {
                     @Override

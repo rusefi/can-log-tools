@@ -3,7 +3,6 @@ package com.rusefi.can.reader.impl;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.LoggingStrategy;
 import com.rusefi.can.reader.dbc.DbcFile;
-import com.rusefi.sensor_logs.BinaryLogEntry;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +17,7 @@ public class TrcToMlqSandbox {
     private static final String trcFileName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\VAG\\2006-Passat-B6\\passat-b6-stock-ecu-ecu-ptcan-parked-revving.trc";
 
     public static void main(String[] args) throws IOException {
-        DbcFile dbc = new DbcFile();
+        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
         {
             BufferedReader reader = new BufferedReader(new StringReader(VAG_MOTOR_1));
             dbc.read(reader);
