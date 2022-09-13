@@ -4,12 +4,7 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.CANLineReader;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 public enum CANoeReader implements CANLineReader {
     INSTANCE;

@@ -44,9 +44,17 @@ public class DbcFile {
                 purgePacket(currentPacket);
                 line = line.replaceAll(":", "");
                 String[] tokens = line.split(" ");
-                int decId = Integer.parseInt(tokens[1]);
+                if (tokens.length < 3) {
+                    // skipping header line
+                    continue;
+                }
+                long decId = Long.parseLong(tokens[1]);
+                if (decId > 2_000_000_000) {
+                    System.err.println("Huh? Skipping ID=" + decId);
+                    continue;
+                }
                 String packetName = tokens[2];
-                currentPacket = new DbcPacket(decId, packetName);
+                currentPacket = new DbcPacket((int) decId, packetName);
             } else if (line.startsWith("CM_")) {
                 purgePacket(currentPacket);
                 line = replaceSpecialWithSpaces(line);
@@ -69,7 +77,8 @@ public class DbcFile {
                 DbcField field = DbcField.parseField(currentPacket, line);
                 if (debugEnabled)
                     System.out.println("Found " + field);
-                currentPacket.add(field);
+                if (field != null)
+                    currentPacket.add(field);
 
             } else {
                 // skipping useless line

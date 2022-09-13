@@ -10,7 +10,10 @@ import static com.rusefi.can.reader.CANLineReader.getReader;
 
 public class TrcToMlq {
     public static ReaderType getCurrentReaderType() {
-        return ReaderType.PCAN;
+        String property = System.getProperty("TRACE_READER", "PCAN");
+        ReaderType readerType = ReaderType.valueOf(property);
+        System.out.println("getCurrentReaderType: " + readerType + " for [" + property + "]");
+        return readerType;
     }
 
     public static void main(String[] args) throws IOException {

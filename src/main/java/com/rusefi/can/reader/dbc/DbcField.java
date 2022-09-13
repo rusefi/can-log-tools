@@ -23,6 +23,8 @@ public class DbcField {
     public static DbcField parseField(DbcPacket parent, String line) {
         line = DbcFile.replaceSpecialWithSpaces(line);
         String[] tokens = line.split(" ");
+        if (tokens.length < 2)
+            return null;
         String name = tokens[1];
         int index = 1;
         while (!tokens[index - 1].equals(":"))

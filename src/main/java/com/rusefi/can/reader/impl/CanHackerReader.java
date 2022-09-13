@@ -11,7 +11,6 @@ public enum CanHackerReader implements CANLineReader {
         line = line.trim();
         if (line.startsWith("@"))
             return null;
-        System.out.println("readLine " + line);
 
         String[] tokens = line.split("\\s+");
         double timeStamp = Double.parseDouble(CANLineReader.attemptToFixLocalization(tokens[0]));
