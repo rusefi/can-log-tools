@@ -19,6 +19,9 @@ jobs:
         run: javac -version
 
       - name: Gradle
+        run: bash gradlew test
+
+      - name: Gradle
         run: bash gradlew jar
 
       - name: Upload .jar file
