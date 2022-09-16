@@ -25,7 +25,17 @@ public class TrcToMlq {
             String outputFolder = args[2];
             HandleFolder.doJob(dbcFileName, inputFolder, outputFolder);
         } else if (args.length != 2) {
-            System.err.println("Two arguments expected - DBC file name and TRC file name");
+            System.err.println("Two or three arguments expected:");
+            System.err.println("   either");
+            System.err.println("fileName.DBC traceFile.name");
+            System.err.println("  it would output to gauges.mlg");
+            System.err.println("   or");
+            System.err.println("fileName.DBC tracesInputFolder outputFolder");
+            System.err.println("");
+            System.err.println("");
+            System.err.println("By default PCAN format is used");
+            System.err.println("For can hacker format:");
+            System.err.println("   java -DTRACE_READER=CANHACKER");
             System.exit(-1);
         } else {
             String dbcFileName = args[0];
