@@ -25,6 +25,7 @@ public class DbcFile {
     }
 
     public static DbcFile readFromFile(String fileName) throws IOException {
+        System.out.println("Reading DBC file from " + fileName + "...");
         DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
         {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));

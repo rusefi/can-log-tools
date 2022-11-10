@@ -23,7 +23,7 @@ public class TrcToMlq {
             String dbcFileName = args[0];
             String inputFolder = args[1];
             String outputFolder = args[2];
-            HandleFolder.doJob(dbcFileName, inputFolder, outputFolder);
+            ConvertTrcToMegaLogViewerWithDBC.doJob(dbcFileName, inputFolder, outputFolder);
         } else if (args.length != 2) {
             System.err.println("Two or three arguments expected:");
             System.err.println("   either");
