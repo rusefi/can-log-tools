@@ -1,6 +1,7 @@
 package com.rusefi.can.reader;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.ReaderTypeHolder;
 import com.rusefi.can.TrcToMlq;
 import com.rusefi.can.reader.impl.CANoeReader;
 import com.rusefi.can.reader.impl.CanHackerReader;
@@ -25,7 +26,7 @@ public interface CANLineReader {
     }
 
     static CANLineReader getReader() {
-        switch (TrcToMlq.getCurrentReaderType()) {
+        switch (ReaderTypeHolder.INSTANCE.getType()) {
             case CANOE:
                 return CANoeReader.INSTANCE;
             case CANHACKER:

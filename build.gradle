@@ -5,7 +5,7 @@ plugins {
 apply from: 'dependencies.gradle'
 
 group 'org.rusefi'
-version '0.1-SNAPSHOT'
+version '0.11-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -20,7 +20,7 @@ defaultTasks 'jar'
 jar {
     manifest {
         attributes(
-                'Main-Class': 'com.rusefi.can.TrcToMlq'
+                'Main-Class': 'com.rusefi.can.ToolSelector'
         )
     }
 }
