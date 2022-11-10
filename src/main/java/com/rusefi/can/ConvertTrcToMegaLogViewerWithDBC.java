@@ -2,11 +2,11 @@ package com.rusefi.can;
 
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.util.FolderUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 public class ConvertTrcToMegaLogViewerWithDBC {
     public static void doJob(String dbcFileName, String inputFolderName, String outputFolder) throws IOException {
@@ -15,18 +15,15 @@ public class ConvertTrcToMegaLogViewerWithDBC {
         System.out.println("inputFolderName " + inputFolderName);
         System.out.println("outputFolder " + outputFolder);
 
-        File inputFolder = new File(inputFolderName);
-        for (String inputFile : Objects.requireNonNull(inputFolder.list((dir, name) -> name.endsWith(".trc")))) {
-            System.out.println("Handling " + inputFile);
+        FolderUtil.FileAction fileAction = (simpleFileName, fullFileName) -> {
+            List<CANPacket> packets = CANLineReader.getReader().readFile(fullFileName);
 
-            String fullInputFile = inputFolderName + File.separator + inputFile;
-
-            List<CANPacket> packets = CANLineReader.getReader().readFile(fullInputFile);
-
-            String outputFileName = outputFolder + File.separator + inputFile + ".mlg";
+            String outputFileName = outputFolder + File.separator + simpleFileName + ".mlg";
 
             LoggingStrategy.writeLog(dbc, packets, outputFileName);
-        }
-    }
+        };
 
+
+        FolderUtil.handleFolder(inputFolderName, fileAction);
+    }
 }
