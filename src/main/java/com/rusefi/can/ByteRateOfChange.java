@@ -2,12 +2,15 @@ package com.rusefi.can;
 
 import com.rusefi.can.reader.CANLineReader;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.*;
 
 public class ByteRateOfChange {
 
-    public static void process(String fullFileName) throws IOException {
+    public static TraceReport process(String fullFileName, String reportDestinationFolder, String simpleFileName) throws IOException {
         List<CANPacket> packets = CANLineReader.getReader().readFile(fullFileName);
 
         HashMap<ByteId, ByteStatistics> statistics = new HashMap<>();
@@ -25,13 +28,16 @@ public class ByteRateOfChange {
 
         System.out.println(allStats);
 
+        PrintStream ps = new PrintStream(new FileOutputStream(reportDestinationFolder + File.separator + simpleFileName + ".txt", false));
 
         for (ByteStatistics byteStatistics : allStats) {
             ByteId key = byteStatistics.key;
-            System.out.println(dualSid(key.sid) + " at index " + key.index + " has " + byteStatistics.getUniqueValues() + " unique values");
+            ps.println(dualSid(key.sid) + " at index " + key.index + " has " + byteStatistics.getUniqueValues() + " unique value(s)");
         }
 
+        ps.close();
 
+        return new TraceReport(simpleFileName, statistics);
     }
 
     public static String dualSid(int sid) {
@@ -91,4 +97,21 @@ public class ByteRateOfChange {
         }
     }
 
+    public static class TraceReport extends HashMap<ByteId, ByteStatistics> {
+        private final String simpleFileName;
+        private final HashMap<ByteId, ByteStatistics> statistics;
+
+        public TraceReport(String simpleFileName, HashMap<ByteId, ByteStatistics> statistics) {
+            this.simpleFileName = simpleFileName;
+            this.statistics = statistics;
+        }
+
+        public String getSimpleFileName() {
+            return simpleFileName;
+        }
+
+        public HashMap<ByteId, ByteStatistics> getStatistics() {
+            return statistics;
+        }
+    }
 }
