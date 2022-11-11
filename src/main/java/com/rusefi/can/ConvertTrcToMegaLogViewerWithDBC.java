@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class ConvertTrcToMegaLogViewerWithDBC {
+
     public static void doJob(String dbcFileName, String inputFolderName, String outputFolder) throws IOException {
         DbcFile dbc = DbcFile.readFromFile(dbcFileName);
 
@@ -18,7 +19,7 @@ public class ConvertTrcToMegaLogViewerWithDBC {
         FolderUtil.FileAction fileAction = (simpleFileName, fullFileName) -> {
             List<CANPacket> packets = CANLineReader.getReader().readFile(fullFileName);
 
-            String outputFileName = outputFolder + File.separator + simpleFileName + ".mlg";
+            String outputFileName = outputFolder + File.separator + simpleFileName + LoggingStrategy.MLG;
 
             LoggingStrategy.writeLog(dbc, packets, outputFileName);
         };

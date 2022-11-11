@@ -1,12 +1,15 @@
 package com.rusefi.can;
 
 import com.rusefi.can.reader.CANLineReader;
+import com.rusefi.sensor_logs.BinaryLogEntry;
+import com.rusefi.sensor_logs.BinarySensorLog;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ByteRateOfChange {
 
@@ -112,6 +115,23 @@ public class ByteRateOfChange {
 
         public HashMap<ByteId, ByteStatistics> getStatistics() {
             return statistics;
+        }
+
+        public void createMegaLogViewer() {
+            Map<ByteId, BinaryLogEntry> entries = new HashMap<>();
+
+            for (ByteId key : statistics.keySet()) {
+                entries.put(key, BinaryLogEntry.createFloatLogEntry(key.sid + "_" + key.index, Integer.toBinaryString(key.sid)));
+            }
+
+            Map<String, Double> values = new HashMap<>();
+            AtomicReference<Long> time = new AtomicReference<>();
+            BinarySensorLog<BinaryLogEntry> log = new BinarySensorLog<>(o -> {
+                Double value = values.get(o.getName());
+                if (value == null)
+                    return 0.0;
+                return value;
+            }, entries.values(), time::get, "haha" + LoggingStrategy.MLG);
         }
     }
 }
