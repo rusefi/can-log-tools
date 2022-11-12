@@ -53,7 +53,11 @@ public class ByteRateOfChange {
     }
 
     public static String dualSid(int sid) {
-        return String.format("%d/0x%x", sid, sid);
+        return dualSid(sid, "/");
+    }
+
+    public static String dualSid(int sid, String separator) {
+        return String.format("%d%s0x%x", sid, separator, sid);
     }
 
     public static class ByteStatistics {

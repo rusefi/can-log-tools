@@ -6,6 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * This seems to be about https://github.com/brent-stone/CAN_Reverse_Engineering
+ */
 public class SteveWriter implements CANTextWriter {
     private final String fileName;
 
