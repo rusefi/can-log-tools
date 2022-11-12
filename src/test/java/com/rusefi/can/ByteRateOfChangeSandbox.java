@@ -13,7 +13,7 @@ public class ByteRateOfChangeSandbox {
     public static void main(String[] args) throws IOException {
         ReaderTypeHolder.INSTANCE.type = ReaderType.PCAN;
 
-        String folder = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\Nissan\\2011_Xterra\\2011-nissan-CAN-June-2021";
+        String folder = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\Nissan\\2011_Xterra\\CAN-Nov-2022";
 
         String reportDestinationFolder = folder + File.separator + "processed";
         new File(reportDestinationFolder).mkdirs();
@@ -21,12 +21,9 @@ public class ByteRateOfChangeSandbox {
 
         List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
 
-        FolderUtil.handleFolder(folder, new FolderUtil.FileAction() {
-            @Override
-            public void doJob(String simpleFileName, String fullFileName) throws IOException {
-                ByteRateOfChange.TraceReport report = ByteRateOfChange.process(fullFileName, reportDestinationFolder, simpleFileName);
-                reports.add(report);
-            }
+        FolderUtil.handleFolder(folder, (simpleFileName, fullFileName) -> {
+            ByteRateOfChange.TraceReport report = ByteRateOfChange.process(fullFileName, reportDestinationFolder, simpleFileName);
+            reports.add(report);
         }, "pcan.trc");
 
 
@@ -43,25 +40,44 @@ public class ByteRateOfChangeSandbox {
 
         PrintStream report = System.out;
 
-        report.println("Between " + traceReport1.getSimpleFileName() + " and " + traceReport2.getSimpleFileName());
+        report.println("Comparing " + traceReport1.getSimpleFileName() + " and " + traceReport2.getSimpleFileName());
 
-        int totalDifferences = 0;
+        List<ByteVariationDifference> differences = new ArrayList<>();
 
         for (ByteRateOfChange.ByteId id : allKeys) {
             ByteRateOfChange.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(id, byteId -> new ByteRateOfChange.ByteStatistics(byteId));
             ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(id, byteId -> new ByteRateOfChange.ByteStatistics(byteId));
 
             if (s1.getUniqueValues() != s2.getUniqueValues()) {
-                report.println(id + ": " + s1.getUniqueValues() + " vs " + s2.getUniqueValues());
-                totalDifferences++;
+                String msg = id + ": " + s1.getUniqueValues() + " vs " + s2.getUniqueValues();
+                differences.add(new ByteVariationDifference(Math.abs(s1.getUniqueValues() - s2.getUniqueValues()), msg));
             }
-
         }
+        differences.sort(new Comparator<ByteVariationDifference>() {
+            @Override
+            public int compare(ByteVariationDifference o1, ByteVariationDifference o2) {
+                return o2.deltaCount - o1.deltaCount;
+            }
+        });
 
-        report.println(totalDifferences + " total differences");
+        for (ByteVariationDifference difference : differences)
+            report.println(difference.msg);
+
+        report.println(differences.size() + " total differences");
         report.println();
         report.println();
         report.println();
         report.println();
     }
+
+    static class ByteVariationDifference {
+        private int deltaCount;
+        private String msg;
+
+        public ByteVariationDifference(int deltaCount, String msg) {
+            this.deltaCount = deltaCount;
+            this.msg = msg;
+        }
+    }
+
 }

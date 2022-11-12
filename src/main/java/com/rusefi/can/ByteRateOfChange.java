@@ -80,7 +80,7 @@ public class ByteRateOfChange {
         }
 
         private String getLogKey() {
-            return sid + "_" + index;
+            return dualSid(sid) + "_byte_" + index + "_bit_" + (index * 8);
         }
 
         @Override
@@ -98,10 +98,7 @@ public class ByteRateOfChange {
 
         @Override
         public String toString() {
-            return "ByteId{" +
-                    "sid=" + sid +
-                    ", index=" + index +
-                    '}';
+            return getLogKey();
         }
     }
 
