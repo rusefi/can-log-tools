@@ -18,6 +18,9 @@ public class ByteRateOfChange {
     public static TraceReport process(String fullFileName, String reportDestinationFolder, String simpleFileName) throws IOException {
         List<CANPacket> packets = CANLineReader.getReader().readFile(fullFileName);
 
+        PerSidDump.handle(packets, simpleFileName);
+
+
         HashMap<ByteId, ByteStatistics> statistics = new HashMap<>();
 
         for (CANPacket packet : packets) {
@@ -110,16 +113,16 @@ public class ByteRateOfChange {
     public static class TraceReport extends HashMap<ByteId, ByteStatistics> {
         private final String simpleFileName;
         private final HashMap<ByteId, ByteStatistics> statistics;
-        private double duration;
+        private final double durationMs;
 
         public TraceReport(String simpleFileName, HashMap<ByteId, ByteStatistics> statistics, double duration) {
             this.simpleFileName = simpleFileName;
             this.statistics = statistics;
-            this.duration = duration;
+            this.durationMs = duration;
         }
 
         String getSummary() {
-            return getSimpleFileName() + " (duration=" + (int)(duration / 1000) + "secs)";
+            return getSimpleFileName() + " (duration=" + (int)(durationMs / 1000) + "secs)";
         }
 
         public String getSimpleFileName() {
