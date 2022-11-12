@@ -1,6 +1,6 @@
 package com.rusefi.can.reader.impl;
 
-import com.rusefi.can.LoggingStrategy;
+import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;

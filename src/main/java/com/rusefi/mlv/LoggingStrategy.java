@@ -1,5 +1,6 @@
-package com.rusefi.can;
+package com.rusefi.mlv;
 
+import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;
@@ -45,7 +46,7 @@ public class LoggingStrategy {
         context.processPackets(packets, log, logger);
     }
 
-    interface PacketLogger {
+    public interface PacketLogger {
         boolean takeValues(CANPacket packetContent);
     }
 

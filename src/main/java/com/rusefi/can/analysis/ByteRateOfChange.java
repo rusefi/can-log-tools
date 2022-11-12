@@ -1,5 +1,8 @@
-package com.rusefi.can;
+package com.rusefi.can.analysis;
 
+import com.rusefi.can.CANPacket;
+import com.rusefi.mlv.LoggingContext;
+import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.sensor_logs.BinaryLogEntry;
 import com.rusefi.sensor_logs.BinarySensorLog;
@@ -39,7 +42,9 @@ public class ByteRateOfChange {
 
         ps.close();
 
-        TraceReport traceReport = new TraceReport(simpleFileName, statistics);
+        double duration = packets.isEmpty() ? 0 : packets.get(packets.size() - 1).getTimeStamp() - packets.get(0).getTimeStamp();
+
+        TraceReport traceReport = new TraceReport(simpleFileName, statistics, duration);
         traceReport.createMegaLogViewer(packets);
         return traceReport;
     }
@@ -48,7 +53,7 @@ public class ByteRateOfChange {
         return String.format("%d/0x%x", sid, sid);
     }
 
-    static class ByteStatistics {
+    public static class ByteStatistics {
         HashSet<Integer> uniqueValues = new HashSet<>();
         private final ByteId key;
 
@@ -70,7 +75,7 @@ public class ByteRateOfChange {
     }
 
 
-    static class ByteId {
+    public static class ByteId {
         final int sid;
         final int index;
 
@@ -105,10 +110,16 @@ public class ByteRateOfChange {
     public static class TraceReport extends HashMap<ByteId, ByteStatistics> {
         private final String simpleFileName;
         private final HashMap<ByteId, ByteStatistics> statistics;
+        private double duration;
 
-        public TraceReport(String simpleFileName, HashMap<ByteId, ByteStatistics> statistics) {
+        public TraceReport(String simpleFileName, HashMap<ByteId, ByteStatistics> statistics, double duration) {
             this.simpleFileName = simpleFileName;
             this.statistics = statistics;
+            this.duration = duration;
+        }
+
+        String getSummary() {
+            return getSimpleFileName() + " (duration=" + (int)(duration / 1000) + "secs)";
         }
 
         public String getSimpleFileName() {

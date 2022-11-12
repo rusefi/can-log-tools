@@ -2,6 +2,7 @@ package com.rusefi.can;
 
 import com.rusefi.can.reader.ReaderType;
 import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.mlv.LoggingStrategy;
 
 import java.io.IOException;
 import java.util.List;

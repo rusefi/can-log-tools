@@ -1,5 +1,7 @@
-package com.rusefi.can;
+package com.rusefi.mlv;
 
+import com.rusefi.can.CANPacket;
+import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;
 import com.rusefi.sensor_logs.BinarySensorLog;
 
@@ -9,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-class LoggingContext {
-    Map<String, Double> values = new HashMap<>();
+public class LoggingContext {
+    public Map<String, Double> values = new HashMap<>();
     AtomicReference<Long> time = new AtomicReference<>();
 
-    BinarySensorLog<BinaryLogEntry> getBinaryLogEntryBinarySensorLog(Collection<BinaryLogEntry> entries, String outputFileName) {
+    public BinarySensorLog<BinaryLogEntry> getBinaryLogEntryBinarySensorLog(Collection<BinaryLogEntry> entries, String outputFileName) {
         return new BinarySensorLog<>(o -> {
             Double value = this.values.get(o.getName());
             if (value == null)

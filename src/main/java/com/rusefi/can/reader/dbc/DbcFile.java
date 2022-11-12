@@ -1,6 +1,6 @@
 package com.rusefi.can.reader.dbc;
 
-import com.rusefi.can.LoggingStrategy;
+import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;
 
 import java.io.BufferedReader;
