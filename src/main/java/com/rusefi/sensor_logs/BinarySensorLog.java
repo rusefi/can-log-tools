@@ -142,6 +142,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
 
     @Override
     public void close() {
+        System.out.println("Finishing " + fileName);
         close(stream);
         stream = null;
     }

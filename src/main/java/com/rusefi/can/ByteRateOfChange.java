@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ByteRateOfChange {
 
@@ -40,7 +39,9 @@ public class ByteRateOfChange {
 
         ps.close();
 
-        return new TraceReport(simpleFileName, statistics);
+        TraceReport traceReport = new TraceReport(simpleFileName, statistics);
+        traceReport.createMegaLogViewer(packets);
+        return traceReport;
     }
 
     public static String dualSid(int sid) {
@@ -76,6 +77,10 @@ public class ByteRateOfChange {
         public ByteId(int sid, int index) {
             this.sid = sid;
             this.index = index;
+        }
+
+        private String getLogKey() {
+            return sid + "_" + index;
         }
 
         @Override
@@ -117,21 +122,26 @@ public class ByteRateOfChange {
             return statistics;
         }
 
-        public void createMegaLogViewer() {
+        public void createMegaLogViewer(List<CANPacket> packets) {
             Map<ByteId, BinaryLogEntry> entries = new HashMap<>();
 
             for (ByteId key : statistics.keySet()) {
-                entries.put(key, BinaryLogEntry.createFloatLogEntry(key.sid + "_" + key.index, Integer.toBinaryString(key.sid)));
+                entries.put(key, BinaryLogEntry.createFloatLogEntry(key.getLogKey(), Integer.toBinaryString(key.sid)));
             }
 
-            Map<String, Double> values = new HashMap<>();
-            AtomicReference<Long> time = new AtomicReference<>();
-            BinarySensorLog<BinaryLogEntry> log = new BinarySensorLog<>(o -> {
-                Double value = values.get(o.getName());
-                if (value == null)
-                    return 0.0;
-                return value;
-            }, entries.values(), time::get, "haha" + LoggingStrategy.MLG);
+            LoggingContext context = new LoggingContext();
+            BinarySensorLog<BinaryLogEntry> log = context.getBinaryLogEntryBinarySensorLog(entries.values(), simpleFileName + LoggingStrategy.MLG);
+
+
+            context.processPackets(packets, log, packetContent -> {
+                for (int i = 0; i < packetContent.getData().length; i++) {
+                    int value = packetContent.getData()[i] & 0xFF;
+
+                    String name = new ByteId(packetContent.getId(), i).getLogKey();
+                    context.values.put(name, (double) value);
+                }
+                return true;
+            });
         }
     }
 }

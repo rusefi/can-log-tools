@@ -7,10 +7,7 @@ import com.rusefi.sensor_logs.BinaryLogEntry;
 import com.rusefi.sensor_logs.BinarySensorLog;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class LoggingStrategy {
     public static final String MLG = ".mlg";
@@ -31,26 +28,25 @@ public class LoggingStrategy {
     public static void writeLog(DbcFile dbc, List<CANPacket> packets, String outputFileName) {
         List<BinaryLogEntry> entries = dbc.getFieldNameEntries();
 
-        Map<String, Double> values = new HashMap<>();
-        AtomicReference<Long> time = new AtomicReference<>();
-        BinarySensorLog<BinaryLogEntry> log = new BinarySensorLog<>(o -> {
-            Double value = values.get(o.getName());
-            if (value == null)
-                return 0.0;
-            return value;
-        }, entries, time::get, outputFileName);
+        LoggingContext context = new LoggingContext();
+        BinarySensorLog<BinaryLogEntry> log = context.getBinaryLogEntryBinarySensorLog(entries, outputFileName);
 
-        for (CANPacket packetContent : packets) {
+        PacketLogger logger = packetContent -> {
             DbcPacket packetMeta = dbc.findPacket(packetContent.getId());
             if (packetMeta == null)
-                continue;
+                return false;
 
-            time.set((long) (packetContent.getTimeStamp() * 1000));
             for (DbcField field : packetMeta.getFields()) {
-                values.put(field.getName(), field.getValue(packetContent));
+                context.values.put(field.getName(), field.getValue(packetContent));
             }
-            log.writeSensorLogLine();
-        }
-        log.close();
+            return true;
+        };
+
+        context.processPackets(packets, log, logger);
     }
+
+    interface PacketLogger {
+        boolean takeValues(CANPacket packetContent);
+    }
+
 }
