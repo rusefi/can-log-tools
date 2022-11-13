@@ -6,10 +6,7 @@ import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;
 import com.rusefi.sensor_logs.BinarySensorLog;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
 
 public class ByteRateOfChange {
@@ -24,27 +21,37 @@ public class ByteRateOfChange {
 
         PerSidDump.handle(packets, simpleFileName);
 
+        CounterScanner.scanForCounters(packets);
 
         TraceFileMetaIndex traceFileMetaIndex = calculateByteStatistics(packets);
 
-        List<ByteStatistics> allStats = new ArrayList<>(traceFileMetaIndex.statistics.values());
-        allStats.sort((o1, o2) -> o2.getUniqueValues() - o1.getUniqueValues());
-
-        System.out.println(allStats);
-
-        PrintStream ps = new PrintStream(new FileOutputStream(reportDestinationFolder + File.separator + simpleFileName + ".txt", false));
-
-        for (ByteStatistics byteStatistics : allStats) {
-            ByteId key = byteStatistics.key;
-            ps.println(dualSid(key.sid) + " at index " + key.index + " has " + byteStatistics.getUniqueValues() + " unique value(s)");
-        }
-
-        ps.close();
-
+        writeByteReport(reportDestinationFolder, simpleFileName, traceFileMetaIndex);
 
         TraceReport traceReport = new TraceReport(packets, simpleFileName, traceFileMetaIndex.statistics);
         traceReport.createMegaLogViewer();
         return traceReport;
+    }
+
+    private static void writeByteReport(String reportDestinationFolder, String simpleFileName, TraceFileMetaIndex traceFileMetaIndex) throws FileNotFoundException {
+        List<ByteStatistics> allStats = new ArrayList<>(traceFileMetaIndex.statistics.values());
+        allStats.sort((o1, o2) -> o2.getUniqueValues() - o1.getUniqueValues());
+
+//        System.out.println(allStats);
+
+        writeByteReport(reportDestinationFolder, simpleFileName, allStats);
+    }
+
+    private static void writeByteReport(String reportDestinationFolder, String simpleFileName, List<ByteStatistics> allStats) throws FileNotFoundException {
+        String outputFileName = reportDestinationFolder + File.separator + simpleFileName + ".txt";
+        System.out.println("Wring byte report to " + outputFileName);
+        PrintStream ps = new PrintStream(new FileOutputStream(outputFileName, false));
+
+        for (ByteStatistics byteStatistics : allStats) {
+            ByteId key = byteStatistics.key;
+            ps.println(dualSid(key.sid) + " byte " + key.index + " has " + byteStatistics.getUniqueValues() + " unique value(s)");
+        }
+
+        ps.close();
     }
 
     private static TraceFileMetaIndex calculateByteStatistics(List<CANPacket> packets) {
@@ -52,10 +59,10 @@ public class ByteRateOfChange {
 
         for (CANPacket packet : packets) {
             traceFileMetaIndex.SIDs.add(packet.getId());
-            for (int index = 0; index < packet.getData().length; index++) {
-                ByteId key = new ByteId(packet.getId(), index);
+            for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
+                ByteId key = new ByteId(packet.getId(), byteIndex);
                 ByteStatistics stats = traceFileMetaIndex.statistics.computeIfAbsent(key, byteId -> new ByteStatistics(key));
-                stats.uniqueValues.add((int) packet.getData()[index]);
+                stats.uniqueValues.add((int) packet.getData()[byteIndex]);
             }
         }
         return traceFileMetaIndex;
@@ -141,7 +148,7 @@ public class ByteRateOfChange {
         }
 
         String getSummary() {
-            return getSimpleFileName() + " (duration=" + (int)(durationMs / 1000) + "secs)";
+            return getSimpleFileName() + " (duration=" + (int) (durationMs / 1000) + "secs)";
         }
 
         public String getSimpleFileName() {

@@ -15,15 +15,15 @@ public class ByteRateOfChangeSandbox {
     public static void main(String[] args) throws IOException {
         ReaderTypeHolder.INSTANCE.type = ReaderType.PCAN;
 
-        String inputFileName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\Nissan\\2011_Xterra\\CAN-Nov-2022";
+        String inputFolderName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\Nissan\\2011_Xterra\\CAN-Nov-2022";
 
-        String reportDestinationFolder = inputFileName + File.separator + "processed";
+        String reportDestinationFolder = inputFolderName + File.separator + "processed";
         new File(reportDestinationFolder).mkdirs();
 
 
         List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
 
-        FolderUtil.handleFolder(inputFileName, (simpleFileName, fullInputFileName) -> {
+        FolderUtil.handleFolder(inputFolderName, (simpleFileName, fullInputFileName) -> {
 
             List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
 
