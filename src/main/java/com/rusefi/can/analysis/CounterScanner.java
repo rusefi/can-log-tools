@@ -29,11 +29,12 @@ public class CounterScanner {
 
         for (Map.Entry<BitStateKey, BitState> e : bitStates.entrySet()) {
 
-            if (e.getValue().couldBeCounter)
-                System.out.println("Looks like counter " + e.getKey());
+            BitState bitState = e.getValue();
+            if (bitState.couldBeCounter()) {
+                BitStateKey key = e.getKey();
+                System.out.println("Looks like counter " + key + " " + bitState.cycleLength);
+            }
         }
-
-
     }
 
     static class BitStateKey implements Comparable {
@@ -94,23 +95,55 @@ public class CounterScanner {
     }
 
     static class BitState {
-        boolean isFirst = true;
-        boolean couldBeCounter = true;
+        int index;
+        int cycleLength;
+
+        public boolean couldBeCounter() {
+            return state == StateMachine.HAPPY_COUNTER;
+        }
+
+        enum StateMachine {
+            FIRST_VALUE,
+            LOOKING_FOR_FIRST_SWITCHOVER,
+            FOUND_FIRST_SWITCHOVER,
+            HAPPY_COUNTER,
+            NOT_GOOD
+        }
+
+        StateMachine state = StateMachine.FIRST_VALUE;
 
         boolean previousBitValue;
 
         public void handle(boolean bitValue) {
-            if (isFirst) {
-                isFirst = false;
+            if (state == StateMachine.NOT_GOOD) {
+                return;
+            } else if (state == StateMachine.FIRST_VALUE) {
                 previousBitValue = bitValue;
-                return;
-            }
-            if (!couldBeCounter)
-                return;
-            if (previousBitValue == bitValue) {
-                couldBeCounter = false;
-            }
-            previousBitValue = bitValue;
+                state = StateMachine.LOOKING_FOR_FIRST_SWITCHOVER;
+            } else if (state == StateMachine.LOOKING_FOR_FIRST_SWITCHOVER) {
+                if (previousBitValue == bitValue)
+                    return;
+                previousBitValue = bitValue;
+                state = StateMachine.FOUND_FIRST_SWITCHOVER;
+            } else if (state == StateMachine.FOUND_FIRST_SWITCHOVER) {
+                index++;
+                if (previousBitValue != bitValue) {
+                    state = StateMachine.HAPPY_COUNTER;
+                    cycleLength = index;
+                    previousBitValue = bitValue;
+                    index = 0;
+                }
+            } else if (state == StateMachine.HAPPY_COUNTER) {
+                index++;
+
+                if (previousBitValue != bitValue) {
+                    if (index != cycleLength)
+                        state = StateMachine.NOT_GOOD;
+                    previousBitValue = bitValue;
+                    index = 0;
+                }
+            } else
+                throw new IllegalStateException(state.toString());
         }
     }
 }
