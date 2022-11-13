@@ -3,12 +3,20 @@ package com.rusefi.can.reader.impl;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.CANLineReader;
 
-public enum PcanReader implements CANLineReader {
+/**
+ * @see PcanTrcReader1_1 for version 1.1 format
+ * TODO: merge these two?
+ */
+public enum PcanTrcReader2_0 implements CANLineReader {
     INSTANCE;
+
+    public static final String FILEVERSION = ";$FILEVERSION";
 
     @Override
     public CANPacket readLine(String line) {
         line = line.trim();
+        if (line.startsWith(FILEVERSION) && !line.startsWith(FILEVERSION + "=2.0"))
+            throw new IllegalStateException("Unexpected fileversion " + line);
         if (line.startsWith(";"))
             return null;
         String[] tokens = line.split("\\s+");

@@ -23,7 +23,7 @@ public class TrcToMlqSandbox {
             dbc.read(reader);
         }
 
-        List<CANPacket> packets = new PcanTrcReader().readFile(trcFileName);
+        List<CANPacket> packets = new PcanTrcReader1_1().readFile(trcFileName);
         System.out.println(packets.size() + " packets");
 
         LoggingStrategy.writeLog(dbc, packets, "gauges.mlg");

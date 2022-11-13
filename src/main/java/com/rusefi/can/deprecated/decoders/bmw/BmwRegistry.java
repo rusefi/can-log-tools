@@ -1,6 +1,6 @@
-package com.rusefi.can.decoders.bmw;
+package com.rusefi.can.deprecated.decoders.bmw;
 
-import com.rusefi.can.decoders.PacketDecoder;
+import com.rusefi.can.deprecated.decoders.PacketDecoder;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -3,7 +3,6 @@ package com.rusefi.can.analysis;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.writer.SteveWriter;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;

@@ -31,7 +31,7 @@ public class GetValueFromTrc {
 
         String trcLine = "  3769)      2117.7  Rx         0280  8  01 1D DF 12 1E 00 1A 1E ";
 
-        PcanTrcReader reader = new PcanTrcReader();
+        PcanTrcReader1_1 reader = new PcanTrcReader1_1();
         CANPacket packet = reader.readLine(trcLine);
         assertEquals(8, packet.getData().length);
         assertEquals(640, packet.getId());

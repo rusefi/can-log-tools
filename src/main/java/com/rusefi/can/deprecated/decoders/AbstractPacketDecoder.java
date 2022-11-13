@@ -1,8 +1,6 @@
-package com.rusefi.can.decoders;
+package com.rusefi.can.deprecated.decoders;
 
 import com.rusefi.can.CANPacket;
-
-import java.util.Arrays;
 
 import static com.rusefi.can.Utils.bytesToHexWithSpaces;
 
@@ -11,10 +9,6 @@ public abstract class AbstractPacketDecoder implements PacketDecoder {
 
     public AbstractPacketDecoder(int id) {
         this.id = id;
-    }
-
-    public static int mask(int bitWidth) {
-        return (1 << bitWidth) - 1;
     }
 
     @Override

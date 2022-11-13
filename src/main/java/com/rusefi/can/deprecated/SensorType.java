@@ -1,4 +1,4 @@
-package com.rusefi.can;
+package com.rusefi.can.deprecated;
 
 public enum SensorType {
     RPM,

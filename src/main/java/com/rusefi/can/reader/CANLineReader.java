@@ -1,11 +1,9 @@
 package com.rusefi.can.reader;
 
 import com.rusefi.can.CANPacket;
-import com.rusefi.can.ReaderTypeHolder;
-import com.rusefi.can.TrcToMlq;
 import com.rusefi.can.reader.impl.CANoeReader;
 import com.rusefi.can.reader.impl.CanHackerReader;
-import com.rusefi.can.reader.impl.PcanTrcReader;
+import com.rusefi.can.reader.impl.PcanTrcReader1_1;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +14,8 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public interface CANLineReader {
-    char FLOAT_DIVIDER = new Double(0).toString().charAt(1);
+    // locale drama is here? todo: more flexibility?
+    char FLOAT_DIVIDER = Double.toString(0).charAt(1);
 
     static byte[] readHexArray(String[] tokens, int start, int size) {
         byte[] data = new byte[size];
@@ -33,7 +32,7 @@ public interface CANLineReader {
                 return CanHackerReader.INSTANCE;
             case PCAN:
             default:
-                return new PcanTrcReader();
+                return new PcanTrcReader1_1();
         }
     }
 

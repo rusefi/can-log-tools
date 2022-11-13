@@ -20,7 +20,7 @@ public class ParseDbcFieldTest {
         assertEquals(0.75, iatField.getMult(), EPS);
         assertEquals(-48, iatField.getOffset(), EPS);
 
-        CANPacket packet = new PcanTrcReader().readLine("  2197)      1234.8  Rx         0380  8  00 62 FA 00 22 00 00 FA");
+        CANPacket packet = new PcanTrcReader1_1().readLine("  2197)      1234.8  Rx         0380  8  00 62 FA 00 22 00 00 FA");
         assertEquals(8, packet.getData().length);
 
         assertEquals(25.5, iatField.getValue(packet), EPS);

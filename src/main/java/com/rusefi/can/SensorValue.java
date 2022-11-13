@@ -1,5 +1,7 @@
 package com.rusefi.can;
 
+import com.rusefi.can.deprecated.SensorType;
+
 public class SensorValue {
     private final SensorType type;
     private final double value;

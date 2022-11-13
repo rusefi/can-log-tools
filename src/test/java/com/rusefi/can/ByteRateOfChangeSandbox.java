@@ -4,6 +4,7 @@ import com.rusefi.can.analysis.ByteRateOfChange;
 import com.rusefi.can.analysis.ByteRateOfChangeReports;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.ReaderType;
+import com.rusefi.can.reader.ReaderTypeHolder;
 import com.rusefi.util.FolderUtil;
 
 import java.io.File;

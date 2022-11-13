@@ -1,7 +1,8 @@
-package com.rusefi.can;
+package com.rusefi.can.deprecated;
 
-import com.rusefi.can.decoders.bmw.Bmw0BA;
-import com.rusefi.can.decoders.bmw.Bmw192;
+import com.rusefi.can.CANPacket;
+import com.rusefi.can.deprecated.decoders.bmw.Bmw0BA;
+import com.rusefi.can.deprecated.decoders.bmw.Bmw192;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.impl.CANoeReader;
 
@@ -10,6 +11,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TreeMap;
 
+/**
+ * this code looks to validate BMW logs against hard-coded BMW packet logic? dead stuff since we've moved to DBC approach?
+ */
 public class CANoeCanValidator {
     public static void main(String[] args) throws IOException {
         CANLineReader reader = CANoeReader.INSTANCE;
@@ -18,8 +22,8 @@ public class CANoeCanValidator {
 
     }
 
-    public static void validate(String fileName, CANLineReader reader) throws IOException {
-        List<CANPacket> packetList = reader.readFile(fileName);
+    public static void validate(String inputFileName, CANLineReader reader) throws IOException {
+        List<CANPacket> packetList = reader.readFile(inputFileName);
 
         TreeMap<Integer, Object> allIds = new TreeMap<>();
 
@@ -34,7 +38,9 @@ public class CANoeCanValidator {
 
         }
 
-        try (FileWriter fw = new FileWriter("all_ids.txt")) {
+        String outputFileName = "all_ids.txt";
+        System.out.println("Writing to " + outputFileName);
+        try (FileWriter fw = new FileWriter(outputFileName)) {
             for (Integer id : allIds.keySet()) {
                 fw.write(Integer.toHexString(id) + "\r\n");
             }

@@ -1,9 +1,11 @@
 package com.rusefi.can;
 
-import com.rusefi.can.decoders.bmw.Bmw0A9;
-import com.rusefi.can.decoders.bmw.Bmw0AA;
-import com.rusefi.can.decoders.bmw.Bmw0B5;
-import com.rusefi.can.decoders.bmw.Bmw1D0;
+import com.rusefi.can.deprecated.PacketPayload;
+import com.rusefi.can.deprecated.SensorType;
+import com.rusefi.can.deprecated.decoders.bmw.Bmw0A9;
+import com.rusefi.can.deprecated.decoders.bmw.Bmw0AA;
+import com.rusefi.can.deprecated.decoders.bmw.Bmw0B5;
+import com.rusefi.can.deprecated.decoders.bmw.Bmw1D0;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -1,11 +1,11 @@
-package com.rusefi.can;
+package com.rusefi.can.reader;
 
-import com.rusefi.can.reader.ReaderType;
+import com.rusefi.can.TrcToMlq;
 
 public enum ReaderTypeHolder {
     INSTANCE;
 
-    ReaderType type;
+    public ReaderType type;
 
     public ReaderType getType() {
         if (type == null)

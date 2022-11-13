@@ -1,10 +1,10 @@
-package com.rusefi.can.decoders.bmw;
+package com.rusefi.can.deprecated.decoders.bmw;
 
 import com.rusefi.can.CANPacket;
-import com.rusefi.can.PacketPayload;
-import com.rusefi.can.SensorType;
+import com.rusefi.can.deprecated.PacketPayload;
+import com.rusefi.can.deprecated.SensorType;
 import com.rusefi.can.SensorValue;
-import com.rusefi.can.decoders.AbstractPacketDecoder;
+import com.rusefi.can.deprecated.decoders.AbstractPacketDecoder;
 
 public class Bmw0B5 extends AbstractPacketDecoder {
     public static final AbstractPacketDecoder INSTANCE = new Bmw0B5();

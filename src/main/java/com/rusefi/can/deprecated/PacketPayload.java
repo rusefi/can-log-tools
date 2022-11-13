@@ -1,4 +1,6 @@
-package com.rusefi.can;
+package com.rusefi.can.deprecated;
+
+import com.rusefi.can.SensorValue;
 
 public class PacketPayload {
 

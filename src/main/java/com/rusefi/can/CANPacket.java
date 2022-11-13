@@ -1,6 +1,6 @@
 package com.rusefi.can;
 
-import com.rusefi.can.decoders.AbstractPacketDecoder;
+import com.rusefi.util.BitMathUtil;
 
 import static com.rusefi.can.Utils.bytesToHexWithSpaces;
 
@@ -29,7 +29,7 @@ public class CANPacket {
         if (shift + bitIndex > 8) {
             value = value + getUnsigned(byteIndex + 1) * 256;
         }
-        return value >> shift & AbstractPacketDecoder.mask(bitWidth);
+        return value >> shift & BitMathUtil.mask(bitWidth);
     }
 
     public double getTimeStamp() {
