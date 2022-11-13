@@ -3,7 +3,6 @@ package com.rusefi.can.analysis;
 import com.rusefi.can.CANPacket;
 import com.rusefi.mlv.LoggingContext;
 import com.rusefi.mlv.LoggingStrategy;
-import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.sensor_logs.BinaryLogEntry;
 import com.rusefi.sensor_logs.BinarySensorLog;
 
@@ -15,23 +14,20 @@ import java.util.*;
 
 public class ByteRateOfChange {
 
-    public static TraceReport process(String fullFileName, String reportDestinationFolder, String simpleFileName) throws IOException {
-        List<CANPacket> packets = CANLineReader.getReader().readFile(fullFileName);
+    static class TraceFileMetaIndex {
+        HashMap<ByteId, ByteStatistics> statistics = new HashMap<>();
+
+        Set<Integer> SIDs = new HashSet<>();
+    }
+
+    public static TraceReport process(String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
 
         PerSidDump.handle(packets, simpleFileName);
 
 
-        HashMap<ByteId, ByteStatistics> statistics = new HashMap<>();
+        TraceFileMetaIndex traceFileMetaIndex = calculateByteStatistics(packets);
 
-        for (CANPacket packet : packets) {
-            for (int index = 0; index < packet.getData().length; index++) {
-                ByteId key = new ByteId(packet.getId(), index);
-                ByteStatistics stats = statistics.computeIfAbsent(key, byteId -> new ByteStatistics(key));
-                stats.uniqueValues.add((int) packet.getData()[index]);
-            }
-        }
-
-        List<ByteStatistics> allStats = new ArrayList<>(statistics.values());
+        List<ByteStatistics> allStats = new ArrayList<>(traceFileMetaIndex.statistics.values());
         allStats.sort((o1, o2) -> o2.getUniqueValues() - o1.getUniqueValues());
 
         System.out.println(allStats);
@@ -45,11 +41,28 @@ public class ByteRateOfChange {
 
         ps.close();
 
-        double duration = packets.isEmpty() ? 0 : packets.get(packets.size() - 1).getTimeStamp() - packets.get(0).getTimeStamp();
 
-        TraceReport traceReport = new TraceReport(simpleFileName, statistics, duration);
-        traceReport.createMegaLogViewer(packets);
+        TraceReport traceReport = new TraceReport(packets, simpleFileName, traceFileMetaIndex.statistics);
+        traceReport.createMegaLogViewer();
         return traceReport;
+    }
+
+    private static TraceFileMetaIndex calculateByteStatistics(List<CANPacket> packets) {
+        TraceFileMetaIndex traceFileMetaIndex = new TraceFileMetaIndex();
+
+        for (CANPacket packet : packets) {
+            traceFileMetaIndex.SIDs.add(packet.getId());
+            for (int index = 0; index < packet.getData().length; index++) {
+                ByteId key = new ByteId(packet.getId(), index);
+                ByteStatistics stats = traceFileMetaIndex.statistics.computeIfAbsent(key, byteId -> new ByteStatistics(key));
+                stats.uniqueValues.add((int) packet.getData()[index]);
+            }
+        }
+        return traceFileMetaIndex;
+    }
+
+    private static double getDurationMs(List<CANPacket> packets) {
+        return packets.isEmpty() ? 0 : packets.get(packets.size() - 1).getTimeStamp() - packets.get(0).getTimeStamp();
     }
 
     public static String dualSid(int sid) {
@@ -115,14 +128,16 @@ public class ByteRateOfChange {
     }
 
     public static class TraceReport extends HashMap<ByteId, ByteStatistics> {
+        private final List<CANPacket> packets;
         private final String simpleFileName;
         private final HashMap<ByteId, ByteStatistics> statistics;
         private final double durationMs;
 
-        public TraceReport(String simpleFileName, HashMap<ByteId, ByteStatistics> statistics, double duration) {
+        public TraceReport(List<CANPacket> packets, String simpleFileName, HashMap<ByteId, ByteStatistics> statistics) {
+            this.packets = packets;
             this.simpleFileName = simpleFileName;
             this.statistics = statistics;
-            this.durationMs = duration;
+            this.durationMs = getDurationMs(packets);
         }
 
         String getSummary() {
@@ -137,7 +152,7 @@ public class ByteRateOfChange {
             return statistics;
         }
 
-        public void createMegaLogViewer(List<CANPacket> packets) {
+        public void createMegaLogViewer() {
             Map<ByteId, BinaryLogEntry> entries = new HashMap<>();
 
             for (ByteId key : statistics.keySet()) {

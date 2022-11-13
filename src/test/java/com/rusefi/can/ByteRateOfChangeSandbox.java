@@ -2,6 +2,7 @@ package com.rusefi.can;
 
 import com.rusefi.can.analysis.ByteRateOfChange;
 import com.rusefi.can.analysis.ByteRateOfChangeReports;
+import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.ReaderType;
 import com.rusefi.util.FolderUtil;
 
@@ -21,8 +22,11 @@ public class ByteRateOfChangeSandbox {
 
         List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
 
-        FolderUtil.handleFolder(inputFileName, (simpleFileName, fullFileName) -> {
-            ByteRateOfChange.TraceReport report = ByteRateOfChange.process(fullFileName, reportDestinationFolder, simpleFileName);
+        FolderUtil.handleFolder(inputFileName, (simpleFileName, fullInputFileName) -> {
+
+            List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
+
+            ByteRateOfChange.TraceReport report = ByteRateOfChange.process(reportDestinationFolder, simpleFileName, logFileContent);
             reports.add(report);
         }, "pcan.trc");
 
