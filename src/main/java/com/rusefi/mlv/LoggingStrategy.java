@@ -38,12 +38,12 @@ public class LoggingStrategy {
                 return false;
 
             for (DbcField field : packetMeta.getFields()) {
-                context.values.put(field.getName(), field.getValue(packetContent));
+                context.currentSnapshot.put(field.getName(), field.getValue(packetContent));
             }
             return true;
         };
 
-        context.processPackets(packets, log, logger);
+        context.writeLogContent(packets, log, logger);
     }
 
     public interface PacketLogger {

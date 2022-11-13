@@ -20,15 +20,15 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
     private final TimeProvider timeProvider;
     private DataOutputStream stream;
 
-    private final String fileName;
+    private final String outputFileName;
 
-    private int counter;
+    private int lineCounter;
 
-    public BinarySensorLog(Function<T, Double> valueProvider, Collection<T> sensors, TimeProvider timeProvider, String fileName) {
+    public BinarySensorLog(Function<T, Double> valueProvider, Collection<T> sensors, TimeProvider timeProvider, String outputFileName) {
         this.valueProvider = Objects.requireNonNull(valueProvider, "valueProvider");
         this.entries = Objects.requireNonNull(sensors, "entries");
         this.timeProvider = timeProvider;
-        this.fileName = fileName;
+        this.outputFileName = outputFileName;
     }
 
     public interface TimeProvider {
@@ -43,10 +43,10 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
     @Override
     public void writeSensorLogLine() {
         if (stream == null) {
-            System.out.println("Writing to " + fileName);
+            System.out.println("Writing to " + outputFileName);
 
             try {
-                stream = new DataOutputStream(new FileOutputStream(fileName));
+                stream = new DataOutputStream(new FileOutputStream(outputFileName));
                 writeHeader();
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -57,7 +57,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
         if (stream != null) {
             try {
                 stream.write(0);
-                stream.write(counter++);
+                stream.write(lineCounter++);
                 stream.writeShort((int) (timeProvider.currentTimestamp() * 100));
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -78,7 +78,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
                 stream.write(byteArray);
                 stream.write(checkSum);
 
-                if (counter % 20 == 0) {
+                if (lineCounter % 20 == 0) {
                     // for not flush on each block of data but still flush
                     stream.flush();
                 }
@@ -142,7 +142,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
 
     @Override
     public void close() {
-        System.out.println("Finishing " + fileName);
+        System.out.println("Finishing " + outputFileName);
         close(stream);
         stream = null;
     }
@@ -157,8 +157,8 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
         }
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getOutputFileName() {
+        return outputFileName;
     }
 
     private void writeLine(DataOutputStream stream, String name, int length) throws IOException {

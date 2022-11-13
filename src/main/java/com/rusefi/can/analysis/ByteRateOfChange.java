@@ -148,12 +148,12 @@ public class ByteRateOfChange {
             BinarySensorLog<BinaryLogEntry> log = context.getBinaryLogEntryBinarySensorLog(entries.values(), simpleFileName + LoggingStrategy.MLG);
 
 
-            context.processPackets(packets, log, packetContent -> {
+            context.writeLogContent(packets, log, packetContent -> {
                 for (int i = 0; i < packetContent.getData().length; i++) {
                     int value = packetContent.getData()[i] & 0xFF;
 
                     String name = new ByteId(packetContent.getId(), i).getLogKey();
-                    context.values.put(name, (double) value);
+                    context.currentSnapshot.put(name, (double) value);
                 }
                 return true;
             });
