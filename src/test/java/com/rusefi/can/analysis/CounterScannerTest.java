@@ -2,6 +2,9 @@ package com.rusefi.can.analysis;
 
 import org.junit.Test;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class CounterScannerTest {
@@ -51,5 +54,44 @@ public class CounterScannerTest {
 
         assertTrue(state.couldBeCounter());
         assertEquals(2, state.cycleLength);
+    }
+
+    @Test
+    public void testAggregateCounterCandidatesPlain() {
+        LinkedHashMap<CounterScanner.BitStateKey, Integer> counters = new LinkedHashMap<>();
+
+        counters.put(new CounterScanner.BitStateKey(1, 3, 6), 4);
+
+        counters.put(new CounterScanner.BitStateKey(0, 7, 6), 1);
+
+        List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
+
+        assertEquals(1, countersWithWidth.size());
+        assertEquals(7, countersWithWidth.get(0).start.getByteIndex());
+
+        System.out.println(countersWithWidth);
+    }
+
+    @Test
+    public void testAggregateCounterCandidates() {
+        LinkedHashMap<CounterScanner.BitStateKey, Integer> counters = new LinkedHashMap<>();
+
+
+        counters.put(new CounterScanner.BitStateKey(0, 7, 6), 1);
+
+        counters.put(new CounterScanner.BitStateKey(1, 3, 6), 4);
+
+        counters.put(new CounterScanner.BitStateKey(0, 3, 4), 1);
+        counters.put(new CounterScanner.BitStateKey(0, 3, 5), 2);
+        counters.put(new CounterScanner.BitStateKey(0, 3, 6), 4);
+
+        counters.put(new CounterScanner.BitStateKey(0, 5, 6), 4);
+
+
+        List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
+
+        assertEquals(2, countersWithWidth.size());
+
+        System.out.println(countersWithWidth);
     }
 }

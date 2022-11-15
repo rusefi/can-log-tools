@@ -4,6 +4,8 @@ import com.rusefi.can.CANPacket;
 
 import java.util.*;
 
+import static com.rusefi.can.analysis.ByteRateOfChange.dualSid;
+
 public class CounterScanner {
     public static void scanForCounters(List<CANPacket> packets) {
 
@@ -27,13 +29,25 @@ public class CounterScanner {
             }
         }
 
+
+        LinkedHashMap<BitStateKey, Integer> counters = new LinkedHashMap<>();
+
         for (Map.Entry<BitStateKey, BitState> e : bitStates.entrySet()) {
 
             BitState bitState = e.getValue();
             if (bitState.couldBeCounter()) {
                 BitStateKey key = e.getKey();
                 System.out.println("Looks like counter " + key + " " + bitState.cycleLength);
+
+                counters.put(key, bitState.cycleLength);
+
             }
+        }
+
+        List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
+
+        for (CounterAggregator.CounterWithWidth counterWithWidth : countersWithWidth) {
+            System.out.println("Found " + counterWithWidth);
         }
     }
 
@@ -75,10 +89,10 @@ public class CounterScanner {
 
         @Override
         public String toString() {
-            return "BitStateKey{" +
-                    "sid=" + sid +
-                    ", byteIndex=" + byteIndex +
-                    ", bitIndex=" + bitIndex +
+            return "{" +
+                    dualSid(sid) +
+                    ", byteIndex " + byteIndex +
+                    ", bitIndex " + bitIndex +
                     '}';
         }
 
