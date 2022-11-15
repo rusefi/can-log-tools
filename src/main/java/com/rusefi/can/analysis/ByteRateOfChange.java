@@ -28,7 +28,7 @@ public class ByteRateOfChange {
         writeByteReport(reportDestinationFolder, simpleFileName, traceFileMetaIndex);
 
         TraceReport traceReport = new TraceReport(packets, simpleFileName, traceFileMetaIndex.statistics);
-        traceReport.createMegaLogViewer();
+        traceReport.createMegaLogViewer(traceFileMetaIndex.SIDs);
         return traceReport;
     }
 
@@ -159,26 +159,48 @@ public class ByteRateOfChange {
             return statistics;
         }
 
-        public void createMegaLogViewer() {
-            Map<ByteId, BinaryLogEntry> entries = new HashMap<>();
+        public void createMegaLogViewer(Set<Integer> SIDs) {
+            List<BinaryLogEntry> entries = new ArrayList<>();
 
             for (ByteId key : statistics.keySet()) {
-                entries.put(key, BinaryLogEntry.createFloatLogEntry(key.getLogKey(), Integer.toBinaryString(key.sid)));
+                entries.add(BinaryLogEntry.createFloatLogEntry(key.getLogKey(), Integer.toBinaryString(key.sid)));
+            }
+
+            for (Integer sid : SIDs) {
+                for (int i = 0; i < 7; i++) {
+                    String twoBytesKey = getTwoBytesKey(sid, i);
+                    entries.add(BinaryLogEntry.createFloatLogEntry(twoBytesKey, Integer.toBinaryString(sid)));
+                }
             }
 
             LoggingContext context = new LoggingContext();
-            BinarySensorLog<BinaryLogEntry> log = context.getBinaryLogEntryBinarySensorLog(entries.values(), simpleFileName + LoggingStrategy.MLG);
+            BinarySensorLog<BinaryLogEntry> log = context.getBinaryLogEntryBinarySensorLog(entries, simpleFileName + LoggingStrategy.MLG);
 
 
             context.writeLogContent(packets, log, packetContent -> {
-                for (int i = 0; i < packetContent.getData().length; i++) {
-                    int value = packetContent.getData()[i] & 0xFF;
+                byte[] bytes = packetContent.getData();
+                for (int i = 0; i < bytes.length; i++) {
+                    int value = bytes[i] & 0xFF;
 
-                    String name = new ByteId(packetContent.getId(), i).getLogKey();
-                    context.currentSnapshot.put(name, (double) value);
+                    int sid = packetContent.getId();
+                    {
+                        String name = new ByteId(sid, i).getLogKey();
+                        context.currentSnapshot.put(name, (double) value);
+                    }
+                    {
+                        if (i < bytes.length - 1) {
+                            String name = getTwoBytesKey(sid, i);
+                            int value2 = bytes[i + 1] & 0xFF;
+                            context.currentSnapshot.put(name, (double) value2 * 256 + value);
+                        }
+                    }
                 }
                 return true;
             });
         }
+    }
+
+    private static String getTwoBytesKey(Integer sid, int i) {
+        return dualSid(sid) + "_two_bytes_" + i;
     }
 }
