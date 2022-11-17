@@ -168,8 +168,14 @@ public class ByteRateOfChange {
 
             for (Integer sid : SIDs) {
                 for (int i = 0; i < 7; i++) {
-                    String twoBytesKey = getTwoBytesKey(sid, i);
-                    entries.add(BinaryLogEntry.createFloatLogEntry(twoBytesKey, Integer.toBinaryString(sid)));
+                    {
+                        String twoBytesKey = getTwoBytesKeyM(sid, i);
+                        entries.add(BinaryLogEntry.createFloatLogEntry(twoBytesKey, Integer.toBinaryString(sid)));
+                    }
+                    {
+                        String twoBytesKey = getTwoBytesKeyL(sid, i);
+                        entries.add(BinaryLogEntry.createFloatLogEntry(twoBytesKey, Integer.toBinaryString(sid)));
+                    }
                 }
             }
 
@@ -189,9 +195,15 @@ public class ByteRateOfChange {
                     }
                     {
                         if (i < bytes.length - 1) {
-                            String name = getTwoBytesKey(sid, i);
                             int value2 = bytes[i + 1] & 0xFF;
-                            context.currentSnapshot.put(name, (double) value2 * 256 + value);
+                            {
+                                String name = getTwoBytesKeyM(sid, i);
+                                context.currentSnapshot.put(name, (double) value2 * 256 + value);
+                            }
+                            {
+                                String name = getTwoBytesKeyL(sid, i);
+                                context.currentSnapshot.put(name, (double) value2 + value * 256);
+                            }
                         }
                     }
                 }
@@ -200,7 +212,10 @@ public class ByteRateOfChange {
         }
     }
 
-    private static String getTwoBytesKey(Integer sid, int i) {
-        return dualSid(sid) + "_two_bytes_" + i;
+    private static String getTwoBytesKeyM(Integer sid, int i) {
+        return dualSid(sid) + "__" + i + "_" + (i + 1);
     }
-}
+
+    private static String getTwoBytesKeyL(Integer sid, int i) {
+        return dualSid(sid) + "__" + (i + 1) + "_" + i;
+    }}
