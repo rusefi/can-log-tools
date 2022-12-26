@@ -1,5 +1,11 @@
 package com.rusefi.can.analysis;
 
+import com.rusefi.can.CANPacket;
+import com.rusefi.can.reader.CANLineReader;
+import com.rusefi.util.FolderUtil;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,6 +53,26 @@ public class ByteRateOfChangeReports {
         report.println();
         report.println();
         report.println();
+    }
+    public static String createOutputFolder(String inputFolderName) {
+        String reportDestinationFolder = inputFolderName + File.separator + "processed";
+        new File(reportDestinationFolder).mkdirs();
+        return reportDestinationFolder;
+    }
+
+    public static void scanInputFolder(String inputFolderName, String fileNameSuffix) throws IOException {
+        String reportDestinationFolder = createOutputFolder(inputFolderName);
+
+        List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
+
+        FolderUtil.handleFolder(inputFolderName, (simpleFileName, fullInputFileName) -> {
+
+            List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
+
+            ByteRateOfChange.TraceReport report = ByteRateOfChange.process(reportDestinationFolder, simpleFileName, logFileContent);
+            reports.add(report);
+        }, fileNameSuffix);
+        compareEachReportAgainstAllOthers(reports);
     }
 
     static class ByteVariationDifference {
