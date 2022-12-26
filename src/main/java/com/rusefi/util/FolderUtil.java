@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class FolderUtil {
-    public static void handleFolder(String inputFolderName, FileAction fileAction, String suffix) throws IOException {
+    public static void handleFolder(String inputFolderName, FileAction fileAction, String fileNameSuffix) throws IOException {
         File inputFolder = new File(inputFolderName);
-        for (String simpleFileName : Objects.requireNonNull(inputFolder.list((dir, name) -> name.endsWith(suffix)))) {
+        for (String simpleFileName : Objects.requireNonNull(inputFolder.list((dir, name) -> name.endsWith(fileNameSuffix)))) {
             System.out.println("Handling input file " + simpleFileName);
             String fullInputFile = inputFolderName + File.separator + simpleFileName;
 
