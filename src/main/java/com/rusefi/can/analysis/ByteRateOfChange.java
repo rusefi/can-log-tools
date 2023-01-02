@@ -102,7 +102,7 @@ public class ByteRateOfChange {
     }
 
 
-    public static class ByteId {
+    public static class ByteId implements Comparable {
         final int sid;
         final int index;
 
@@ -126,6 +126,14 @@ public class ByteRateOfChange {
         @Override
         public int hashCode() {
             return Objects.hash(sid, index);
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            ByteId other = (ByteId) o;
+            if (other.sid != sid)
+                return sid - other.sid;
+            return index - other.index;
         }
 
         @Override
@@ -218,4 +226,5 @@ public class ByteRateOfChange {
 
     private static String getTwoBytesKeyL(Integer sid, int i) {
         return dualSid(sid) + "__" + (i + 1) + "_" + i;
-    }}
+    }
+}

@@ -52,22 +52,20 @@ public class CounterScanner {
     }
 
     static class BitStateKey implements Comparable {
-        private final int sid;
-        private final int byteIndex;
+        private final ByteRateOfChange.ByteId byteId;
         private final int bitIndex;
 
         public BitStateKey(int sid, int byteIndex, int bitIndex) {
-            this.sid = sid;
-            this.byteIndex = byteIndex;
+            this.byteId = new ByteRateOfChange.ByteId(sid, byteIndex);
             this.bitIndex = bitIndex;
         }
 
         public int getSid() {
-            return sid;
+            return byteId.sid;
         }
 
         public int getByteIndex() {
-            return byteIndex;
+            return byteId.index;
         }
 
         public int getBitIndex() {
@@ -79,19 +77,18 @@ public class CounterScanner {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             BitStateKey that = (BitStateKey) o;
-            return sid == that.sid && byteIndex == that.byteIndex && bitIndex == that.bitIndex;
+            return byteId.equals(that.byteId) && bitIndex == that.bitIndex;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(sid, byteIndex, bitIndex);
+            return Objects.hash(byteId.hashCode(), bitIndex);
         }
 
         @Override
         public String toString() {
             return "{" +
-                    dualSid(sid) +
-                    ", byteIndex " + byteIndex +
+                    byteId +
                     ", bitIndex " + bitIndex +
                     '}';
         }
@@ -100,10 +97,9 @@ public class CounterScanner {
         public int compareTo(Object o) {
             BitStateKey other = (BitStateKey) o;
 
-            if (other.sid != sid)
-                return sid - other.sid;
-            if (other.byteIndex != byteIndex)
-                return byteIndex - other.byteIndex;
+            int compareByte = byteId.compareTo(other.byteId);
+            if (compareByte != 0)
+                return compareByte;
             return bitIndex - other.bitIndex;
         }
     }
