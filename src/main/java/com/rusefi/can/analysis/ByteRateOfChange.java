@@ -111,7 +111,7 @@ public class ByteRateOfChange {
             this.index = index;
         }
 
-        private String getLogKey() {
+        public String getLogKey() {
             return dualSid(sid) + "_byte_" + index + "_bit_" + (index * 8);
         }
 
