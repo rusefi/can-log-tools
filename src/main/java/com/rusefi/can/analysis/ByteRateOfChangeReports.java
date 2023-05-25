@@ -72,6 +72,7 @@ public class ByteRateOfChangeReports {
             ByteRateOfChange.TraceReport report = ByteRateOfChange.process(reportDestinationFolder, simpleFileName, logFileContent);
             reports.add(report);
         }, fileNameSuffix);
+        System.out.println("Processing " + reports.size() + " report(s)");
         compareEachReportAgainstAllOthers(reports);
     }
 
