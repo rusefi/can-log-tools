@@ -4,6 +4,7 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.impl.CANoeReader;
 import com.rusefi.can.reader.impl.CanHackerReader;
 import com.rusefi.can.reader.impl.PcanTrcReader1_1;
+import com.rusefi.can.reader.impl.PcanTrcReader2_0;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,13 +31,19 @@ public interface CANLineReader {
                 return CANoeReader.INSTANCE;
             case CANHACKER:
                 return CanHackerReader.INSTANCE;
+            case PCAN2:
+                return PcanTrcReader2_0.INSTANCE;
             case PCAN:
             default:
                 return new PcanTrcReader1_1();
         }
     }
 
-    CANPacket readLine(String line);
+    default CANPacket readLine(String line) {
+        return readLine(line, "no-file-name");
+    }
+
+    CANPacket readLine(String line, String fileName);
 
     default List<CANPacket> readFile(String fileName) throws IOException {
         return skipHeaderAndRead(fileName, 0);
@@ -52,7 +59,7 @@ public interface CANLineReader {
                 public void accept(String s) {
                     if (index++ < skipCount)
                         return;
-                    CANPacket packet = readLine(s);
+                    CANPacket packet = readLine(s, fileName);
                     if (packet != null)
                         result.add(packet);
                 }

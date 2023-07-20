@@ -10,7 +10,7 @@ public enum CANoeReader implements CANLineReader {
     INSTANCE;
 
     @Override
-    public CANPacket readLine(String line) {
+    public CANPacket readLine(String line, String fileName) {
         if (line.contains("ErrorFrame"))
             return null;
         String[] tokens = line.trim().split("\\s+");

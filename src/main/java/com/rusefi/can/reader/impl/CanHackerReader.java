@@ -18,7 +18,7 @@ public enum CanHackerReader implements CANLineReader {
     INSTANCE;
 
     @Override
-    public CANPacket readLine(String line) {
+    public CANPacket readLine(String line, String fileName) {
         line = line.trim();
         if (line.startsWith("@"))
             return null;

@@ -26,6 +26,6 @@ public class ConvertTrcToMegaLogViewerWithDBC {
         };
 
 
-        FolderUtil.handleFolder(inputFolderName, fileAction, ".trc");
+        FolderUtil.handleFolder(inputFolderName, fileAction, ".trc1");
     }
 }

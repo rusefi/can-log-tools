@@ -11,7 +11,7 @@ import static com.rusefi.can.reader.impl.PcanTrcReader2_0.FILEVERSION;
  */
 public class PcanTrcReader1_1 implements CANLineReader {
     @Override
-    public CANPacket readLine(String line) {
+    public CANPacket readLine(String line, String fileName) {
         line = line.trim();
         if (line.startsWith(FILEVERSION) && !line.startsWith(FILEVERSION + "=1.1"))
             throw new IllegalStateException("Unexpected fileversion " + line);
