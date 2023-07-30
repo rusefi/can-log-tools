@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class ByteRateOfChangeNissanSandbox {
     public static void main(String[] args) throws IOException {
-        ReaderTypeHolder.INSTANCE.type = ReaderType.PCAN;
+        ReaderTypeHolder.INSTANCE.type = ReaderType.PCAN1_1;
 
         String inputFolderName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\Nissan\\2011_Xterra\\CAN-Nov-2022";
 

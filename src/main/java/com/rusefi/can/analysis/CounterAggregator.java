@@ -43,8 +43,6 @@ public class CounterAggregator {
 
         List<CounterWithWidth> counters = new ArrayList<>();
 
-        StringBuffer sb = new StringBuffer();
-
         CounterScanner.BitStateKey start;
         int totalNumberOfBits;
 

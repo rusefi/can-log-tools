@@ -1,7 +1,7 @@
 package com.rusefi.can.reader;
 
 public enum ReaderType {
-    PCAN,
+    PCAN1_1,
     PCAN2,
     CANOE,
     CANHACKER,

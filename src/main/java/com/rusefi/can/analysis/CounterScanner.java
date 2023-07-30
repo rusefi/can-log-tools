@@ -2,12 +2,14 @@ package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
 
+import java.io.*;
 import java.util.*;
 
-import static com.rusefi.can.analysis.ByteRateOfChange.dualSid;
-
 public class CounterScanner {
-    public static void scanForCounters(List<CANPacket> packets) {
+    public static void scanForCounters(String reportDestinationFolder, List<CANPacket> packets) throws FileNotFoundException {
+
+        String outputFileName = reportDestinationFolder + File.separator + "counter_report.txt";
+        PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
 
         Map<BitStateKey, BitState> bitStates = new TreeMap<>();
 
@@ -31,24 +33,25 @@ public class CounterScanner {
 
 
         LinkedHashMap<BitStateKey, Integer> counters = new LinkedHashMap<>();
-
         for (Map.Entry<BitStateKey, BitState> e : bitStates.entrySet()) {
 
             BitState bitState = e.getValue();
             if (bitState.couldBeCounter()) {
                 BitStateKey key = e.getKey();
-                System.out.println("Looks like counter " + key + " " + bitState.cycleLength);
+                pw.println("Working: Looks like counter key=" + key + " cycleLength=" + bitState.cycleLength);
 
                 counters.put(key, bitState.cycleLength);
-
             }
         }
 
+        pw.println("Scanning...");
         List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
 
+        pw.println("Here are the founding:");
         for (CounterAggregator.CounterWithWidth counterWithWidth : countersWithWidth) {
-            System.out.println("Found " + counterWithWidth);
+            pw.println("Found " + counterWithWidth);
         }
+        pw.close();
     }
 
     static class BitStateKey implements Comparable {

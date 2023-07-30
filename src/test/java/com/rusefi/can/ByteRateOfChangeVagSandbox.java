@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class ByteRateOfChangeVagSandbox {
     public static void main(String[] args) throws IOException {
-        ReaderTypeHolder.INSTANCE.type = ReaderType.PCAN;
+        ReaderTypeHolder.INSTANCE.type = ReaderType.PCAN1_1;
 
         String inputFolderName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\VAG\\2006-Passat-B6";
 

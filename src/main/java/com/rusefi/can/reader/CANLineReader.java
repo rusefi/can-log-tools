@@ -33,7 +33,7 @@ public interface CANLineReader {
                 return CanHackerReader.INSTANCE;
             case PCAN2:
                 return PcanTrcReader2_0.INSTANCE;
-            case PCAN:
+            case PCAN1_1:
             default:
                 return new PcanTrcReader1_1();
         }

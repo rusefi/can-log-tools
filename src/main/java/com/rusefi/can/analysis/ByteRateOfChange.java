@@ -12,17 +12,12 @@ import java.util.*;
 public class ByteRateOfChange {
 
     static class TraceFileMetaIndex {
-        HashMap<ByteId, ByteStatistics> statistics = new HashMap<>();
+        final HashMap<ByteId, ByteStatistics> statistics = new HashMap<>();
 
-        Set<Integer> SIDs = new HashSet<>();
+        final Set<Integer> SIDs = new HashSet<>();
     }
 
     public static TraceReport process(String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
-
-        PerSidDump.handle(packets, simpleFileName);
-
-        CounterScanner.scanForCounters(packets);
-
         TraceFileMetaIndex traceFileMetaIndex = calculateByteStatistics(packets);
 
         writeByteReport(reportDestinationFolder, simpleFileName, traceFileMetaIndex);
