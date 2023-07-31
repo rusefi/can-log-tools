@@ -43,7 +43,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
     @Override
     public void writeSensorLogLine() {
         if (stream == null) {
-            System.out.println("Writing to " + outputFileName);
+            System.out.println(getClass().getSimpleName() + ": Writing to " + outputFileName);
 
             try {
                 stream = new DataOutputStream(new FileOutputStream(outputFileName));

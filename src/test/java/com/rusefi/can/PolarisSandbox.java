@@ -31,24 +31,10 @@ public class PolarisSandbox {
                 continue;
             replayed.add(packet.getId());
 
-            byte[] data = packet.getData();
-            System.out.println(String.format("Got ECU 0x%x", packet.getId()) + " " + data.length);
+            String arrayName = "payload" + packet.getId();
+            replayLua.append(packet.asLua(arrayName));
 
-            replayLua.append("    data = {");
-
-
-            for (int index = 0; index < data.length; index++) {
-                if (index > 0)
-                    replayLua.append(", ");
-
-                replayLua.append(String.format("0x%x", data[index]));
-
-            }
-            replayLua.append("}\n");
-
-            replayLua.append(String.format("    txCan(1, 0x%x, 1, data)\n", packet.getId()));
-
-
+            replayLua.append(String.format("    txCan(1, 0x%x, 1, " + arrayName + ")\n", packet.getId()));
         }
 
         System.out.printf(replayLua.toString());

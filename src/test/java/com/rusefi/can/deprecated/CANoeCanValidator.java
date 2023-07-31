@@ -39,7 +39,7 @@ public class CANoeCanValidator {
         }
 
         String outputFileName = "all_ids.txt";
-        System.out.println("Writing to " + outputFileName);
+        System.out.println("CANoeCanValidator: Writing to " + outputFileName);
         try (FileWriter fw = new FileWriter(outputFileName)) {
             for (Integer id : allIds.keySet()) {
                 fw.write(Integer.toHexString(id) + "\r\n");

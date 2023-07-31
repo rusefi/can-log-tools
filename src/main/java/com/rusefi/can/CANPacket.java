@@ -15,6 +15,24 @@ public class CANPacket {
         this.data = data;
     }
 
+    public StringBuilder asLua(String arrayName) {
+        StringBuilder result = new StringBuilder();
+        result.append(arrayName + " = {");
+
+        byte[] data = getData();
+        System.out.println(String.format("Got ECU 0x%x", getId()) + " " + data.length);
+
+        for (int index = 0; index < data.length; index++) {
+            if (index > 0)
+                result.append(", ");
+
+            result.append(String.format("0x%02x", data[index]));
+
+        }
+        result.append("}\n");
+        return result;
+    }
+
     /**
      * @param index, starting from zero
      */

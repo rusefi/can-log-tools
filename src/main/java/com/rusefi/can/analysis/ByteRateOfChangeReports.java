@@ -79,6 +79,8 @@ public class ByteRateOfChangeReports {
             PerSidDump.handle(reportDestinationFolder, simpleFileName, logFileContent);
             CounterScanner.scanForCounters(reportDestinationFolder, logFileContent);
 
+            CanToMegaLogViewer.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
+
             ByteRateOfChange.TraceReport report = ByteRateOfChange.process(reportDestinationFolder, simpleFileName, logFileContent);
             reports.add(report);
         }, fileNameSuffix);
