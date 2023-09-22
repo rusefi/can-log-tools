@@ -75,6 +75,18 @@ public class CANPacket {
         return Byte.toUnsignedInt(data[index]);
     }
 
+    public Object getBytesAsString() {
+        StringBuilder result = new StringBuilder();
+        for (int index = 0; index < data.length; index++) {
+            if (index > 0)
+                result.append(" ");
+
+            result.append(String.format("0x%02x", data[index]));
+
+        }
+        return result;
+    }
+
     public interface PackerAssertion {
         boolean test(CANPacket packet);
     }

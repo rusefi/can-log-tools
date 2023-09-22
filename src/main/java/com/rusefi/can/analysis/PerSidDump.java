@@ -50,7 +50,9 @@ public class PerSidDump {
             String middleOutputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + dualSid(sid, "_") + "_middle.txt";
             PrintWriter middle = new PrintWriter(new FileOutputStream(middleOutputFileName));
 
-            middle.println(middlePacket.asLua("payload" + middlePacket.getId()));
+            middle.println(middlePacket.asLua("payload" + middlePacket.getId())
+            + "\n"
+                    + middlePacket.getBytesAsString());
             middle.close();
         }
     }
