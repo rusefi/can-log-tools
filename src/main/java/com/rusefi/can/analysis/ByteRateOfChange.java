@@ -22,22 +22,30 @@ public class ByteRateOfChange {
     }
 
     private static void writeByteReport(String reportDestinationFolder, String simpleFileName, TraceFileMetaIndex traceFileMetaIndex) throws FileNotFoundException {
+        String byteChangesFolder = reportDestinationFolder + File.separator + "byte_changes";
+        new File(byteChangesFolder).mkdirs();
+
         List<ByteStatistics> allStats = new ArrayList<>(traceFileMetaIndex.statistics.values());
-        allStats.sort((o1, o2) -> o2.getUniqueValues() - o1.getUniqueValues());
+        allStats.sort((o1, o2) -> o2.getUniqueValuesCount() - o1.getUniqueValuesCount());
 
-//        System.out.println(allStats);
+        writeByteReport(allStats, byteChangesFolder + File.separator + simpleFileName + "byte_rate_of_changes_sorted_counter.txt");
 
-        writeByteReport(reportDestinationFolder, simpleFileName, allStats);
+        allStats.sort(new Comparator<ByteStatistics>() {
+            @Override
+            public int compare(ByteStatistics o1, ByteStatistics o2) {
+                return o1.key.compareTo(o2.key);
+            }
+        });
+        writeByteReport(allStats, byteChangesFolder + File.separator + simpleFileName + "byte_rate_of_changes_sorted_index.txt");
     }
 
-    private static void writeByteReport(String reportDestinationFolder, String simpleFileName, List<ByteStatistics> allStats) throws FileNotFoundException {
-        String outputFileName = reportDestinationFolder + File.separator + simpleFileName + ".txt";
-        System.out.println("Writing byte report to " + outputFileName);
-        PrintStream ps = new PrintStream(new FileOutputStream(outputFileName, false));
+    private static void writeByteReport(List<ByteStatistics> allStats, String fileName) throws FileNotFoundException {
+        System.out.println("Writing byte report to " + fileName);
+        PrintStream ps = new PrintStream(new FileOutputStream(fileName, false));
 
         for (ByteStatistics byteStatistics : allStats) {
             ByteId key = byteStatistics.key;
-            ps.println(dualSid(key.sid) + " byte " + key.index + " has " + byteStatistics.getUniqueValues() + " unique value(s)");
+            ps.println(dualSid(key.sid) + " byte " + key.index + " has " + byteStatistics.getUniqueValuesCount() + " unique value(s)");
         }
 
         ps.close();
@@ -77,8 +85,12 @@ public class ByteRateOfChange {
             this.key = key;
         }
 
-        public int getUniqueValues() {
+        public int getUniqueValuesCount() {
             return uniqueValues.size();
+        }
+
+        public ByteId getKey() {
+            return key;
         }
 
         @Override
