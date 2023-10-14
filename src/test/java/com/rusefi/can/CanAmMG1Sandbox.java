@@ -7,11 +7,10 @@ import com.rusefi.can.reader.ReaderTypeHolder;
 import com.rusefi.can.reader.impl.PcanTrcReader2_0;
 
 import java.io.IOException;
-import java.util.List;
 
 public class CanAmMG1Sandbox {
     public static void main(String[] args) throws IOException {
-        ReaderTypeHolder.INSTANCE.type = ReaderType.PCAN1_1;
+        ReaderTypeHolder.INSTANCE.type = ReaderType.PCAN;
         CANLineReader reader = PcanTrcReader2_0.INSTANCE;
 
 

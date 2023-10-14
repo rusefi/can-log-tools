@@ -4,7 +4,7 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.impl.CANoeReader;
 import com.rusefi.can.reader.impl.CanHackerReader;
 import com.rusefi.can.reader.impl.PcanTrcReader1_1;
-import com.rusefi.can.reader.impl.PcanTrcReader2_0;
+import com.rusefi.can.reader.impl.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,11 +31,9 @@ public interface CANLineReader {
                 return CANoeReader.INSTANCE;
             case CANHACKER:
                 return CanHackerReader.INSTANCE;
-            case PCAN2:
-                return PcanTrcReader2_0.INSTANCE;
-            case PCAN1_1:
+            case PCAN:
             default:
-                return new PcanTrcReader1_1();
+                return PcanAutoReader.INSTANCE;
         }
     }
 

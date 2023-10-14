@@ -10,6 +10,8 @@ import static com.rusefi.can.reader.impl.PcanTrcReader2_0.FILEVERSION;
  * TODO: merge these two?
  */
 public class PcanTrcReader1_1 implements CANLineReader {
+    public static final CANLineReader INSTANCE = new PcanTrcReader1_1();
+
     @Override
     public CANPacket readLine(String line, String fileName) {
         line = line.trim();
