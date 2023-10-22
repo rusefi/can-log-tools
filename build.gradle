@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    implementation libs.snakeyaml
     testImplementation libs.junit
 }
 
