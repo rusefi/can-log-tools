@@ -1,12 +1,13 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.*;
 
 public class CounterScanner {
-    public static void scanForCounters(String reportDestinationFolder, List<CANPacket> packets) throws FileNotFoundException {
+    public static void scanForCounters(String reportDestinationFolder, List<CANPacket> packets) throws IOException {
 
         String outputFileName = reportDestinationFolder + File.separator + "counter_report.txt";
         PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
@@ -47,10 +48,20 @@ public class CounterScanner {
         pw.println("Scanning...");
         List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
 
+        Yaml yaml = new Yaml();
+        Map<Integer, Map<Integer, Integer>> map = new HashMap<>();
+
         pw.println("Here are the founding:");
         for (CounterAggregator.CounterWithWidth counterWithWidth : countersWithWidth) {
             pw.println("Found " + counterWithWidth);
+
+            Map<Integer, Integer> lengthByStartIndex = map.computeIfAbsent(counterWithWidth.getStart().getSid(), integer -> new HashMap<>());
+
+            lengthByStartIndex.put(counterWithWidth.getStart().getTotalBitIndex(), counterWithWidth.getTotalNumberOfBits());
         }
+        String yamlCountersReportFileName = reportDestinationFolder + File.separator + "counters.yaml";
+        System.out.println("Writing report to " + yamlCountersReportFileName);
+        yaml.dump(map, new FileWriter(yamlCountersReportFileName));
         pw.close();
     }
 
@@ -63,12 +74,16 @@ public class CounterScanner {
             this.bitIndex = bitIndex;
         }
 
+        public int getTotalBitIndex() {
+            return byteId.bitIndex * 8 + bitIndex;
+        }
+
         public int getSid() {
             return byteId.sid;
         }
 
         public int getByteIndex() {
-            return byteId.index;
+            return byteId.bitIndex;
         }
 
         public int getBitIndex() {

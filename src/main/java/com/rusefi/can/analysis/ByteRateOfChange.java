@@ -45,7 +45,7 @@ public class ByteRateOfChange {
 
         for (ByteStatistics byteStatistics : allStats) {
             ByteId key = byteStatistics.key;
-            ps.println(dualSid(key.sid) + " byte " + key.index + " has " + byteStatistics.getUniqueValuesCount() + " unique value(s)");
+            ps.println(dualSid(key.sid) + " byte " + key.bitIndex + " has " + byteStatistics.getUniqueValuesCount() + " unique value(s)");
         }
 
         ps.close();
@@ -105,15 +105,15 @@ public class ByteRateOfChange {
 
     public static class ByteId implements Comparable<ByteId> {
         final int sid;
-        final int index;
+        final int bitIndex;
 
-        public ByteId(int sid, int index) {
+        public ByteId(int sid, int bitIndex) {
             this.sid = sid;
-            this.index = index;
+            this.bitIndex = bitIndex;
         }
 
         public String getLogKey() {
-            return dualSid(sid) + "_byte_" + index + "_bit_" + (index * 8);
+            return dualSid(sid) + "_byte_" + bitIndex + "_bit_" + (bitIndex * 8);
         }
 
         @Override
@@ -121,20 +121,20 @@ public class ByteRateOfChange {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             ByteId byteId = (ByteId) o;
-            return sid == byteId.sid && index == byteId.index;
+            return sid == byteId.sid && bitIndex == byteId.bitIndex;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(sid, index);
+            return Objects.hash(sid, bitIndex);
         }
 
         @Override
         public int compareTo(ByteId o) {
-            ByteId other = (ByteId) o;
+            ByteId other = o;
             if (other.sid != sid)
                 return sid - other.sid;
-            return index - other.index;
+            return bitIndex - other.bitIndex;
         }
 
         @Override

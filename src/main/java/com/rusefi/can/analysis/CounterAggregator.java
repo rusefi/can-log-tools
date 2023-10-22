@@ -64,6 +64,14 @@ public class CounterAggregator {
             this.totalNumberOfBits = totalNumberOfBits;
         }
 
+        public CounterScanner.BitStateKey getStart() {
+            return start;
+        }
+
+        public int getTotalNumberOfBits() {
+            return totalNumberOfBits;
+        }
+
         @Override
         public String toString() {
             return "Counter{" +
