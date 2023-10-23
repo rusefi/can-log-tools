@@ -7,6 +7,9 @@ import java.io.*;
 import java.util.*;
 
 public class CounterScanner {
+
+    public static final String COUNTERS_YAML = "counters.yaml";
+
     public static void scanForCounters(String reportDestinationFolder, List<CANPacket> packets) throws IOException {
 
         String outputFileName = reportDestinationFolder + File.separator + "counter_report.txt";
@@ -59,7 +62,7 @@ public class CounterScanner {
 
             lengthByStartIndex.put(counterWithWidth.getStart().getTotalBitIndex(), counterWithWidth.getTotalNumberOfBits());
         }
-        String yamlCountersReportFileName = reportDestinationFolder + File.separator + "counters.yaml";
+        String yamlCountersReportFileName = reportDestinationFolder + File.separator + COUNTERS_YAML;
         System.out.println("Writing report to " + yamlCountersReportFileName);
         yaml.dump(map, new FileWriter(yamlCountersReportFileName));
         pw.close();
@@ -75,7 +78,7 @@ public class CounterScanner {
         }
 
         public int getTotalBitIndex() {
-            return byteId.bitIndex * 8 + bitIndex;
+            return byteId.byteIndex * 8 + bitIndex;
         }
 
         public int getSid() {
@@ -83,7 +86,7 @@ public class CounterScanner {
         }
 
         public int getByteIndex() {
-            return byteId.bitIndex;
+            return byteId.byteIndex;
         }
 
         public int getBitIndex() {

@@ -11,14 +11,14 @@ public class ByteRateOfChangeReports {
     /**
      * sweet baby O(n^2)
      */
-    public static void compareEachReportAgainstAllOthers(String reportDestinationFolder, List<ByteRateOfChange.TraceReport> reports) throws FileNotFoundException {
+    public static void compareEachReportAgainstAllOthers(String reportDestinationFolder, List<ByteRateOfChange.TraceReport> reports, CanContext context) throws FileNotFoundException {
         for (int i = 0; i < reports.size(); i++) {
             for (int j = i + 1; j < reports.size(); j++)
-                compareTwoReports(reportDestinationFolder, reports.get(i), reports.get(j));
+                compareTwoReports(reportDestinationFolder, reports.get(i), reports.get(j), context);
         }
     }
 
-    private static void compareTwoReports(String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2) throws FileNotFoundException {
+    private static void compareTwoReports(String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanContext context) throws FileNotFoundException {
         Set<ByteRateOfChange.ByteId> allKeys = new TreeSet<>();
         allKeys.addAll(traceReport1.getStatistics().keySet());
         allKeys.addAll(traceReport2.getStatistics().keySet());
@@ -37,6 +37,15 @@ public class ByteRateOfChangeReports {
 
 
         for (ByteRateOfChange.ByteId id : allKeys) {
+            if (context.counterBytes.contains(id)) {
+                // skipping byte with a known counter
+                continue;
+            }
+            if (id.getByteIndex() == 7 && context.withChecksum.contains(id.sid)) {
+                // skipping known checksum byte
+                continue;
+            }
+
             ByteRateOfChange.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(id, ByteRateOfChange.ByteStatistics::new);
             ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(id, ByteRateOfChange.ByteStatistics::new);
 
@@ -70,6 +79,8 @@ public class ByteRateOfChangeReports {
     public static void scanInputFolder(String inputFolderName, String fileNameSuffix) throws IOException {
         String reportDestinationFolder = createOutputFolder(inputFolderName);
 
+        CanContext context = CanContext.read(inputFolderName);
+
         List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
 
         FolderUtil.handleFolder(inputFolderName, (simpleFileName, fullInputFileName) -> {
@@ -77,7 +88,9 @@ public class ByteRateOfChangeReports {
             List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
 
             PerSidDump.handle(reportDestinationFolder, simpleFileName, logFileContent);
+            // at the moment we overwrite counter detection report after we process each file
             CounterScanner.scanForCounters(reportDestinationFolder, logFileContent);
+            ChecksumScanner.scanForChecksums(reportDestinationFolder, logFileContent);
 
             CanToMegaLogViewer.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
 
@@ -87,7 +100,7 @@ public class ByteRateOfChangeReports {
 
 
         System.out.println("Processing " + reports.size() + " report(s)");
-        compareEachReportAgainstAllOthers(reportDestinationFolder, reports);
+        compareEachReportAgainstAllOthers(reportDestinationFolder, reports, context);
     }
 
     static class ByteVariationDifference {

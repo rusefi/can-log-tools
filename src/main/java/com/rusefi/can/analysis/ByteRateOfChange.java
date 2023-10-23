@@ -45,7 +45,7 @@ public class ByteRateOfChange {
 
         for (ByteStatistics byteStatistics : allStats) {
             ByteId key = byteStatistics.key;
-            ps.println(dualSid(key.sid) + " byte " + key.bitIndex + " has " + byteStatistics.getUniqueValuesCount() + " unique value(s)");
+            ps.println(dualSid(key.sid) + " byte " + key.getByteIndex() + " has " + byteStatistics.getUniqueValuesCount() + " unique value(s)");
         }
 
         ps.close();
@@ -105,15 +105,15 @@ public class ByteRateOfChange {
 
     public static class ByteId implements Comparable<ByteId> {
         final int sid;
-        final int bitIndex;
+        final int byteIndex;
 
-        public ByteId(int sid, int bitIndex) {
+        public ByteId(int sid, int byteIndex) {
             this.sid = sid;
-            this.bitIndex = bitIndex;
+            this.byteIndex = byteIndex;
         }
 
         public String getLogKey() {
-            return dualSid(sid) + "_byte_" + bitIndex + "_bit_" + (bitIndex * 8);
+            return dualSid(sid) + "_byte_" + byteIndex + "_bit_" + (byteIndex * 8);
         }
 
         @Override
@@ -121,12 +121,16 @@ public class ByteRateOfChange {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             ByteId byteId = (ByteId) o;
-            return sid == byteId.sid && bitIndex == byteId.bitIndex;
+            return sid == byteId.sid && byteIndex == byteId.byteIndex;
+        }
+
+        public int getByteIndex() {
+            return byteIndex;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(sid, bitIndex);
+            return Objects.hash(sid, byteIndex);
         }
 
         @Override
@@ -134,7 +138,7 @@ public class ByteRateOfChange {
             ByteId other = o;
             if (other.sid != sid)
                 return sid - other.sid;
-            return bitIndex - other.bitIndex;
+            return byteIndex - other.byteIndex;
         }
 
         @Override
