@@ -59,7 +59,7 @@ public class ByteRateOfChange {
             for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
                 ByteId key = new ByteId(packet.getId(), byteIndex);
                 ByteStatistics stats = traceFileMetaIndex.statistics.computeIfAbsent(key, byteId -> new ByteStatistics(key));
-                stats.uniqueValues.add((int) packet.getData()[byteIndex]);
+                stats.registerValue(packet.getData()[byteIndex]);
             }
         }
         return traceFileMetaIndex;
@@ -78,8 +78,11 @@ public class ByteRateOfChange {
     }
 
     public static class ByteStatistics {
-        HashSet<Integer> uniqueValues = new HashSet<>();
+        private final HashSet<Integer> uniqueValues = new HashSet<>();
+        int totalTransitions;
         private final ByteId key;
+
+        private int previousValue;
 
         public ByteStatistics(ByteId key) {
             this.key = key;
@@ -99,6 +102,16 @@ public class ByteRateOfChange {
                     "counter=" + uniqueValues.size() +
                     ", key=" + key +
                     '}';
+        }
+
+        public void registerValue(int value) {
+            if (!uniqueValues.isEmpty()) {
+                if (previousValue != value)
+                    totalTransitions++;
+            }
+
+            previousValue = value;
+            uniqueValues.add(value);
         }
     }
 
