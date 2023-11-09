@@ -50,9 +50,31 @@ public class PerSidDump {
             String middleOutputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + dualSid(sid, "_") + "_middle.txt";
             PrintWriter middle = new PrintWriter(new FileOutputStream(middleOutputFileName));
 
-            middle.println(middlePacket.asLua("payload" + middlePacket.getId())
-            + "\n"
-                    + middlePacket.getBytesAsString());
+            String payloadVariableName = "payload" + middlePacket.getId();
+            String variableName = "CAN_" + middlePacket.getId() + "_" + Integer.toHexString(middlePacket.getId());
+
+            StringBuilder payloadLine = middlePacket.asLua(payloadVariableName);
+
+            middle.println(variableName + " = " + middlePacket.getId());
+            middle.println(payloadLine);
+
+            middle.println();
+            String methodName = "onMotor" + middlePacket.getId();
+            middle.println("function " + methodName + "(bus, id, dlc, data)");
+            //middle.println("\tprint ('MOTOR_" + middlePacket.getId() + "' " ..)
+
+            middle.println("\ttxCan(TCU_BUS, " + variableName + ", 0, " + payloadVariableName + ")");
+
+            middle.println("end");
+            middle.println();
+
+            middle.println("canRxAdd(ECU_BUS, " + variableName + ", " + methodName + ")");
+            middle.println("canRxAdd(ECU_BUS, " + variableName + ", " + "drop" + ")");
+            middle.println("canRxAdd(ECU_BUS, " + variableName + ", " + "drop" + ")");
+
+            middle.println();
+
+            middle.println(middlePacket.getBytesAsString());
             middle.close();
         }
     }
