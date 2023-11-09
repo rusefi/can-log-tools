@@ -52,7 +52,7 @@ public class CounterScanner {
         List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
 
         Yaml yaml = new Yaml();
-        Map<Integer, Map<Integer, Integer>> map = new HashMap<>();
+        Map<Integer, Map<Integer, Integer>> map = new TreeMap<>();
 
         pw.println("Here are the founding:");
         for (CounterAggregator.CounterWithWidth counterWithWidth : countersWithWidth) {
