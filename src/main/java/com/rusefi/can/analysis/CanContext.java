@@ -5,10 +5,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CanContext {
     final Set<Integer> withChecksum = new HashSet<>();
@@ -38,7 +35,11 @@ public class CanContext {
 
     public static CanContext read(String inputFolderName) throws FileNotFoundException {
         Yaml checksum = new Yaml();
-        List<Integer> withChecksum = checksum.load(new FileReader(inputFolderName + File.separator + ChecksumScanner.CHECKSUM_YAML));
+        String checkSumFileName = inputFolderName + File.separator + ChecksumScanner.CHECKSUM_YAML;
+        if (!new File(checkSumFileName).exists())
+            return new CanContext(new ArrayList<>(), new HashMap<>());
+
+        List<Integer> withChecksum = checksum.load(new FileReader(checkSumFileName));
 
         Yaml countersYaml = new Yaml();
         Map<Integer, Map<Integer, Integer>> countersMap = countersYaml.load(new FileReader(inputFolderName + File.separator + CounterScanner.COUNTERS_YAML));
