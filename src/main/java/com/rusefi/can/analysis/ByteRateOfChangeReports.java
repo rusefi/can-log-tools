@@ -54,6 +54,16 @@ public class ByteRateOfChangeReports {
                 int deltaCount = Math.abs(s1.getUniqueValuesCount() - s2.getUniqueValuesCount());
                 differences.add(new ByteVariationDifference(deltaCount, msg));
                 report.println(msg + " delta=" + deltaCount + " / transitions=" + s1.totalTransitions + " vs " + s2.totalTransitions);
+            } else {
+                HashSet<Integer> diff = s1.getUniqueValues();
+                diff.removeAll(s2.getUniqueValues());
+                if (!diff.isEmpty()) {
+
+                    report.println(id + " different sets " + s1.getUniqueValues() + " vs " + s2.getUniqueValues());
+
+                }
+
+
             }
         }
 

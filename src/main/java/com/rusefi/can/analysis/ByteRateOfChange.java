@@ -92,6 +92,10 @@ public class ByteRateOfChange {
             return uniqueValues.size();
         }
 
+        public HashSet<Integer> getUniqueValues() {
+            return uniqueValues;
+        }
+
         public ByteId getKey() {
             return key;
         }
