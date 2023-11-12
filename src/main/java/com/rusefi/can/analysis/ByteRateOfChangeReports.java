@@ -50,10 +50,10 @@ public class ByteRateOfChangeReports {
             ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(id, ByteRateOfChange.ByteStatistics::new);
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
-                String msg = id + ": " + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
+                String msg = id + ": count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
                 int deltaCount = Math.abs(s1.getUniqueValuesCount() - s2.getUniqueValuesCount());
                 differences.add(new ByteVariationDifference(deltaCount, msg));
-                report.println(msg + " delta=" + deltaCount + " / " + s1.totalTransitions + " vs " + s2.totalTransitions);
+                report.println(msg + " delta=" + deltaCount + " / transitions=" + s1.totalTransitions + " vs " + s2.totalTransitions);
             }
         }
 
