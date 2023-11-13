@@ -104,6 +104,7 @@ public class ByteRateOfChange {
         public String toString() {
             return "ByteStatistics{" +
                     "counter=" + uniqueValues.size() +
+                    ", totalTransitions=" + totalTransitions +
                     ", key=" + key +
                     '}';
         }
@@ -189,5 +190,12 @@ public class ByteRateOfChange {
             return statistics;
         }
 
+        public void save(String file) throws IOException {
+            Writer w = new FileWriter(file);
+            for (Map.Entry<ByteId, ByteStatistics> e : statistics.entrySet()) {
+                w.append(e.getKey() + " " + e.getValue() + "\r\n");
+            }
+
+        }
     }
 }

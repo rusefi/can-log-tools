@@ -105,6 +105,8 @@ public class ByteRateOfChangeReports {
             CanToMegaLogViewer.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
 
             ByteRateOfChange.TraceReport report = ByteRateOfChange.process(reportDestinationFolder, simpleFileName, logFileContent);
+            report.save("temp.txt");
+
             reports.add(report);
         }, fileNameSuffix);
 
