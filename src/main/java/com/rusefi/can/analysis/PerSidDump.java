@@ -50,20 +50,26 @@ public class PerSidDump {
             String middleOutputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + dualSid(sid, "_") + "_middle.txt";
             PrintWriter middle = new PrintWriter(new FileOutputStream(middleOutputFileName));
 
-            String payloadVariableName = "payload" + middlePacket.getId();
-            String variableName = "CAN_" + middlePacket.getId() + "_" + Integer.toHexString(middlePacket.getId());
+            String decAndHex = middlePacket.getId() + "_" + Integer.toHexString(middlePacket.getId());
+            String payloadVariableName = "payload" + decAndHex;
+            String variableName = "CAN_" + decAndHex;
 
             StringBuilder payloadLine = middlePacket.asLua(payloadVariableName);
 
             middle.println(variableName + " = " + middlePacket.getId());
             middle.println(payloadLine);
 
+            String counterVariable = "counter" + decAndHex;
+
             middle.println();
-            String methodName = "onMotor" + middlePacket.getId();
+            middle.println(counterVariable + " = 0");
+            String methodName = "onMotor" + decAndHex;
             middle.println("function " + methodName + "(bus, id, dlc, data)");
+            middle.println("\t" + counterVariable + " = (" + counterVariable + " + 1) % 256");
+            middle.println("\t" + payloadVariableName + "[x] = " + counterVariable);
             //middle.println("\tprint ('MOTOR_" + middlePacket.getId() + "' " ..)
 
-            middle.println("\ttxCan(TCU_BUS, " + variableName + ", 0, " + payloadVariableName + ")");
+            middle.println("\ttxCan(VEHICLE_BUS, " + variableName + ", 0, " + payloadVariableName + ")");
 
             middle.println("end");
             middle.println();
