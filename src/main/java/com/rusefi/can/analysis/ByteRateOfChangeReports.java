@@ -97,6 +97,8 @@ public class ByteRateOfChangeReports {
         List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
 
         FolderUtil.handleFolder(inputFolderName, (simpleFileName, fullInputFileName) -> {
+//            if (!simpleFileName.contains("belt"))
+//                return;
 
             List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
 
