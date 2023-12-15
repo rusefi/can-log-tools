@@ -13,13 +13,15 @@ public class PcanTrcReader1_1 implements CANLineReader {
     public static final CANLineReader INSTANCE = new PcanTrcReader1_1();
 
     @Override
-    public CANPacket readLine(String line, String fileName) {
+    public CANPacket readLine(String line, String fileName, int lineIndex) {
         line = line.trim();
         if (line.startsWith(FILEVERSION) && !line.startsWith(FILEVERSION + "=1.1"))
             throw new IllegalStateException("Unexpected fileversion " + line);
         if (line.startsWith(";"))
             return null;
         String[] tokens = line.split("\\s+");
+        if (tokens.length < 2)
+            throw new IllegalStateException("Unexpected token count in [" + line + "]@" + lineIndex);
         double timeStamp = Double.parseDouble(tokens[1]);
 
         int sid = Integer.parseInt(tokens[3], 16);

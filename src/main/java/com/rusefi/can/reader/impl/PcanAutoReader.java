@@ -19,8 +19,8 @@ public class PcanAutoReader implements CANLineReader {
     }
 
     @Override
-    public CANPacket readLine(String line, String fileName) {
-        return delegate.readLine(line, fileName);
+    public CANPacket readLine(String line, String fileName, int lineIndex) {
+        return delegate.readLine(line, fileName, lineIndex);
     }
 
     @Override

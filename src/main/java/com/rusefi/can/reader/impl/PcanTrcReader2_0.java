@@ -13,7 +13,7 @@ public enum PcanTrcReader2_0 implements CANLineReader {
     public static final String FILEVERSION = ";$FILEVERSION";
 
     @Override
-    public CANPacket readLine(String line, String fileName) {
+    public CANPacket readLine(String line, String fileName, int lineIndex) {
         line = line.trim();
         if (line.startsWith(FILEVERSION) && !line.startsWith(FILEVERSION + "=2.0"))
             throw new IllegalStateException("Unexpected fileversion " + line + " in " + fileName);

@@ -41,7 +41,11 @@ public interface CANLineReader {
         return readLine(line, "no-file-name");
     }
 
-    CANPacket readLine(String line, String fileName);
+    default CANPacket readLine(String line, String fileName) {
+        return readLine(line, fileName, -1);
+    }
+
+    CANPacket readLine(String line, String fileName, int lineIndex);
 
     default List<CANPacket> readFile(String fileName) throws IOException {
         return skipHeaderAndRead(fileName, 0);
