@@ -61,7 +61,7 @@ public interface CANLineReader {
                 public void accept(String s) {
                     if (index++ < skipCount)
                         return;
-                    CANPacket packet = readLine(s, fileName);
+                    CANPacket packet = readLine(s, fileName, index);
                     if (packet != null)
                         result.add(packet);
                 }

@@ -21,7 +21,7 @@ public class PcanTrcReader1_1 implements CANLineReader {
             return null;
         String[] tokens = line.split("\\s+");
         if (tokens.length < 2)
-            throw new IllegalStateException("Unexpected token count in [" + line + "]@" + lineIndex);
+            throw new IllegalStateException("Unexpected token count in " + fileName + "@" + lineIndex + ": [" + line + "]");
         double timeStamp = Double.parseDouble(tokens[1]);
 
         int sid = Integer.parseInt(tokens[3], 16);
