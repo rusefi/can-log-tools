@@ -11,14 +11,14 @@ public class ByteRateOfChangeReports {
     /**
      * sweet baby O(n^2)
      */
-    public static void compareEachReportAgainstAllOthers(String reportDestinationFolder, List<ByteRateOfChange.TraceReport> reports, CanContext context) throws FileNotFoundException {
+    public static void compareEachReportAgainstAllOthers(String reportDestinationFolder, List<ByteRateOfChange.TraceReport> reports, CanMetaDataContext context) throws FileNotFoundException {
         for (int i = 0; i < reports.size(); i++) {
             for (int j = i + 1; j < reports.size(); j++)
                 compareTwoReports(reportDestinationFolder, reports.get(i), reports.get(j), context);
         }
     }
 
-    private static void compareTwoReports(String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanContext context) throws FileNotFoundException {
+    private static void compareTwoReports(String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanMetaDataContext context) throws FileNotFoundException {
         Set<ByteRateOfChange.ByteId> allKeys = new TreeSet<>();
         allKeys.addAll(traceReport1.getStatistics().keySet());
         allKeys.addAll(traceReport2.getStatistics().keySet());
@@ -92,7 +92,7 @@ public class ByteRateOfChangeReports {
     public static void scanInputFolder(String inputFolderName, String fileNameSuffix) throws IOException {
         String reportDestinationFolder = createOutputFolder(inputFolderName);
 
-        CanContext context = CanContext.read(inputFolderName);
+        CanMetaDataContext context = CanMetaDataContext.read(inputFolderName);
 
         List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
 

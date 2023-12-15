@@ -7,13 +7,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 
-public class CanContext {
+public class CanMetaDataContext {
     final Set<Integer> withChecksum = new HashSet<>();
     final Map<Integer, Map<Integer, Integer>> countersMap;
 
     Set<ByteRateOfChange.ByteId> counterBytes = new HashSet<>();
 
-    private CanContext(List<Integer> withChecksum, Map<Integer, Map<Integer, Integer>> countersMap) {
+    private CanMetaDataContext(List<Integer> withChecksum, Map<Integer, Map<Integer, Integer>> countersMap) {
         this.countersMap = countersMap;
         this.withChecksum.addAll(withChecksum);
 
@@ -33,17 +33,17 @@ public class CanContext {
         }
     }
 
-    public static CanContext read(String inputFolderName) throws FileNotFoundException {
+    public static CanMetaDataContext read(String inputFolderName) throws FileNotFoundException {
         Yaml checksum = new Yaml();
         String checkSumFileName = inputFolderName + File.separator + ChecksumScanner.CHECKSUM_YAML;
         if (!new File(checkSumFileName).exists())
-            return new CanContext(new ArrayList<>(), new HashMap<>());
+            return new CanMetaDataContext(new ArrayList<>(), new HashMap<>());
 
         List<Integer> withChecksum = checksum.load(new FileReader(checkSumFileName));
 
         Yaml countersYaml = new Yaml();
         Map<Integer, Map<Integer, Integer>> countersMap = countersYaml.load(new FileReader(inputFolderName + File.separator + CounterScanner.COUNTERS_YAML));
 
-        return new CanContext(withChecksum, countersMap);
+        return new CanMetaDataContext(withChecksum, countersMap);
     }
 }
