@@ -17,10 +17,14 @@ import com.rusefi.can.reader.CANLineReader;
 public enum CanHackerReader implements CANLineReader {
     INSTANCE;
 
+    public static final String HEADER = "@ TEXT";
+
     @Override
     public CANPacket readLine(String line, String fileName, int lineIndex) {
         line = line.trim();
         if (line.startsWith("@"))
+            return null;
+        if (line.startsWith("# "))
             return null;
 
         String[] tokens = line.split("\\s+");

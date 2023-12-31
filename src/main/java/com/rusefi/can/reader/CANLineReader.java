@@ -3,7 +3,6 @@ package com.rusefi.can.reader;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.impl.CANoeReader;
 import com.rusefi.can.reader.impl.CanHackerReader;
-import com.rusefi.can.reader.impl.PcanTrcReader1_1;
 import com.rusefi.can.reader.impl.*;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ public interface CANLineReader {
                 return CanHackerReader.INSTANCE;
             case PCAN:
             default:
-                return PcanAutoReader.INSTANCE;
+                return AutoFormatReader.INSTANCE;
         }
     }
 
