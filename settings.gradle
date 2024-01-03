@@ -1,2 +1,6 @@
 rootProject.name = 'can-log-tools'
 
+include ':playback'
+project(':playback').projectDir = new File('playback')
+include ':peak-can-basic'
+project(':peak-can-basic').projectDir = new File('ext/peak-can-basic')
