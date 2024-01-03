@@ -4,5 +4,6 @@ plugins {
 }
 
 dependencies {
+    api rootProject
     api project(':peak-can-basic')
 }
