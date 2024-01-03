@@ -2,3 +2,6 @@
 	path = opendbc
 	url = https://github.com/rusefi/opendbc.git
 	branch = rusefi_prod
+[submodule "ext/peak-can-basic"]
+	path = ext/peak-can-basic
+	url = https://github.com/rusefi/peak-can-basic
