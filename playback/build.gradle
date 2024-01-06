@@ -3,9 +3,12 @@ plugins {
     id 'java-library'
 }
 
+apply from: '../dependencies.gradle'
+
 dependencies {
     api rootProject
     api project(':peak-can-basic')
+    api libs.annotations
     api group: 'tel.schich', name: 'javacan-core', version: "$javaCanVersion"
     api group: 'tel.schich', name: 'javacan-core', version: "$javaCanVersion", classifier: 'x86_64'
 }

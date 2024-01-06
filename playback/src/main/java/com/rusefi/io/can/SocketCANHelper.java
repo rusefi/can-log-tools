@@ -1,6 +1,6 @@
 package com.rusefi.io.can;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 import tel.schich.javacan.CanChannels;
 import tel.schich.javacan.CanFrame;
 import tel.schich.javacan.NetworkDevice;
