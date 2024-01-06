@@ -36,4 +36,14 @@ public class SocketCANHelper {
             throw new IllegalStateException(e);
         }
     }
+
+    public static CanSender create() {
+        RawCanChannel canChannel = createSocket();
+        return new CanSender() {
+            @Override
+            public void send(int id, byte[] payload) {
+                SocketCANHelper.send(id, payload, canChannel);
+            }
+        };
+    }
 }

@@ -9,7 +9,7 @@ public class PCanHelper {
     public static final TPCANHandle CHANNEL = TPCANHandle.PCAN_USBBUS1;
 
     //    @NotNull
-    public static PCANBasic create() {
+    public static PCANBasic createPCAN() {
         PCANBasic can = new PCANBasic();
         can.initializeAPI();
         return can;
@@ -27,12 +27,22 @@ public class PCanHelper {
     }
 
     public static PCANBasic createAndInit() {
-        PCANBasic pcan = create();
+        PCANBasic pcan = createPCAN();
         TPCANStatus initStatus = init(pcan);
         if (initStatus != TPCANStatus.PCAN_ERROR_OK) {
             System.out.println("TPCANStatus " + initStatus);
             System.exit(-1);
         }
         return pcan;
+    }
+
+    public static CanSender create() {
+        PCANBasic pcan = createAndInit();
+        return new CanSender() {
+            @Override
+            public void send(int id, byte[] payload) {
+                PCanHelper.send(pcan, id, payload);
+            }
+        };
     }
 }
