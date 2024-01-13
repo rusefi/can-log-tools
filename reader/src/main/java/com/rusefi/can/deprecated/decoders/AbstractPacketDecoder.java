@@ -1,8 +1,7 @@
 package com.rusefi.can.deprecated.decoders;
 
 import com.rusefi.can.CANPacket;
-
-import static com.rusefi.can.Utils.bytesToHexWithSpaces;
+import com.rusefi.can.Utils;
 
 public abstract class AbstractPacketDecoder implements PacketDecoder {
     private final int id;
@@ -21,6 +20,6 @@ public abstract class AbstractPacketDecoder implements PacketDecoder {
     }
 
     protected IllegalStateException unexpected(String reason, CANPacket packet) {
-        return new IllegalStateException(reason + ": " + bytesToHexWithSpaces(packet.getData()));
+        return new IllegalStateException(reason + ": " + Utils.bytesToHexWithSpaces(packet.getData()));
     }
 }

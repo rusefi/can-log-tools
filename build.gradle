@@ -13,11 +13,6 @@ allprojects {
     }
 }
 
-dependencies {
-    implementation libs.snakeyaml
-    testImplementation libs.junit
-}
-
 defaultTasks 'jar'
 
 jar {

@@ -1,9 +1,9 @@
 package com.rusefi.can;
 
+import com.rusefi.can.reader.impl.CANoeReader;
 import com.rusefi.can.deprecated.decoders.PacketDecoder;
 import com.rusefi.can.deprecated.PacketPayload;
 import com.rusefi.can.deprecated.decoders.bmw.BmwRegistry;
-import com.rusefi.can.reader.impl.CANoeReader;
 
 import java.io.FileWriter;
 import java.io.IOException;

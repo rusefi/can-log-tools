@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.*;
 import java.util.function.Function;
 
-import static com.rusefi.sensor_logs.Fields.MLQ_FIELD_HEADER_NAME_OR_CATEGORY;
-
 /**
  * MLV .mlq binary log file
  * https://www.efianalytics.com/TunerStudio/docs/MLG_Binary_LogFormat_1.0.pdf
@@ -123,7 +121,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             // 0000h type enum
             stream.write(7);
             // 0001h
-            writeLine(stream, name, MLQ_FIELD_HEADER_NAME_OR_CATEGORY);
+            writeLine(stream, name, Fields.MLQ_FIELD_HEADER_NAME_OR_CATEGORY);
             // 0023h
             writeLine(stream, unit, 10);
             stream.write(0); // Display Style, 0=Float
@@ -133,7 +131,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             stream.writeFloat(0);
             // 0036h precision digits
             stream.write(2);
-            writeLine(stream, sensor.getCategory(), MLQ_FIELD_HEADER_NAME_OR_CATEGORY);
+            writeLine(stream, sensor.getCategory(), Fields.MLQ_FIELD_HEADER_NAME_OR_CATEGORY);
         }
         if (stream.size() != infoDataStart)
             throw new IllegalStateException("We are doing something wrong :( stream.size=" + stream.size() + "/" + infoDataStart);

@@ -2,8 +2,6 @@ package com.rusefi.can;
 
 import com.rusefi.util.BitMathUtil;
 
-import static com.rusefi.can.Utils.bytesToHexWithSpaces;
-
 public class CANPacket {
     private final double timeStamp;
     private final int id;
@@ -68,7 +66,7 @@ public class CANPacket {
 
     public void assertThat(String msg, PackerAssertion assertion) {
         if (!assertion.test(this))
-            throw new IllegalStateException("Not " + msg + " " + bytesToHexWithSpaces(data));
+            throw new IllegalStateException("Not " + msg + " " + Utils.bytesToHexWithSpaces(data));
     }
 
     public int getUnsignedInt(int index) {

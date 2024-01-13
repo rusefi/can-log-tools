@@ -1,9 +1,9 @@
 package com.rusefi.can.reader;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.reader.impl.AutoFormatReader;
 import com.rusefi.can.reader.impl.CANoeReader;
 import com.rusefi.can.reader.impl.CanHackerReader;
-import com.rusefi.can.reader.impl.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
