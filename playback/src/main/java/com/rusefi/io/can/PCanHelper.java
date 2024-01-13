@@ -30,7 +30,7 @@ public class PCanHelper {
         PCANBasic pcan = createPCAN();
         TPCANStatus initStatus = init(pcan);
         if (initStatus != TPCANStatus.PCAN_ERROR_OK) {
-            System.out.println("TPCANStatus " + initStatus);
+            System.out.println("createAndInit: *** ERROR *** TPCANStatus " + initStatus);
             System.exit(-1);
         }
         return pcan;
@@ -38,11 +38,24 @@ public class PCanHelper {
 
     public static CanSender create() {
         PCANBasic pcan = createAndInit();
-        return new CanSender() {
-            @Override
-            public void send(int id, byte[] payload) {
-                PCanHelper.send(pcan, id, payload);
+        return (id, payload) -> {
+            TPCANStatus status = send(pcan, id, payload);
+
+            if (status == TPCANStatus.PCAN_ERROR_XMTFULL || status == TPCANStatus.PCAN_ERROR_QXMTFULL) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+//                System.out.println(String.format("Let's retry ID=%x", packet.getId()) + " OK=" + okCounter);
+                status = send(pcan, id, payload);
             }
+
+            boolean isHappy = status == TPCANStatus.PCAN_ERROR_OK;
+            if (!isHappy) {
+                System.out.println("Error sending " + status);
+            }
+            return isHappy;
         };
     }
 }

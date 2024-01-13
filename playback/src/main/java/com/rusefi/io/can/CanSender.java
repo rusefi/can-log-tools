@@ -1,5 +1,5 @@
 package com.rusefi.io.can;
 
 public interface CanSender {
-    void send(int id, byte[] payload);
+    boolean send(int id, byte[] payload);
 }

@@ -41,8 +41,9 @@ public class SocketCANHelper {
         RawCanChannel canChannel = createSocket();
         return new CanSender() {
             @Override
-            public void send(int id, byte[] payload) {
+            public boolean send(int id, byte[] payload) {
                 SocketCANHelper.send(id, payload, canChannel);
+                return true;
             }
         };
     }
