@@ -28,13 +28,9 @@ public class SocketCANHelper {
         return socket;
     }
 
-    public static void send(int id, byte[] payload, RawCanChannel channel) {
+    public static void send(int id, byte[] payload, RawCanChannel channel) throws IOException {
         CanFrame packet = CanFrame.create(id, FD_NO_FLAGS, payload);
-        try {
-            channel.write(packet);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        channel.write(packet);
     }
 
     public static CanSender create() {
@@ -42,8 +38,12 @@ public class SocketCANHelper {
         return new CanSender() {
             @Override
             public boolean send(int id, byte[] payload) {
-                SocketCANHelper.send(id, payload, canChannel);
-                return true;
+                try {
+                    SocketCANHelper.send(id, payload, canChannel);
+                    return true;
+                } catch (IOException e) {
+                    return false;
+                }
             }
         };
     }
