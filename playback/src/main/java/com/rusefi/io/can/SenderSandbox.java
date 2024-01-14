@@ -7,15 +7,17 @@ import org.jetbrains.annotations.NotNull;
 import peak.can.basic.HackLoadLibraryFlag;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 public class SenderSandbox {
     public static void main(String[] args) throws Exception {
-        List<CANPacket> packets = readResource("atlas.trc");
+        String fileName = args.length > 0 ? args[0] : getFullResourceFileName("resources/atlas.trc");
+
+        List<CANPacket> packets = CANLineReader.getReader().readFile(fileName);
         System.out.println("Got " + packets.size() + " packet(s)");
 
         if (isWindows()) {
@@ -31,16 +33,10 @@ public class SenderSandbox {
         }
     }
 
-    static List<CANPacket> readResource(String resourceName) throws URISyntaxException, IOException {
-        String fullResourceFileName = getFullResourceFileName(resourceName);
-
-        return CANLineReader.getReader().readFile(fullResourceFileName);
-    }
-
     @NotNull
     private static String getFullResourceFileName(String resourceName) throws URISyntaxException {
         URL resource = SenderSandbox.class.getResource("/" + resourceName);
-        System.out.println(resource);
+        System.out.println(Objects.requireNonNull(resource, "URL for " + resourceName));
         String fullResourceFileName = Paths.get(resource.toURI()).toString();
         return fullResourceFileName;
     }
