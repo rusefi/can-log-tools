@@ -16,8 +16,8 @@ CAN log file utilities to help me work with https://github.com/brent-stone/CAN_R
 # CAN file processing
 
 ```
-gradlew :reder:shadowJar
-java -jar reader/build/libs/reader-all.jar 
+gradlew :reader:shadowJar
+java -jar reader/build/libs/reader-all.jar "C:\stuff\rusefi_documentation\OEM-Docs\VAG\2006-Passat-B6" -filter passat-back-and-forth-60-seconds -dbc opendbc/vw_golf_mk4.dbc
 ```
 
 
