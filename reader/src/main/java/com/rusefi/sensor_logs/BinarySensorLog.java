@@ -106,7 +106,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
         stream.writeInt((int) (System.currentTimeMillis() / 1000));
         // 000ch
         int infoDataStart = Fields.MLQ_HEADER_SIZE + Fields.MLQ_FIELD_HEADER_SIZE * entries.size();
-        System.out.println("Total " + entries.size() + " fields");
+        System.out.println(new Date() + " Total " + entries.size() + " fields");
         stream.writeInt(infoDataStart);
         stream.writeInt(infoDataStart + headerText.length());
         // 0012h
@@ -140,7 +140,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
 
     @Override
     public void close() {
-        System.out.println("Finishing " + outputFileName);
+        System.out.println(new Date() + " Finishing " + outputFileName);
         close(stream);
         stream = null;
     }

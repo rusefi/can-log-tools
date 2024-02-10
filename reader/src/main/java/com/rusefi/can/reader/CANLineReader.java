@@ -31,6 +31,7 @@ public interface CANLineReader {
             case CANHACKER:
                 return CanHackerReader.INSTANCE;
             case PCAN:
+            case AUTO:
             default:
                 return AutoFormatReader.INSTANCE;
         }

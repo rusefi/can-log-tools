@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.util.FolderUtil;
 
@@ -97,8 +98,8 @@ public class ByteRateOfChangeReports {
         List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
 
         FolderUtil.handleFolder(inputFolderName, (simpleFileName, fullInputFileName) -> {
-//            if (!simpleFileName.contains("belt"))
-//                return;
+            if (Launcher.fileNameFilter != null && !simpleFileName.contains(Launcher.fileNameFilter))
+                return;
 
             List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
 
@@ -110,7 +111,7 @@ public class ByteRateOfChangeReports {
             CanToMegaLogViewer.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
 
             ByteRateOfChange.TraceReport report = ByteRateOfChange.process(reportDestinationFolder, simpleFileName, logFileContent);
-            report.save("temp.txt");
+            report.save("temp-ByteRateOfChange.txt");
 
             reports.add(report);
         }, fileNameSuffix);

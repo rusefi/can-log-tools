@@ -40,7 +40,7 @@ public class ByteRateOfChange {
     }
 
     private static void writeByteReport(List<ByteStatistics> allStats, String fileName) throws FileNotFoundException {
-        System.out.println("Writing byte report to " + fileName);
+        System.out.println(new Date() + " Writing byte report to " + fileName);
         PrintStream ps = new PrintStream(new FileOutputStream(fileName, false));
 
         for (ByteStatistics byteStatistics : allStats) {

@@ -8,6 +8,7 @@ import com.rusefi.sensor_logs.BinaryLogEntry;
 import com.rusefi.sensor_logs.BinarySensorLog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class LoggingStrategy {
@@ -29,6 +30,7 @@ public class LoggingStrategy {
     public static void writeLog(DbcFile dbc, List<CANPacket> packets, String outputFileName) {
         List<BinaryLogEntry> entries = dbc.getFieldNameEntries();
 
+        System.out.println(new Date() + " writeLog... " + outputFileName);
         LoggingContext context = new LoggingContext();
         BinarySensorLog<BinaryLogEntry> log = context.getBinaryLogEntryBinarySensorLog(entries, outputFileName);
 
@@ -44,6 +46,7 @@ public class LoggingStrategy {
         };
 
         context.writeLogContent(packets, log, logger);
+        System.out.println(new Date() + " writeLog " + outputFileName + " done!");
     }
 
     public interface PacketLogger {

@@ -44,7 +44,7 @@ public class ChecksumScanner {
         withChecksum.sort(Comparator.naturalOrder());
         Yaml yaml = new Yaml();
         String yamlCountersReportFileName = reportDestinationFolder + File.separator + CHECKSUM_YAML;
-        System.out.println("Writing report to " + yamlCountersReportFileName);
+        System.out.println(new Date() + " Writing report to " + yamlCountersReportFileName);
         yaml.dump(withChecksum, new FileWriter(yamlCountersReportFileName));
     }
 }

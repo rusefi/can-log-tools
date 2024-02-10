@@ -6,10 +6,7 @@ import com.rusefi.sensor_logs.BinaryLogEntry;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class DbcFile {
     public final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
@@ -25,7 +22,7 @@ public class DbcFile {
     }
 
     public static DbcFile readFromFile(String fileName) throws IOException {
-        System.out.println("Reading DBC file from " + fileName + "...");
+        System.out.println(new Date() + " Reading DBC file from " + fileName + "...");
         DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
         {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -114,7 +111,6 @@ public class DbcFile {
     public DbcPacket findPacket(int canId) {
         return packets.get(canId);
     }
-
 
     public List<BinaryLogEntry> getFieldNameEntries() {
         if (list == null) {

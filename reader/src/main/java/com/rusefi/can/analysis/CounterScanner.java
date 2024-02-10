@@ -63,7 +63,7 @@ public class CounterScanner {
             lengthByStartIndex.put(counterWithWidth.getStart().getTotalBitIndex(), counterWithWidth.getTotalNumberOfBits());
         }
         String yamlCountersReportFileName = reportDestinationFolder + File.separator + COUNTERS_YAML;
-        System.out.println("Writing report to " + yamlCountersReportFileName);
+        System.out.println(new Date() + " Writing report to " + yamlCountersReportFileName);
         yaml.dump(map, new FileWriter(yamlCountersReportFileName));
         pw.close();
     }

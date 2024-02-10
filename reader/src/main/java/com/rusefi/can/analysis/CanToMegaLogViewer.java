@@ -1,19 +1,33 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.Launcher;
+import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.mlv.LoggingContext;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;
 import com.rusefi.sensor_logs.BinarySensorLog;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class CanToMegaLogViewer {
-    public static void createMegaLogViewer(String reportDestinationFolder, List<CANPacket> canPackets, String simpleFileName) {
+    public static void createMegaLogViewer(String reportDestinationFolder, List<CANPacket> canPackets, String simpleFileName) throws IOException {
+
+        if (Launcher.dbcFileName != null) {
+            DbcFile dbc = DbcFile.readFromFile(Launcher.dbcFileName);
+            String outputFileName = reportDestinationFolder + File.separator + simpleFileName + ".by_dbc.mlg";
+            LoggingStrategy.writeLog(dbc, canPackets, outputFileName);
+        }
+
+        writeByIds(reportDestinationFolder, canPackets, simpleFileName);
+    }
+
+    private static void writeByIds(String reportDestinationFolder, List<CANPacket> canPackets, String simpleFileName) {
         List<BinaryLogEntry> entries = new ArrayList<>();
         Set<ByteRateOfChange.ByteId> byteIds = new HashSet<>();
 

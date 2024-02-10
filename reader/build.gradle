@@ -7,3 +7,11 @@ dependencies {
     implementation libs.snakeyaml
     testImplementation libs.junit
 }
+
+shadowJar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.rusefi.can.Launcher'
+        )
+    }
+}
