@@ -16,7 +16,7 @@ CAN log file utilities to help me work with https://github.com/brent-stone/CAN_R
 
 # CAN playback
 
-``
+```
 gradlew :playback:shadowJar
 java -jar playback/build/libs/playback-all.jar playback/src/main/resources/atlas.trc
-``
+```
