@@ -26,10 +26,15 @@ public class AutoFormatReader implements CANLineReader {
     @Override
     public List<CANPacket> readFile(String fileName) throws IOException {
         String firstLine = Files.lines(Paths.get(fileName)).findFirst().get();
-        if (!firstLine.contains(PcanTrcReader2_0.FILEVERSION) && !firstLine.contains(CanHackerReader.HEADER))
+        if (!firstLine.contains(PcanTrcReader2_0.FILEVERSION)
+                && !firstLine.contains(CanHackerReader.HEADER)
+                && !firstLine.contains(BusMasterReader.HEADER)
+        )
             throw new IllegalStateException(PcanTrcReader2_0.FILEVERSION + " expected in first line");
         if (firstLine.contains(CanHackerReader.HEADER)) {
             delegate = CanHackerReader.INSTANCE;
+        } else if (firstLine.contains(BusMasterReader.HEADER)) {
+            delegate = BusMasterReader.INSTANCE;
         } else if (firstLine.contains("1.1")) {
             delegate = PcanTrcReader1_1.INSTANCE;
         } else if (firstLine.contains("2.0")) {
@@ -37,7 +42,11 @@ public class AutoFormatReader implements CANLineReader {
         } else {
             throw new IllegalStateException("Unsupported version in " + firstLine);
         }
-        return delegate.readFile(fileName);
+        try {
+            return delegate.readFile(fileName);
+        } catch (Throwable e) {
+            throw new IllegalStateException("While " + fileName, e);
+        }
     }
 
     @Override
