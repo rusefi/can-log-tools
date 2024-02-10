@@ -8,6 +8,8 @@ public class RallySandbox {
                 "C:\\stuff\\rusefi_documentation\\OEM-Docs\\Mitsubishi\\2009-rallyart",
                 Launcher.FILENAME_SUFFIX_PROPERTY,
                 ".log",
+//                Launcher.FILENAME_FILTER_PROPERTY,
+//                "auto",
         });
     }
 }
