@@ -15,6 +15,12 @@ CAN log file utilities to help me work with https://github.com/brent-stone/CAN_R
 
 # CAN file processing
 
+```
+gradlew :reder:shadowJar
+java -jar reader/build/libs/reader-all.jar 
+```
+
+
 
 # CAN playback
 
