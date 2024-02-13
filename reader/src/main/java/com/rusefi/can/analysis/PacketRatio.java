@@ -22,7 +22,7 @@ public class PacketRatio {
             counter.incrementAndGet();
         }
 
-        Writer w = new FileWriter(reportDestinationFolder + File.separator + "distribution_" + simpleFileName);
+        Writer w = new FileWriter(reportDestinationFolder + File.separator + "distribution_" + simpleFileName + ".txt");
 
         for (Map.Entry<Integer, AtomicInteger> e : countBySID.entrySet()) {
             double ratio = 100.0 * e.getValue().get() / logFileContent.size();
