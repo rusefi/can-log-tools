@@ -166,13 +166,11 @@ public class ByteRateOfChange {
     }
 
     public static class TraceReport extends HashMap<ByteId, ByteStatistics> {
-        private final List<CANPacket> packets;
         private final String simpleFileName;
         private final HashMap<ByteId, ByteStatistics> statistics;
         private final double durationMs;
 
         public TraceReport(List<CANPacket> packets, String simpleFileName, HashMap<ByteId, ByteStatistics> statistics) {
-            this.packets = packets;
             this.simpleFileName = simpleFileName;
             this.statistics = statistics;
             this.durationMs = getDurationMs(packets);
