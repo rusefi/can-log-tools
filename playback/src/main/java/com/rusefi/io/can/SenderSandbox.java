@@ -15,22 +15,28 @@ import java.util.Objects;
 
 public class SenderSandbox {
     public static void main(String[] args) throws Exception {
-        String fileName = args.length > 0 ? args[0] : getFullResourceFileName("resources/atlas.trc");
+//        String fileName = args.length > 0 ? args[0] : getFullResourceFileName("resources/atlas.trc");
+        String fileName = args.length > 0 ? args[0] : getFullResourceFileName("passat-idling.trc");
 
         List<CANPacket> packets = CANLineReader.getReader().readFile(fileName);
         System.out.println("Got " + packets.size() + " packet(s)");
 
+        CanSender sender = create();
+
+        while (true) {
+            CanPacketSender.sendMessagesOut(packets, sender);
+        }
+    }
+
+    @NotNull
+    public static CanSender create() {
         if (isWindows()) {
             HackLoadLibraryFlag.LOAD_LIBRARY = false;
             //System.load(getFullResourceFileName("PCANBasic_JNI.dll"));
             System.load(new File("ext/peak-can-basic/src/main/resources/PCANBasic_JNI.dll").getAbsolutePath());
         }
 
-        CanSender sender = isWindows() ? PCanHelper.create() : SocketCANHelper.create();
-
-        while (true) {
-            CanPacketSender.sendMessagesOut(packets, sender);
-        }
+        return isWindows() ? PCanHelper.create() : SocketCANHelper.create();
     }
 
     @NotNull
