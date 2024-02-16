@@ -12,12 +12,29 @@ import java.io.StringReader;
 
 import static com.rusefi.can.reader.impl.ParseDBCTest.VAG_MOTOR_1;
 import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class GetValueFromTrc {
+public class GetValueFromTrcTest {
 
     public static final double EPS = 0.01;
+
+    private static int getBitIndex(byte[] data, int bitIndex, int bitWidth) {
+        return DbcField.getBitRange(data, bitIndex, bitWidth, false);
+    }
+
+    @Test
+    public void testBigEndian() {
+        byte[] data = {(byte) 0xAB, 0x56};
+        // hmmm
+        assertEquals(0x56AB, DbcField.getBitRange(data, 0, 16, false));
+        assertEquals(0xAB56, DbcField.getBitRange(data, 8, 16, true));
+
+        assertEquals(0xAB, DbcField.getBitRange(data, 0, 8, false));
+        assertEquals(0xAB, DbcField.getBitRange(data, 0, 8, true));
+
+        assertEquals(0x56, DbcField.getBitRange(data, 8, 8, false));
+        assertEquals(0x56, DbcField.getBitRange(data, 8, 8, true));
+    }
 
     @Test
     public void test() throws IOException {
@@ -36,13 +53,13 @@ public class GetValueFromTrc {
         assertEquals(8, packet.getData().length);
         assertEquals(640, packet.getId());
 
-        assertEquals(0x12DF, DbcField.getBitIndex(packet.getData(), 16, 16));
-        assertEquals(0xDF1D, DbcField.getBitIndex(packet.getData(), 8, 16));
+        assertEquals(0x12DF, getBitIndex(packet.getData(), 16, 16));
+        assertEquals(0xDF1D, getBitIndex(packet.getData(), 8, 16));
 
-        assertEquals(1, DbcField.getBitIndex(packet.getData(), 0, 3));
+        assertEquals(1, getBitIndex(packet.getData(), 0, 3));
 
-        assertEquals(0x1D, DbcField.getBitIndex(packet.getData(), 8, 8));
-        assertEquals(13 , DbcField.getBitIndex(packet.getData(), 8, 4));
+        assertEquals(0x1D, getBitIndex(packet.getData(), 8, 8));
+        assertEquals(13, getBitIndex(packet.getData(), 8, 4));
 
 
         DbcField bf = dbc.getPacketByIndexSlow(0).find("rpm");

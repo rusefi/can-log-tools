@@ -11,7 +11,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ParseDBCTest {
     public static final String VAG_MOTOR_1 = "BO_ 640 Motor_1: 8 XXX\n" +
@@ -30,7 +30,7 @@ public class ParseDBCTest {
             " SG_ Fahrpedalwert_ungenau__Motor_1_ M : 1|1@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Leergasinformation : 0|1@1+ (1,0) [0|0] \"\" XXX" +
             "";
-    public static final String RPM_DBC = "VERSION \"\"\n" +
+    private static final String RPM_DBC = "VERSION \"\"\n" +
             "\n" +
             "\n" +
             "NS_ :\n" +
@@ -62,7 +62,7 @@ public class ParseDBCTest {
             "\n" +
             "BO_ 1394 ZAS_1: 2 XXX\n" +
             " SG_ Fehlerspeichereintrag__ZAS_ : 15|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Frei_ZAS_1_3 : 8|7@1+ (1,0) [0|0] \"\" XXX\n" +
+            " SG_ Frei_ZAS_1_3 : 8|7@0+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Frei_ZAS_1_2 : 7|1@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Klemme_15_SV : 6|1@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Frei_ZAS_1_1 : 5|1@1+ (1,0) [0|0] \"\" XXX\n" +
@@ -101,6 +101,10 @@ public class ParseDBCTest {
         dbc.read(reader);
 
         assertEquals(dbc.packets.size(), 3);
+
+        DbcPacket zacPacket = dbc.getPacketByIndexSlow(0);
+        assertFalse(zacPacket.getFields().get(0).isBigEndian());
+        assertTrue(zacPacket.getFields().get(1).isBigEndian());
 
         DbcPacket motorPacket = dbc.getPacketByIndexSlow(2);
         assertNotNull(motorPacket);

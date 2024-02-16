@@ -9,15 +9,17 @@ public class DbcField {
     private final double mult;
     private final double offset;
     private String category;
+    private final boolean isBigEndian;
     private boolean isNiceName;
 
-    public DbcField(String name, int startOffset, int length, double mult, double offset, String category) {
+    public DbcField(String name, int startOffset, int length, double mult, double offset, String category, boolean isBigEndian) {
         this.name = name;
         this.startOffset = startOffset;
         this.length = length;
         this.mult = mult;
         this.offset = offset;
         this.category = category;
+        this.isBigEndian = isBigEndian;
     }
 
     public static DbcField parseField(DbcPacket parent, String line) {
@@ -40,11 +42,15 @@ public class DbcField {
             throw new IllegalStateException("While " + line, e);
         }
         int length = Integer.parseInt(tokens[index + 1]);
+        int endiannessCode = Integer.parseInt(tokens[index + 2]);
+        if (endiannessCode != 0 && endiannessCode != 1)
+            throw new IllegalStateException("Unexpected endiannessCode " + endiannessCode);
+        boolean isBigEndian = endiannessCode == 0;
 
         double mult = Double.parseDouble(tokens[index + 3]);
         double offset = Double.parseDouble(tokens[index + 4]);
 
-        return new DbcField(name, startOffset, length, mult, offset, parent.getName());
+        return new DbcField(name, startOffset, length, mult, offset, parent.getName(), isBigEndian);
     }
 
     public String getCategory() {
@@ -75,6 +81,10 @@ public class DbcField {
         return offset;
     }
 
+    public boolean isBigEndian() {
+        return isBigEndian;
+    }
+
     @Override
     public String toString() {
         return "DbcField{" +
@@ -82,10 +92,11 @@ public class DbcField {
                 ", startOffset=" + startOffset +
                 ", length=" + length +
                 ", mult=" + mult +
+                ", isBigEndian=" + isBigEndian +
                 '}';
     }
 
-    public static int getBitIndex(byte[] data, int bitIndex, int bitWidth) {
+    public static int getBitRange(byte[] data, int bitIndex, int bitWidth, boolean isBigEndian) {
         if (bitIndex < 0)
             throw new IllegalArgumentException("Huh? " + bitIndex + " " + bitWidth);
         int byteIndex = bitIndex >> 3;
@@ -94,16 +105,17 @@ public class DbcField {
             return 0;
         int value = data[byteIndex] & 0xff;
         if (shift + bitWidth > 8) {
-            if (byteIndex + 1 >= data.length)
+            int otherByteIndex = (isBigEndian ? -1 : +1) + byteIndex;
+            if (otherByteIndex < 0 || otherByteIndex >= data.length)
                 return 0;
-            value = value + data[1 + byteIndex] * 256;
+            value = value + data[otherByteIndex] * 256;
         }
         int mask = (1 << bitWidth) - 1;
         return (value >> shift) & mask;
     }
 
     public double getValue(CANPacket packet) {
-        return getBitIndex(packet.getData(), startOffset, length) * mult + offset;
+        return getBitRange(packet.getData(), startOffset, length, isBigEndian) * mult + offset;
     }
 
     public void rename(String niceName) {
