@@ -27,6 +27,9 @@ public class GetValueFromTrcTest {
         byte[] rpm = {(byte) 0x70, 0x04, 0x1F};
         assertEquals(0x41f, DbcField.getBitRange(rpm, 16, 16, true));
 
+        byte[] torque = {0x68, 0x07};
+        assertEquals(0x807, DbcField.getBitRange(torque, 8, 13, true));
+
         byte[] data = {(byte) 0xAB, 0x56, 0x34};
 
         assertEquals(0x56AB, DbcField.getBitRange(data, 0, 16, false));
