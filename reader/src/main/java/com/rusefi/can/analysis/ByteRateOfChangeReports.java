@@ -105,8 +105,8 @@ public class ByteRateOfChangeReports {
 
             PerSidDump.handle(reportDestinationFolder, simpleFileName, logFileContent);
             // at the moment we overwrite counter detection report after we process each file
-            CounterScanner.scanForCounters(reportDestinationFolder, logFileContent);
-            ChecksumScanner.scanForChecksums(reportDestinationFolder, logFileContent);
+            CounterScanner.scanForCounters(reportDestinationFolder, simpleFileName, logFileContent);
+            ChecksumScanner.scanForChecksums(reportDestinationFolder, simpleFileName, logFileContent);
 
             CanToMegaLogViewer.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
 

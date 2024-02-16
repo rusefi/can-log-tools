@@ -13,7 +13,7 @@ public class ChecksumScanner {
 
     public static final String CHECKSUM_YAML = "checksum.yaml";
 
-    public static void scanForChecksums(String reportDestinationFolder, List<CANPacket> packets) throws IOException {
+    public static void scanForChecksums(String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
         Map<Integer, AtomicBoolean> isChecksumMap = new HashMap<>();
 
         J1850_SAE_crc8_Calculator c = new J1850_SAE_crc8_Calculator();
@@ -43,6 +43,7 @@ public class ChecksumScanner {
         }
         withChecksum.sort(Comparator.naturalOrder());
         Yaml yaml = new Yaml();
+        // simpleFileName + "_" +
         String yamlCountersReportFileName = reportDestinationFolder + File.separator + CHECKSUM_YAML;
         System.out.println(new Date() + " Writing report to " + yamlCountersReportFileName);
         yaml.dump(withChecksum, new FileWriter(yamlCountersReportFileName));

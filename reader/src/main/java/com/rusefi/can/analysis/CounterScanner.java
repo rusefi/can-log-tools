@@ -10,9 +10,9 @@ public class CounterScanner {
 
     public static final String COUNTERS_YAML = "counters.yaml";
 
-    public static void scanForCounters(String reportDestinationFolder, List<CANPacket> packets) throws IOException {
+    public static void scanForCounters(String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
 
-        String outputFileName = reportDestinationFolder + File.separator + "counter_report.txt";
+        String outputFileName = reportDestinationFolder + File.separator + simpleFileName + "_counter_report.txt";
         PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
 
         Map<BitStateKey, BitState> bitStates = new TreeMap<>();
