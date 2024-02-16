@@ -24,7 +24,7 @@ public class GetValueFromTrcTest {
 
     @Test
     public void testBigEndian() {
-        byte[] data = {(byte) 0xAB, 0x56};
+        byte[] data = {(byte) 0xAB, 0x56, 0x34};
         // hmmm
         assertEquals(0x56AB, DbcField.getBitRange(data, 0, 16, false));
         assertEquals(0xAB56, DbcField.getBitRange(data, 8, 16, true));
@@ -34,6 +34,9 @@ public class GetValueFromTrcTest {
 
         assertEquals(0x56, DbcField.getBitRange(data, 8, 8, false));
         assertEquals(0x56, DbcField.getBitRange(data, 8, 8, true));
+
+        // yes we have a defect for sure, we only touch two bytes at most while in this case we shall touch three bytes
+        assertEquals(0x56A, DbcField.getBitRange(data, 4, 16, false));
     }
 
     @Test
