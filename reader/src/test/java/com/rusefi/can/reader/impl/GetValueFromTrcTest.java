@@ -24,8 +24,11 @@ public class GetValueFromTrcTest {
 
     @Test
     public void testBigEndian() {
+        byte[] rpm = {(byte) 0x70, 0x04, 0x1F};
+        assertEquals(0x41f, DbcField.getBitRange(rpm, 16, 16, true));
+
         byte[] data = {(byte) 0xAB, 0x56, 0x34};
-        // hmmm
+
         assertEquals(0x56AB, DbcField.getBitRange(data, 0, 16, false));
         assertEquals(0xAB56, DbcField.getBitRange(data, 8, 16, true));
 

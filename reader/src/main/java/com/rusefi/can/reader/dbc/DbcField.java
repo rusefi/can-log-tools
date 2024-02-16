@@ -99,6 +99,7 @@ public class DbcField {
     public static int getBitRange(byte[] data, int bitIndex, int bitWidth, boolean isBigEndian) {
         if (bitIndex < 0)
             throw new IllegalArgumentException("Huh? " + bitIndex + " " + bitWidth);
+
         int byteIndex = bitIndex >> 3;
         int shift = bitIndex - byteIndex * 8;
         if (byteIndex >= data.length)
