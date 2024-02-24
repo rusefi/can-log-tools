@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.DualSid;
 import com.rusefi.can.writer.SteveWriter;
 
 import java.io.File;
@@ -10,8 +11,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
-
-import static com.rusefi.can.analysis.ByteRateOfChange.dualSid;
 
 /**
  * Write a separate file for each unique packet ID
@@ -29,7 +28,7 @@ public class PerSidDump {
         // O(n*M) is not so bad
         for (int sid : sids) {
 
-            String outputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + ByteRateOfChange.dualSid(sid, "_") + ".txt";
+            String outputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid, "_") + ".txt";
             PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
 
             List<CANPacket> filteredPackets = new ArrayList<>();
@@ -47,7 +46,7 @@ public class PerSidDump {
             int middleIndex = filteredPackets.size() / 2;
             CANPacket middlePacket = filteredPackets.get(middleIndex);
 
-            String middleOutputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + ByteRateOfChange.dualSid(sid, "_") + "_middle.txt";
+            String middleOutputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid, "_") + "_middle.txt";
             PrintWriter middle = new PrintWriter(new FileOutputStream(middleOutputFileName));
 
             String decAndHex = middlePacket.getId() + "_" + Integer.toHexString(middlePacket.getId());

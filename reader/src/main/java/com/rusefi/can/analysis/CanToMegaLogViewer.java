@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.DualSid;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.mlv.LoggingContext;
@@ -92,10 +93,10 @@ public class CanToMegaLogViewer {
 
 
     private static String getTwoBytesKeyM(Integer sid, int i) {
-        return ByteRateOfChange.dualSid(sid) + "__" + i + "_" + (i + 1);
+        return DualSid.dualSid(sid) + "__" + i + "_" + (i + 1);
     }
 
     private static String getTwoBytesKeyL(Integer sid, int i) {
-        return ByteRateOfChange.dualSid(sid) + "__" + (i + 1) + "_" + i;
+        return DualSid.dualSid(sid) + "__" + (i + 1) + "_" + i;
     }
 }

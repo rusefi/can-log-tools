@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.DualSid;
 
 import java.io.*;
 import java.util.*;
@@ -45,7 +46,7 @@ public class ByteRateOfChange {
 
         for (ByteStatistics byteStatistics : allStats) {
             ByteId key = byteStatistics.key;
-            ps.println(dualSid(key.sid) + " byte " + key.getByteIndex() + " has " + byteStatistics.getUniqueValuesCount() + " unique value(s)");
+            ps.println(DualSid.dualSid(key.sid) + " byte " + key.getByteIndex() + " has " + byteStatistics.getUniqueValuesCount() + " unique value(s)");
         }
 
         ps.close();
@@ -67,14 +68,6 @@ public class ByteRateOfChange {
 
     private static double getDurationMs(List<CANPacket> packets) {
         return packets.isEmpty() ? 0 : packets.get(packets.size() - 1).getTimeStamp() - packets.get(0).getTimeStamp();
-    }
-
-    public static String dualSid(int sid) {
-        return dualSid(sid, "/");
-    }
-
-    public static String dualSid(int sid, String separator) {
-        return String.format("%d%s0x%x", sid, separator, sid);
     }
 
     public static class ByteStatistics {
@@ -131,7 +124,7 @@ public class ByteRateOfChange {
         }
 
         public String getLogKey() {
-            return dualSid(sid) + "_byte_" + byteIndex + "_bit_" + (byteIndex * 8);
+            return DualSid.dualSid(sid) + "_byte_" + byteIndex + "_bit_" + (byteIndex * 8);
         }
 
         @Override

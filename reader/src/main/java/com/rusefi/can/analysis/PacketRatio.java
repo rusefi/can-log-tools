@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.DualSid;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +27,7 @@ public class PacketRatio {
 
         for (Map.Entry<Integer, AtomicInteger> e : countBySID.entrySet()) {
             double ratio = 100.0 * e.getValue().get() / logFileContent.size();
-            w.write(ByteRateOfChange.dualSid(e.getKey()) + ": " + ratio + "\n");
+            w.write(DualSid.dualSid(e.getKey()) + ": " + ratio + "\n");
         }
         w.close();
     }
