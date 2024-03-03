@@ -3,6 +3,8 @@ package com.rusefi.can.analysis;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.CANLineReader;
+import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcPacket;
 import com.rusefi.util.FolderUtil;
 
 import java.io.*;
@@ -12,14 +14,20 @@ public class ByteRateOfChangeReports {
     /**
      * sweet baby O(n^2)
      */
-    public static void compareEachReportAgainstAllOthers(String reportDestinationFolder, List<ByteRateOfChange.TraceReport> reports, CanMetaDataContext context) throws FileNotFoundException {
+    public static void compareEachReportAgainstAllOthers(String reportDestinationFolder, List<ByteRateOfChange.TraceReport> reports, CanMetaDataContext context) throws IOException {
+
+        DbcFile dbc = null;
+        if (Launcher.dbcFileName != null) {
+            dbc = DbcFile.readFromFile(Launcher.dbcFileName);
+        }
+
         for (int i = 0; i < reports.size(); i++) {
             for (int j = i + 1; j < reports.size(); j++)
-                compareTwoReports(reportDestinationFolder, reports.get(i), reports.get(j), context);
+                compareTwoReports(dbc, reportDestinationFolder, reports.get(i), reports.get(j), context);
         }
     }
 
-    private static void compareTwoReports(String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanMetaDataContext context) throws FileNotFoundException {
+    private static void compareTwoReports(DbcFile dbc, String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanMetaDataContext context) throws FileNotFoundException {
         Set<ByteRateOfChange.ByteId> allKeys = new TreeSet<>();
         allKeys.addAll(traceReport1.getStatistics().keySet());
         allKeys.addAll(traceReport2.getStatistics().keySet());
@@ -42,6 +50,14 @@ public class ByteRateOfChangeReports {
                 // skipping byte with a known counter
                 continue;
             }
+            String prefix = "";
+            if (dbc != null) {
+                DbcPacket packet = dbc.packets.get(id.sid);
+                if (packet != null) {
+                    prefix = packet.getName() + " ";
+                }
+            }
+
             if (id.getByteIndex() == 7 && context.withChecksum.contains(id.sid)) {
                 // skipping known checksum byte
                 continue;
@@ -51,7 +67,7 @@ public class ByteRateOfChangeReports {
             ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(id, ByteRateOfChange.ByteStatistics::new);
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
-                String msg = id + ": count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
+                String msg = prefix + id + ": count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
                 int deltaCount = Math.abs(s1.getUniqueValuesCount() - s2.getUniqueValuesCount());
                 differences.add(new ByteVariationDifference(deltaCount, msg));
                 report.println(msg + " delta=" + deltaCount + " / transitions=" + s1.totalTransitions + " vs " + s2.totalTransitions);
