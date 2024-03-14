@@ -76,12 +76,12 @@ public class ByteRateOfChangeReports {
                 diff.removeAll(s2.getUniqueValues());
                 if (!diff.isEmpty()) {
 
-                    report.println(id + " different sets " + s1.getUniqueValues() + " vs " + s2.getUniqueValues());
+                    report.println(prefix + id + " different sets " + s1.getUniqueValues() + " vs " + s2.getUniqueValues());
 
                 } else {
                     // same number of unique values, same set of values
                     if (s1.totalTransitions != s2.totalTransitions) {
-                        report.println(id + " total number of transitions " + s1.totalTransitions + "/" + s2.totalTransitions);
+                        report.println(prefix + id + " total number of transitions " + s1.totalTransitions + "/" + s2.totalTransitions);
                     }
                 }
             }
