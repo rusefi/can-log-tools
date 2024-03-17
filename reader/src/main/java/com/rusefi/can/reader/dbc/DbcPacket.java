@@ -102,4 +102,11 @@ public class DbcPacket {
         return buf.toString();
     }
 
+    public DbcField getFieldAtByte(int byteIndex) {
+        for (DbcField field : fields) {
+            if (field.coversByte(byteIndex))
+                return field;
+        }
+        return null;
+    }
 }

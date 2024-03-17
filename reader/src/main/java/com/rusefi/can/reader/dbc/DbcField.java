@@ -123,4 +123,13 @@ public class DbcField {
         name = niceName;
         isNiceName = true;
     }
+
+    public boolean coversByte(int byteIndex) {
+        int startBit = byteIndex * 8;
+        if (startOffset>startBit)
+            return false;
+        if (startOffset + length < byteIndex + 8)
+            return false;
+        return true;
+    }
 }

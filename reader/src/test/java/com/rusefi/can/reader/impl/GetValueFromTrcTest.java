@@ -1,6 +1,7 @@
 package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.reader.dbc.DbcPacket;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
@@ -52,7 +53,11 @@ public class GetValueFromTrcTest {
             BufferedReader reader = new BufferedReader(new StringReader(VAG_MOTOR_1));
             dbc.read(reader);
         }
-        assertNotNull(dbc.findPacket(640));
+        DbcPacket packet640 = dbc.findPacket(640);
+        assertNotNull(packet640);
+        DbcField byte1 = packet640.getFieldAtByte(1);
+        assertNotNull(byte1);
+        assertEquals("inneres_Motor_Moment", byte1.getName());
         assertNull(dbc.findPacket(1640));
 
         String trcLine = "  3769)      2117.7  Rx         0280  8  01 1D DF 12 1E 00 1A 1E ";
