@@ -15,13 +15,7 @@ public class ByteRateOfChangeReports {
     /**
      * sweet baby O(n^2)
      */
-    public static void compareEachReportAgainstAllOthers(String reportDestinationFolder, List<ByteRateOfChange.TraceReport> reports, CanMetaDataContext context) throws IOException {
-
-        DbcFile dbc = null;
-        if (Launcher.dbcFileName != null) {
-            dbc = DbcFile.readFromFile(Launcher.dbcFileName);
-        }
-
+    public static void compareEachReportAgainstAllOthers(DbcFile dbc, String reportDestinationFolder, List<ByteRateOfChange.TraceReport> reports, CanMetaDataContext context) throws IOException {
         for (int i = 0; i < reports.size(); i++) {
             for (int j = i + 1; j < reports.size(); j++)
                 compareTwoReports(dbc, reportDestinationFolder, reports.get(i), reports.get(j), context);
@@ -113,6 +107,8 @@ public class ByteRateOfChangeReports {
     public static void scanInputFolder(String inputFolderName, String fileNameSuffix) throws IOException {
         String reportDestinationFolder = createOutputFolder(inputFolderName);
 
+        DbcFile dbc = getDbc();
+
         CanMetaDataContext context = CanMetaDataContext.read(inputFolderName);
 
         List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
@@ -123,7 +119,7 @@ public class ByteRateOfChangeReports {
 
             List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
 
-            PerSidDump.handle(reportDestinationFolder, simpleFileName, logFileContent);
+            PerSidDump.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             // at the moment we overwrite counter detection report after we process each file
             CounterScanner.scanForCounters(reportDestinationFolder, simpleFileName, logFileContent);
             ChecksumScanner.scanForChecksums(reportDestinationFolder, simpleFileName, logFileContent);
@@ -140,7 +136,15 @@ public class ByteRateOfChangeReports {
 
 
         System.out.println("Processing " + reports.size() + " report(s)");
-        compareEachReportAgainstAllOthers(reportDestinationFolder, reports, context);
+        compareEachReportAgainstAllOthers(dbc, reportDestinationFolder, reports, context);
+    }
+
+    private static DbcFile getDbc() throws IOException {
+        DbcFile dbc = null;
+        if (Launcher.dbcFileName != null) {
+            dbc = DbcFile.readFromFile(Launcher.dbcFileName);
+        }
+        return dbc;
     }
 
     static class ByteVariationDifference {
