@@ -126,9 +126,9 @@ public class DbcField {
 
     public boolean coversByte(int byteIndex) {
         int startBit = byteIndex * 8;
-        if (startOffset>startBit)
+        if (startOffset > startBit)
             return false;
-        if (startOffset + length < byteIndex + 8)
+        if (startOffset + length < startBit + 8)
             return false;
         return true;
     }

@@ -58,6 +58,8 @@ public class GetValueFromTrcTest {
         DbcField byte1 = packet640.getFieldAtByte(1);
         assertNotNull(byte1);
         assertEquals("inneres_Motor_Moment", byte1.getName());
+        DbcField byte4 = packet640.getFieldAtByte(4);
+        assertNotNull(byte4);
         assertNull(dbc.findPacket(1640));
 
         String trcLine = "  3769)      2117.7  Rx         0280  8  01 1D DF 12 1E 00 1A 1E ";
