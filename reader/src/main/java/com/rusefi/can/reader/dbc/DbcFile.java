@@ -98,8 +98,11 @@ public class DbcFile {
     }
 
     private void purgePacket(DbcPacket currentPacket) {
-        if (currentPacket != null)
+        if (currentPacket != null) {
+            if (packets.containsKey(currentPacket.getId()))
+                throw new IllegalStateException("We already have " + packets.get(currentPacket.getId()).getName() + " for " + currentPacket.getId());
             packets.put(currentPacket.getId(), currentPacket);
+        }
     }
 
     public static String replaceSpecialWithSpaces(String line) {
