@@ -29,9 +29,12 @@ public class DbcField {
             return null;
         String name = tokens[1];
         int index = 1;
-        while (!tokens[index - 1].equals(":"))
-            index++;
-
+        try {
+            while (!tokens[index - 1].equals(":"))
+                index++;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new IllegalStateException("While parsing [" + line + "]", e);
+        }
 
         if (DbcFile.debugEnabled)
             System.out.println(line);
