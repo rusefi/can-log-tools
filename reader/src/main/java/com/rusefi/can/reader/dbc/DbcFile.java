@@ -99,8 +99,9 @@ public class DbcFile {
 
     private void purgePacket(DbcPacket currentPacket) {
         if (currentPacket != null) {
-            if (packets.containsKey(currentPacket.getId()))
-                throw new IllegalStateException("We already have " + packets.get(currentPacket.getId()).getName() + " for " + currentPacket.getId());
+            DbcPacket existingPacket = packets.get(currentPacket.getId());
+            if (existingPacket != null && existingPacket != currentPacket)
+                throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + currentPacket.getId());
             packets.put(currentPacket.getId(), currentPacket);
         }
     }
