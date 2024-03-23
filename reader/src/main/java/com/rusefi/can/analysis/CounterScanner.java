@@ -1,6 +1,8 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcPacket;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -10,7 +12,7 @@ public class CounterScanner {
 
     public static final String COUNTERS_YAML = "counters.yaml";
 
-    public static void scanForCounters(String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
+    public static void scanForCounters(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
 
         String outputFileName = reportDestinationFolder + File.separator + simpleFileName + "_counter_report.txt";
         PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
@@ -52,7 +54,8 @@ public class CounterScanner {
         List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
 
         Yaml yaml = new Yaml();
-        Map<Integer, Map<Integer, Integer>> map = new TreeMap<>();
+
+        Map</*sid*/Integer, Map<Integer, Integer>> map = new TreeMap<>();
 
         pw.println("Here are the founding:");
         for (CounterAggregator.CounterWithWidth counterWithWidth : countersWithWidth) {
@@ -64,7 +67,16 @@ public class CounterScanner {
         }
         String yamlCountersReportFileName = reportDestinationFolder + File.separator + COUNTERS_YAML;
         System.out.println(new Date() + " Writing report to " + yamlCountersReportFileName);
-        yaml.dump(map, new FileWriter(yamlCountersReportFileName));
+
+
+        Map<String, Map<Integer, Integer>> report = new TreeMap<>();
+        for (Map.Entry<Integer, Map<Integer, Integer>> e : map.entrySet()) {
+            Integer sid = e.getKey();
+            DbcPacket packet = dbc == null ? null : dbc.packets.get(sid);
+            String key = packet == null ? Integer.toString(sid) : packet.getName();
+            report.put(key, e.getValue());
+        }
+        yaml.dump(report, new FileWriter(yamlCountersReportFileName));
         pw.close();
     }
 
@@ -176,5 +188,9 @@ public class CounterScanner {
             } else
                 throw new IllegalStateException(state.toString());
         }
+    }
+
+    static class Id {
+
     }
 }
