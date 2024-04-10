@@ -1,7 +1,8 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
-import com.rusefi.can.DualSid;
+import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcPacket;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PacketRatio {
 
-    public static void write(String reportDestinationFolder, List<CANPacket> logFileContent, String simpleFileName) throws IOException {
+    public static void write(DbcFile dbc, String reportDestinationFolder, List<CANPacket> logFileContent, String simpleFileName) throws IOException {
 
         Map<Integer, AtomicInteger> countBySID = new TreeMap<>();
 
@@ -27,7 +28,10 @@ public class PacketRatio {
 
         for (Map.Entry<Integer, AtomicInteger> e : countBySID.entrySet()) {
             double ratio = 100.0 * e.getValue().get() / logFileContent.size();
-            w.write(DualSid.dualSid(e.getKey()) + ": " + ratio + "\n");
+            Integer sid = e.getKey();
+            DbcPacket packet = dbc == null ? null : dbc.packets.get(sid);
+            String key = packet == null ? Integer.toString(sid) : packet.getName();
+            w.write(key + ": " + ratio + "\n");
         }
         w.close();
     }
