@@ -37,7 +37,7 @@ public class ChecksumScanner {
         for (Map.Entry<Integer, AtomicBoolean> e : isChecksumMap.entrySet()) {
             if (e.getValue().get()) {
                 Integer sid = e.getKey();
-                System.out.println("Ends with checksum " + sid);
+                System.out.println("ChecksumScanner: Ends with checksum " + sid);
                 withChecksum.add(sid);
             }
         }
