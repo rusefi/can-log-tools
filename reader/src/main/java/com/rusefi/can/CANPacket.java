@@ -18,7 +18,7 @@ public class CANPacket {
         result.append(arrayName + " = {");
 
         byte[] data = getData();
-        System.out.println(String.format("Got ECU 0x%x", getId()) + " " + data.length);
+//        System.out.println(String.format("Got ECU 0x%x", getId()) + " " + data.length);
 
         for (int index = 0; index < data.length; index++) {
             if (index > 0)
