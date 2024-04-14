@@ -52,7 +52,7 @@ public class PerSidDump {
             PrintWriter middle = new PrintWriter(new FileOutputStream(middleOutputFileName));
 
             String decAndHex = middlePacket.getId() + "_" + Integer.toHexString(middlePacket.getId());
-            DbcPacket packet = dbc.packets.get(middlePacket.getId());
+            DbcPacket packet = dbc == null ? null : dbc.packets.get(middlePacket.getId());
             String payloadVariableName = "payload" + (packet == null ? decAndHex : packet.getName());
             String variableName = packet == null ? "CAN_" + decAndHex : packet.getName();
             String methodName = "on" + (packet == null ? ("Can" + decAndHex) : packet.getName());
