@@ -29,19 +29,21 @@ public class PerSidDump {
 
         // O(n*M) is not so bad
         for (int sid : sids) {
+            DbcPacket packet = dbc == null ? null : dbc.packets.get(sid);
+            String suffix = packet == null ? "" : ("_" + packet.getName());
 
-            String outputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid, "_") + ".txt";
+            String outputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid, "_") + suffix + ".txt";
             PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
 
             List<CANPacket> filteredPackets = new ArrayList<>();
 
-            for (CANPacket packet : packets) {
-                if (packet.getId() != sid)
+            for (CANPacket canPacket : packets) {
+                if (canPacket.getId() != sid)
                     continue;
 
                 // no specific reason to use SteveWriter just need any human-readable writer here
-                SteveWriter.append(pw, packet);
-                filteredPackets.add(packet);
+                SteveWriter.append(pw, canPacket);
+                filteredPackets.add(canPacket);
             }
             pw.close();
 
@@ -52,7 +54,6 @@ public class PerSidDump {
             PrintWriter middle = new PrintWriter(new FileOutputStream(middleOutputFileName));
 
             String decAndHex = middlePacket.getId() + "_" + Integer.toHexString(middlePacket.getId());
-            DbcPacket packet = dbc == null ? null : dbc.packets.get(middlePacket.getId());
             String payloadVariableName = "payload" + (packet == null ? decAndHex : packet.getName());
             String variableName = packet == null ? "CAN_" + decAndHex : packet.getName();
             String methodName = "on" + (packet == null ? ("Can" + decAndHex) : packet.getName());
