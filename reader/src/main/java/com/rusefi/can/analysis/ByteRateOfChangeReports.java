@@ -124,7 +124,8 @@ public class ByteRateOfChangeReports {
             CounterScanner.scanForCounters(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             ChecksumScanner.scanForChecksums(reportDestinationFolder, simpleFileName, logFileContent);
 
-            GrowingValuesScanner.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder);
+            GrowingValuesScanner.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 1);
+            GrowingValuesScanner.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 20);
 
             CanToMegaLogViewer.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
 

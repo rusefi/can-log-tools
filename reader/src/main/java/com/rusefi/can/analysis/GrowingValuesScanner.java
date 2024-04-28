@@ -11,16 +11,16 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class GrowingValuesScanner {
-    public static void scanForGrowing(DbcFile dbc, String simpleFileName, List<CANPacket> packets, String reportDestinationFolder) throws IOException {
-        String outputFileName = reportDestinationFolder + File.separator + simpleFileName + "_growing.txt";
+    public static void scanForGrowing(DbcFile dbc, String simpleFileName, List<CANPacket> packets, String reportDestinationFolder, int delta) throws IOException {
+        String outputFileName = reportDestinationFolder + File.separator + simpleFileName + "_" + delta + "_growing.txt";
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName))) {
 
-            runScanner(dbc, packets, pw);
+            runScanner(dbc, packets, pw, delta);
         }
     }
 
-    private static void runScanner(DbcFile dbc, List<CANPacket> packets, PrintWriter pw) {
-        Map<ByteRateOfChange.ByteId, ByteState> states = runScanner(packets);
+    private static void runScanner(DbcFile dbc, List<CANPacket> packets, PrintWriter pw, int delta) {
+        Map<ByteRateOfChange.ByteId, ByteState> states = runScanner(packets, delta);
 
         for (ByteState state : states.values()) {
             if (state.isIncrementByte()) {
@@ -31,7 +31,7 @@ public class GrowingValuesScanner {
                 if (packet != null) {
                     DbcField field = packet.getFieldAtByte(state.byteId.byteIndex);
                     if (field != null)
-                        key += field.getName() + " ";
+                        key += " " + field.getName();
                 }
                 pw.println(key + " only increments at " + state.byteId.byteIndex + " last value " + state.value);
             }
@@ -39,7 +39,7 @@ public class GrowingValuesScanner {
 
     }
 
-    public static Map<ByteRateOfChange.ByteId, ByteState> runScanner(List<CANPacket> packets) {
+    public static Map<ByteRateOfChange.ByteId, ByteState> runScanner(List<CANPacket> packets, int delta) {
         Map<ByteRateOfChange.ByteId, ByteState> states = new TreeMap<>();
 
 
@@ -59,7 +59,10 @@ public class GrowingValuesScanner {
                     continue;
                 }
 
-                boolean isIncrement = state.value + 1 == byteValue;
+
+                int actualDelta = (byteValue - state.value) & 0xFF;
+
+                boolean isIncrement = actualDelta <= delta;
                 state.withIncrement = state.withIncrement || isIncrement;
                 state.badChange = state.badChange || !isIncrement;
 
