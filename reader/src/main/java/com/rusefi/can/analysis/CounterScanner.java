@@ -15,8 +15,12 @@ public class CounterScanner {
     public static void scanForCounters(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
 
         String outputFileName = reportDestinationFolder + File.separator + simpleFileName + "_counter_report.txt";
-        PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
+        try (PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName))) {
+            runScanner(dbc, reportDestinationFolder, packets, pw);
+        }
+    }
 
+    private static void runScanner(DbcFile dbc, String reportDestinationFolder, List<CANPacket> packets, PrintWriter pw) throws IOException {
         Map<BitStateKey, BitState> bitStates = new TreeMap<>();
 
         for (CANPacket packet : packets) {
@@ -77,7 +81,6 @@ public class CounterScanner {
             report.put(key, e.getValue());
         }
         yaml.dump(report, new FileWriter(yamlCountersReportFileName));
-        pw.close();
     }
 
     static class BitStateKey implements Comparable {
