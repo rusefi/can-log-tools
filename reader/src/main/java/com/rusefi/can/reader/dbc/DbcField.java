@@ -8,7 +8,7 @@ public class DbcField {
     private final int length;
     private final double mult;
     private final double offset;
-    private String category;
+    private final String category;
     private final boolean isBigEndian;
     private boolean isNiceName;
 
@@ -131,8 +131,6 @@ public class DbcField {
         int startBit = byteIndex * 8;
         if (startOffset > startBit)
             return false;
-        if (startOffset + length < startBit + 8)
-            return false;
-        return true;
+        return startOffset + length >= startBit + 8;
     }
 }
