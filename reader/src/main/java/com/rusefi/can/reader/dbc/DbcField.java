@@ -20,6 +20,8 @@ public class DbcField {
         this.offset = offset;
         this.category = category;
         this.isBigEndian = isBigEndian;
+        if (mult == 0 && offset == 0)
+            throw new IllegalArgumentException("Really? multiplier and offset both zero for " + name);
     }
 
     public static DbcField parseField(DbcPacket parent, String line) {
