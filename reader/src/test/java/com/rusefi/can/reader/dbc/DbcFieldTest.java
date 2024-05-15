@@ -9,9 +9,9 @@ public class DbcFieldTest {
     @Test
     public void testBigEndian() {
         DbcField field = new DbcField("", 8, 16, 1, 0, null, true);
-        assertFalse(field.coversByte(0));
+        assertTrue(field.coversByte(0));
         assertTrue(field.coversByte(1));
-        assertTrue(field.coversByte(2));
+        assertFalse(field.coversByte(2));
         assertFalse(field.coversByte(3));
     }
 
