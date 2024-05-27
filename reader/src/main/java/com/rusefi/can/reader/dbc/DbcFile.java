@@ -35,6 +35,7 @@ public class DbcFile {
         DbcPacket currentPacket = null;
         String line;
         int lineIndex = -1;
+        Set<String> fieldNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         while ((line = reader.readLine()) != null) {
             lineIndex++;
             line = line.trim();
@@ -72,11 +73,19 @@ public class DbcFile {
 
 
             } else if (line.startsWith("SG_")) {
-                DbcField field = DbcField.parseField(currentPacket, line);
+                DbcField field;
+                try {
+                    field = DbcField.parseField(currentPacket, line);
+                } catch (Throwable e) {
+                    throw new IllegalStateException("During [" + line + "]", e);
+                }
                 if (debugEnabled)
                     System.out.println("Found " + field);
-                if (field != null)
+                if (field != null) {
+                    if (!fieldNames.add(field.getName()))
+                        throw new IllegalArgumentException("Let's use unique field names: " + field.getName());
                     currentPacket.add(field);
+                }
 
             } else {
                 // skipping useless line
