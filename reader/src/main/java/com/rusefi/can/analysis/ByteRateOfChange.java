@@ -158,7 +158,7 @@ public class ByteRateOfChange {
         }
     }
 
-    public static class TraceReport extends HashMap<ByteId, ByteStatistics> {
+    public static class TraceReport {
         private final String simpleFileName;
         private final HashMap<ByteId, ByteStatistics> statistics;
         private final double durationMs;
@@ -179,6 +179,15 @@ public class ByteRateOfChange {
 
         public HashMap<ByteId, ByteStatistics> getStatistics() {
             return statistics;
+        }
+
+        @Override
+        public String toString() {
+            return "TraceReport{" +
+                    "simpleFileName='" + simpleFileName + '\'' +
+                    ", statistics=" + statistics +
+                    ", durationMs=" + durationMs +
+                    '}';
         }
 
         public void save(String file) throws IOException {
