@@ -70,7 +70,8 @@ public class ByteRateOfChangeReports {
                 differences.add(new ByteVariationDifference(deltaCount, msg));
                 report.println(msg + " (delta=" + deltaCount + "), transitions=" + s1.totalTransitions + " vs " + s2.totalTransitions);
             } else {
-                HashSet<Integer> diff = s1.getUniqueValues();
+                Set<Integer> diff = new HashSet<>();
+                diff.addAll(s1.getUniqueValues());
                 diff.removeAll(s2.getUniqueValues());
                 if (!diff.isEmpty()) {
 

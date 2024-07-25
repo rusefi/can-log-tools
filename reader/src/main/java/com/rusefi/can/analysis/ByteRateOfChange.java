@@ -85,8 +85,8 @@ public class ByteRateOfChange {
             return uniqueValues.size();
         }
 
-        public HashSet<Integer> getUniqueValues() {
-            return uniqueValues;
+        public Set<Integer> getUniqueValues() {
+            return Collections.unmodifiableSet(uniqueValues);
         }
 
         public ByteId getKey() {
