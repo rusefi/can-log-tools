@@ -12,6 +12,8 @@ import java.io.*;
 import java.util.*;
 
 public class ByteRateOfChangeReports {
+    public static Filter filter = packet -> false;
+
     /**
      * sweet baby O(n^2)
      */
@@ -51,8 +53,11 @@ public class ByteRateOfChangeReports {
                 if (packet != null) {
                     prefix = packet.getName() + " ";
                     DbcField field = packet.getFieldAtByte(id.byteIndex);
-                    if (field != null)
+                    if (field != null) {
+                        if (filter.rejectPacket(field))
+                            continue;
                         prefix += field.getName() + " ";
+                    }
                 }
             }
 
@@ -160,5 +165,9 @@ public class ByteRateOfChangeReports {
             this.deltaCount = deltaCount;
             this.msg = msg;
         }
+    }
+
+    public interface Filter {
+        boolean rejectPacket(DbcField dbcField);
     }
 }
