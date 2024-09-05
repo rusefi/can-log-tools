@@ -17,6 +17,13 @@ public class CANPacket {
         StringBuilder result = new StringBuilder();
         result.append(arrayName + " = {");
 
+        result.append(arrayToCode());
+        result.append("}\n");
+        return result;
+    }
+
+    public StringBuilder arrayToCode() {
+        StringBuilder result = new StringBuilder();
         byte[] data = getData();
 //        System.out.println(String.format("Got ECU 0x%x", getId()) + " " + data.length);
 
@@ -27,7 +34,6 @@ public class CANPacket {
             result.append(String.format("0x%02x", data[index]));
 
         }
-        result.append("}\n");
         return result;
     }
 

@@ -56,7 +56,8 @@ public class PerSidDump {
             String decAndHex = middlePacket.getId() + "_" + Integer.toHexString(middlePacket.getId());
             String payloadVariableName = "payload" + (packet == null ? decAndHex : packet.getName());
             String variableName = packet == null ? "CAN_" + decAndHex : packet.getName();
-            String methodName = "on" + (packet == null ? ("Can" + decAndHex) : packet.getName());
+            String methodNameSuffix = packet == null ? ("Can" + decAndHex) : packet.getName();
+            String rxMethodName = "on" + methodNameSuffix;
 
             StringBuilder payloadLine = middlePacket.asLua(payloadVariableName);
 
@@ -67,7 +68,7 @@ public class PerSidDump {
 
             middle.println();
             middle.println(counterVariable + " = 0");
-            middle.println("function " + methodName + "(bus, id, dlc, data)");
+            middle.println("function " + rxMethodName + "(bus, id, dlc, data)");
             middle.println("\t" + counterVariable + " = (" + counterVariable + " + 1) % 256");
             middle.println("\t" + payloadVariableName + "[x] = " + counterVariable);
             //middle.println("\tprint ('MOTOR_" + middlePacket.getId() + "' " ..)
@@ -77,13 +78,30 @@ public class PerSidDump {
             middle.println("end");
             middle.println();
 
-            middle.println("canRxAdd(ECU_BUS, " + variableName + ", " + methodName + ")");
+            middle.println("canRxAdd(ECU_BUS, " + variableName + ", " + rxMethodName + ")");
             middle.println("canRxAdd(ECU_BUS, " + variableName + ", " + "drop" + ")");
             middle.println("canRxAdd(ECU_BUS, " + variableName + ", " + "drop" + ")");
 
             middle.println();
 
             middle.println(middlePacket.getBytesAsString());
+
+            String txMethodName = "send" + methodNameSuffix;
+
+            middle.println();
+            middle.println();
+            middle.println("static void " + txMethodName + "() {");
+            middle.println("static uint8_t " + payloadVariableName + "[] = {" + middlePacket.arrayToCode() + "};");
+            middle.println("static int " + counterVariable + ";");
+
+            if (packet != null) {
+                middle.println("\tCanTxMessage msg(CanCategory::NBC, " + packet.getName() + ");");
+                middle.println("\tmsg.setArray(" + payloadVariableName + ", 8);");
+
+
+            }
+            middle.println("}");
+
             middle.close();
         }
     }
