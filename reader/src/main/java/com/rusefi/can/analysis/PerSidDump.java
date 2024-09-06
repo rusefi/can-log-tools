@@ -96,7 +96,7 @@ public class PerSidDump {
 
             if (packet != null) {
                 middle.println("\tCanTxMessage msg(CanCategory::NBC, " + packet.getName() + ");");
-                middle.println("\tmsg.setArray(" + payloadVariableName + ", 8);");
+                middle.println("\tmsg.setArray(" + payloadVariableName + ", " + middlePacket.getData().length + ");");
 
 
             }
