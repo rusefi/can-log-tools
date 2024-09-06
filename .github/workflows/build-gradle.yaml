@@ -25,7 +25,7 @@ jobs:
         run: ./gradlew jar
 
       - name: Upload .jar file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: can-log-tools jar
           path: build/libs/can-log-tools-0.1-SNAPSHOT.jar
