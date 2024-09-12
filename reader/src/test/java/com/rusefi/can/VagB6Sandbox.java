@@ -1,5 +1,6 @@
 package com.rusefi.can;
 
+import com.rusefi.can.analysis.ByteRateOfChangeReports;
 import com.rusefi.can.reader.impl.ReadFullVagDbc;
 
 import java.io.IOException;
@@ -9,6 +10,11 @@ public class VagB6Sandbox {
 //        DbcFile dbc = DbcFile.readFromFile(ReadFullVagDbc.VAG_DBC_FILE);
 
         String inputFolderName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\VAG\\2006-Passat-B6\\";
+
+        ByteRateOfChangeReports.filter = dbcField -> {
+            String name = dbcField.getName();
+            return name.startsWith("CHECKSUM_") || name.startsWith("COUNTER_");
+        };
 
         Launcher.main(new String[]{inputFolderName,
                 Launcher.FILENAME_FILTER_PROPERTY,
