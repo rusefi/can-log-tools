@@ -56,7 +56,8 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             try {
                 stream.write(0);
                 stream.write(lineCounter++);
-                stream.writeShort((int) (timeProvider.currentTimestampUs() * 100));
+                // Offset 2, size 2 = Timestamp at 10us resolution
+                stream.writeShort((int) (timeProvider.currentTimestampUs() / 10));
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 DataOutputStream dos = new DataOutputStream(baos);
