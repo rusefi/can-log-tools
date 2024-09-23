@@ -30,7 +30,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
     }
 
     public interface TimeProvider {
-        long currentTimestamp();
+        long currentTimestampUs();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
             try {
                 stream.write(0);
                 stream.write(lineCounter++);
-                stream.writeShort((int) (timeProvider.currentTimestamp() * 100));
+                stream.writeShort((int) (timeProvider.currentTimestampUs() * 100));
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 DataOutputStream dos = new DataOutputStream(baos);

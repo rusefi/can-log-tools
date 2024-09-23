@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LoggingContext {
     public Map<String, Double> currentSnapshot = new HashMap<>();
-    AtomicReference<Long> currentTime = new AtomicReference<>();
+    private final AtomicReference<Long> currentTimeUs = new AtomicReference<>();
 
     public BinarySensorLog<BinaryLogEntry> getBinaryLogEntryBinarySensorLog(Collection<BinaryLogEntry> entries, String outputFileName) {
         return new BinarySensorLog<>(o -> {
@@ -25,7 +25,7 @@ public class LoggingContext {
 
     public void writeLogContent(List<CANPacket> packets, BinarySensorLog<BinaryLogEntry> log, LoggingStrategy.PacketLogger logger) {
         for (CANPacket packetContent : packets) {
-            currentTime.set((long) (packetContent.getTimeStamp() * 1000));
+            currentTimeUs.set((long) (packetContent.getTimeStamp() * 1000));
             boolean needLine = logger.takeValues(packetContent);
             if (needLine)
                 log.writeSensorLogLine();
@@ -34,6 +34,6 @@ public class LoggingContext {
     }
 
     public BinarySensorLog.TimeProvider getTimeProvider() {
-        return () -> this.currentTime.get();
+        return () -> this.currentTimeUs.get();
     }
 }
