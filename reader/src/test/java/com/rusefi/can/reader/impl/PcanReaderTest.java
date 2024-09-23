@@ -1,7 +1,6 @@
 package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.CANPacket;
-import com.rusefi.can.deprecated.decoders.bmw.Bmw192;
 import com.rusefi.can.reader.CANLineReader;
 import org.junit.Test;
 

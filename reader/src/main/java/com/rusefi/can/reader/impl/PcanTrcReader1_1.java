@@ -20,7 +20,7 @@ public class PcanTrcReader1_1 implements CANLineReader {
         String[] tokens = line.split("\\s+");
         if (tokens.length < 2)
             throw new IllegalStateException("Unexpected token count in " + fileName + "@" + lineIndex + ": [" + line + "]");
-        double timeStamp = Double.parseDouble(tokens[1]);
+        double timeStampMs = Double.parseDouble(tokens[1]);
 
         int sid = Integer.parseInt(tokens[3], 16);
         int size = Integer.parseInt(tokens[4]);
@@ -28,6 +28,6 @@ public class PcanTrcReader1_1 implements CANLineReader {
         byte[] data = CANLineReader.readHexArray(tokens, 5, size);
 
 
-        return new CANPacket(timeStamp, sid, data);
+        return new CANPacket(timeStampMs, sid, data);
     }
 }

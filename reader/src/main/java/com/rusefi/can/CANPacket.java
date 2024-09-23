@@ -3,12 +3,12 @@ package com.rusefi.can;
 import com.rusefi.util.BitMathUtil;
 
 public class CANPacket {
-    private final double timeStamp;
+    private final double timeStampMs;
     private final int id;
     private final byte[] data;
 
-    public CANPacket(double timeStamp, int id, byte[] data) {
-        this.timeStamp = timeStamp;
+    public CANPacket(double timeStampMs, int id, byte[] data) {
+        this.timeStampMs = timeStampMs;
         this.id = id;
         this.data = data;
     }
@@ -55,7 +55,7 @@ public class CANPacket {
     }
 
     public double getTimeStamp() {
-        return timeStamp;
+        return timeStampMs;
     }
 
     public int getId() {
