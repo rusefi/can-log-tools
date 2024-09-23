@@ -1,8 +1,6 @@
 package com.rusefi.can.deprecated;
 
 import com.rusefi.can.CANPacket;
-import com.rusefi.can.deprecated.decoders.bmw.Bmw0BA;
-import com.rusefi.can.deprecated.decoders.bmw.Bmw192;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.impl.CANoeReader;
 
@@ -29,12 +27,6 @@ public class CANoeCanValidator {
 
         for (CANPacket packet : packetList) {
             allIds.put(packet.getId(), packet.getId());
-
-            if (packet.getId() == Bmw192.ID)
-                Bmw192.INSTANCE.decode(packet);
-
-            if (packet.getId() == Bmw0BA.ID)
-                Bmw0BA.INSTANCE.decode(packet);
 
         }
 

@@ -13,7 +13,7 @@ public class PcanReaderTest {
         CANLineReader reader = PcanTrcReader2_0.INSTANCE;
         CANPacket packet = reader.readLine("  15883  77333097.212 DT     0192 Rx 4  2D 04 80 F9 ");
         assertEquals(4, packet.getData().length);
-        assertEquals(Bmw192.ID, packet.getId());
+        assertEquals(0x192, packet.getId());
 
         assertEquals(0x80, packet.getUnsigned(2));
     }
