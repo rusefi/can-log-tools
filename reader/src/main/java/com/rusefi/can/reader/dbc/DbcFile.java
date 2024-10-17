@@ -1,5 +1,6 @@
 package com.rusefi.can.reader.dbc;
 
+import com.rusefi.can.Launcher;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;
 
@@ -82,7 +83,7 @@ public class DbcFile {
                 if (debugEnabled)
                     System.out.println("Found " + field);
                 if (field != null) {
-                    if (!fieldNames.add(field.getName()))
+                    if (!fieldNames.add(field.getName()) && !Launcher.allowDuplicateNames)
                         throw new IllegalArgumentException("Let's use unique field names: " + field.getName());
                     currentPacket.add(field);
                 }

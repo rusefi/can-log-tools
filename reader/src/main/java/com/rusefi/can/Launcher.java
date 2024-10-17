@@ -12,6 +12,8 @@ public class Launcher {
     public static String fileNameFilter;
     public static final String DBC_FILENAME_PROPERTY = "-dbc";
     public static String dbcFileName;
+    public static final String DBC_DUP_FIELD_NAMES = "-allow-dup-names";
+    public static boolean allowDuplicateNames = false;
 
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
@@ -26,6 +28,9 @@ public class Launcher {
         String inputFolderName = args[0];
         for (int i = 1; i < args.length; i++) {
             switch (args[i]) {
+                case DBC_DUP_FIELD_NAMES:
+                    allowDuplicateNames = true;
+                    break;
                 case FILENAME_SUFFIX_PROPERTY:
                     i += 1;
                     fileNameSuffixValue = args[i];
