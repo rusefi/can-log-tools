@@ -68,6 +68,7 @@ public class PerSidDump {
 
             middle.println();
             middle.println(counterVariable + " = 0");
+            middle.println("function send" + methodNameSuffix + "()");
             middle.println("function " + rxMethodName + "(bus, id, dlc, data)");
             middle.println("\t" + counterVariable + " = (" + counterVariable + " + 1) % 256");
             middle.println("\t" + payloadVariableName + "[x] = " + counterVariable);
