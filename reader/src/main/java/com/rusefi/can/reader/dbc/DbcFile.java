@@ -13,6 +13,7 @@ public class DbcFile {
     public final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
 
     public static final boolean debugEnabled = false;
+    public static boolean applyOrderForStartOffset;
 
     private List<BinaryLogEntry> list;
 

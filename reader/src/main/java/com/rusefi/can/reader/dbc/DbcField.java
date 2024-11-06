@@ -14,7 +14,7 @@ public class DbcField {
 
     public DbcField(String name, int startOffset, int length, double mult, double offset, String category, boolean isBigEndian) {
         this.name = name;
-        this.startOffset = startOffset;
+        this.startOffset = isBigEndian && DbcFile.applyOrderForStartOffset ? startOffset - length + 1 : startOffset;
         this.length = length;
         this.mult = mult;
         this.offset = offset;

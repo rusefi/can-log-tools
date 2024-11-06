@@ -114,4 +114,24 @@ public class ParseDBCTest {
         assertEquals(0.25, rpm.getMult());
         assertEquals("Motor_1", rpm.getCategory());
     }
+
+    @Test
+    public void parseMoto() throws IOException {
+        String moto = "BO_ 100 P: 8 ECM_HS\n" +
+                " SG_ OAT : 63|8@0+ (1,0) [0|8] \"deg C\"  VICS";
+
+        BufferedReader reader = new BufferedReader(new StringReader(moto));
+
+
+        DbcFile dbc = new DbcFile(false);
+        DbcFile.applyOrderForStartOffset = true;
+        dbc.read(reader);
+
+        assertEquals(dbc.packets.size(), 1);
+        DbcPacket packet = dbc.packets.get(100);
+        assertNotNull(packet);
+
+        DbcField f = packet.getFields().get(0);
+        assertEquals(56, f.getStartOffset());
+    }
 }
