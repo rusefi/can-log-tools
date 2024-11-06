@@ -135,6 +135,10 @@ public class ByteRateOfChange {
             return sid == byteId.sid && byteIndex == byteId.byteIndex;
         }
 
+        public int getSid() {
+            return sid;
+        }
+
         public int getByteIndex() {
             return byteIndex;
         }
