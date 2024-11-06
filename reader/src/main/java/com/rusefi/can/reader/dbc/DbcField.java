@@ -47,7 +47,11 @@ public class DbcField {
             throw new IllegalStateException("While " + line, e);
         }
         int length = Integer.parseInt(tokens[index + 1]);
-        int endiannessCode = Integer.parseInt(tokens[index + 2]);
+        String endiannessCodeString = tokens[index + 2];
+        // todo: what is this about exactly?
+        if (endiannessCodeString.endsWith("-"))
+            endiannessCodeString = endiannessCodeString.substring(0, endiannessCodeString.length() - 1);
+        int endiannessCode = Integer.parseInt(endiannessCodeString);
         if (endiannessCode != 0 && endiannessCode != 1)
             throw new IllegalStateException("Unexpected endiannessCode " + endiannessCode);
         boolean isBigEndian = endiannessCode == 0;
