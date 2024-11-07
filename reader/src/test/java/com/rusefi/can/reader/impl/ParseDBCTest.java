@@ -134,4 +134,17 @@ public class ParseDBCTest {
         DbcField f = packet.getFields().get(0);
         assertEquals(56, f.getStartOffset());
     }
+
+    @Test
+    public void crazyMotorola() {
+        DbcFile.applyOrderForStartOffset = true;
+        assertEquals(24, DbcField.crazyMotorolaMath(27, 4, true));
+        assertEquals(24, DbcField.crazyMotorolaMath(30, 7, true));
+        assertEquals(24, DbcField.crazyMotorolaMath(31, 8, true));
+        assertEquals(24, DbcField.crazyMotorolaMath(17, 10, true));
+
+        assertEquals(24, DbcField.crazyMotorolaMath(17, 10, true));
+
+
+    }
 }
