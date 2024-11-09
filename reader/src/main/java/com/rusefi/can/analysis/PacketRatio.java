@@ -27,11 +27,12 @@ public class PacketRatio {
         Writer w = new FileWriter(reportDestinationFolder + File.separator + "distribution_" + simpleFileName + ".txt");
 
         for (Map.Entry<Integer, AtomicInteger> e : countBySID.entrySet()) {
-            double ratio = 100.0 * e.getValue().get() / logFileContent.size();
+            int countOfThisSid = e.getValue().get();
+            double ratio = 100.0 * countOfThisSid / logFileContent.size();
             Integer sid = e.getKey();
             DbcPacket dbcPacket = dbc == null ? null : dbc.packets.get(sid);
             String key = dbcPacket == null ? Integer.toString(sid) : dbcPacket.getName();
-            w.write(key + ": " + ratio + "\n");
+            w.write(key + " " + ratio + " " + countOfThisSid + "\n");
         }
         w.close();
     }
