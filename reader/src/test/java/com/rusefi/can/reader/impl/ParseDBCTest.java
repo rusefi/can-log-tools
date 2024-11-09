@@ -123,7 +123,6 @@ public class ParseDBCTest {
 
 
         DbcFile dbc = new DbcFile(false);
-        DbcFile.compatibilityWithBrokenRusEfiLogic = false;
         dbc.read(reader);
 
         assertEquals(dbc.packets.size(), 1);
@@ -136,14 +135,11 @@ public class ParseDBCTest {
 
     @Test
     public void crazyMotorola() {
-        DbcFile.compatibilityWithBrokenRusEfiLogic = false;
         assertEquals(24, DbcField.crazyMotorolaMath(27, 4, true));
         assertEquals(24, DbcField.crazyMotorolaMath(30, 7, true));
         assertEquals(24, DbcField.crazyMotorolaMath(31, 8, true));
         assertEquals(24, DbcField.crazyMotorolaMath(17, 10, true));
 
         assertEquals(24, DbcField.crazyMotorolaMath(17, 10, true));
-
-
     }
 }

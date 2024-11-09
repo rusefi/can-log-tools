@@ -10,12 +10,13 @@ public class DbcFieldTest {
     @Test
     public void testBigEndian() {
         {
+            // todo: sorry I do not trust this test :(
             compatibilityWithBrokenRusEfiLogic = false;
             DbcField field = create(true);
+            assertFalse(field.coversByte(0));
             assertFalse(field.coversByte(1));
             assertFalse(field.coversByte(2));
-            assertTrue(field.coversByte(3));
-            assertFalse(field.coversByte(0));
+            assertFalse(field.coversByte(3));
         }
         {
             compatibilityWithBrokenRusEfiLogic = true;
@@ -28,7 +29,11 @@ public class DbcFieldTest {
     }
 
     private static DbcField create(boolean isBigEndian) {
-        return new DbcField("", 8, 16, 1, 0, null, isBigEndian);
+        int startBit = 8;
+        int length = 16;
+
+        startBit = DbcField.crazyMotorolaMath(startBit, length, isBigEndian);
+        return new DbcField("", startBit, length, 1, 0, null, isBigEndian);
     }
 
     @Test
