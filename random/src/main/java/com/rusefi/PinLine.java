@@ -16,6 +16,8 @@ public class PinLine {
     private static final int Y_FROM = 215;
 
     public static void main(String[] args) {
+        if (INDEX_FROM > INDEX_TO)
+            throw new IllegalStateException("Indexing order " + INDEX_FROM + " to " + INDEX_TO);
 
         int count = INDEX_TO - INDEX_FROM;
         float width = X_TO - X_FROM;
