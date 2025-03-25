@@ -41,7 +41,7 @@ public class DbcFile {
         while ((line = reader.readLine()) != null) {
             lineIndex++;
             line = line.trim();
-            if (line.startsWith("BO_")) {
+            if (line.startsWith("BO_ ")) {
                 purgePacket(currentPacket);
                 line = line.replaceAll(":", "");
                 String[] tokens = line.split(" ");
@@ -56,12 +56,16 @@ public class DbcFile {
                 }
                 String packetName = tokens[2];
                 currentPacket = new DbcPacket((int) decId, packetName);
-            } else if (line.startsWith("CM_")) {
+            } else if (line.startsWith("CM_ ")) {
                 purgePacket(currentPacket);
                 line = replaceSpecialWithSpaces(line);
                 String[] tokens = line.split(" ");
                 if (tokens.length == 1) {
                     // skipping header line
+                    continue;
+                }
+                if (!tokens[1].equals("SG_")) {
+                    // will parse only signal descriptions
                     continue;
                 }
                 if (tokens.length < 4)
@@ -74,7 +78,7 @@ public class DbcFile {
                 packet.replaceName(originalName, niceName);
 
 
-            } else if (line.startsWith("SG_")) {
+            } else if (line.startsWith("SG_ ")) {
                 DbcField field;
                 try {
                     field = DbcField.parseField(currentPacket, line);
