@@ -22,6 +22,7 @@ public class Launcher {
                     FILENAME_SUFFIX_PROPERTY,
                     FILENAME_FILTER_PROPERTY,
                     DBC_FILENAME_PROPERTY,
+                    DBC_DUP_FIELD_NAMES,
             }));
             System.exit(-1);
         }
