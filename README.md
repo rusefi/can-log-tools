@@ -11,6 +11,11 @@ java -jar reader/build/libs/reader-all.jar "C:\stuff\rusefi_documentation\OEM-Do
 ```
 
 
+## Charting
+
+We produce two versions of chartable data for https://www.efianalytics.com/MegaLogViewer/ see .mlq files
+
+
 # CAN playback
 CAN playback using PCAN on Windows or SocketCAN on Linux.
 
