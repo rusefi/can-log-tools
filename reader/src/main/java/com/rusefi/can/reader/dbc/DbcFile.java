@@ -13,6 +13,10 @@ public class DbcFile {
     public final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
 
     public static final boolean debugEnabled = false;
+    /**
+     * problem: looks like some DBC files which were created by AndreyB manually were invalid
+     * this flag is technical debt of conversion from bad DBC into legit DBC
+     */
     public static boolean applyOrderForStartOffset = true;
 
     private List<BinaryLogEntry> list;
