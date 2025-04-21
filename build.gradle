@@ -4,8 +4,8 @@ plugins {
 
 apply from: 'dependencies.gradle'
 
-group 'org.rusefi'
-version '0.11-SNAPSHOT'
+group = 'org.rusefi'
+version = '0.11-SNAPSHOT'
 
 allprojects {
     repositories {
