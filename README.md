@@ -1,3 +1,6 @@
+# TL,DR DBC
+Kvaser Database Editor is the reference tool
+
 # CAN file processing
 
 * split trace file by packet ID
