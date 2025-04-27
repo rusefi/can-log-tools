@@ -25,7 +25,7 @@ public class DbcField {
     }
 
     public static int crazyMotorolaMath(int b, int length, boolean isBigEndian) {
-        if (!DbcFile.applyOrderForStartOffset || !isBigEndian)
+        if (DbcFile.compatibilityWithBrokenRusEfiLogic || !isBigEndian)
             return b;
 
         // https://github.com/ebroecker/canmatrix/wiki/signal-Byteorder

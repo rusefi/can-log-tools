@@ -8,7 +8,6 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.*;
@@ -124,7 +123,7 @@ public class ParseDBCTest {
 
 
         DbcFile dbc = new DbcFile(false);
-        DbcFile.applyOrderForStartOffset = true;
+        DbcFile.compatibilityWithBrokenRusEfiLogic = false;
         dbc.read(reader);
 
         assertEquals(dbc.packets.size(), 1);
@@ -137,7 +136,7 @@ public class ParseDBCTest {
 
     @Test
     public void crazyMotorola() {
-        DbcFile.applyOrderForStartOffset = true;
+        DbcFile.compatibilityWithBrokenRusEfiLogic = false;
         assertEquals(24, DbcField.crazyMotorolaMath(27, 4, true));
         assertEquals(24, DbcField.crazyMotorolaMath(30, 7, true));
         assertEquals(24, DbcField.crazyMotorolaMath(31, 8, true));

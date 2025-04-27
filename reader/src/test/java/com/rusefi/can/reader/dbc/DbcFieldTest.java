@@ -2,7 +2,7 @@ package com.rusefi.can.reader.dbc;
 
 import org.junit.Test;
 
-import static com.rusefi.can.reader.dbc.DbcFile.applyOrderForStartOffset;
+import static com.rusefi.can.reader.dbc.DbcFile.compatibilityWithBrokenRusEfiLogic;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -10,7 +10,7 @@ public class DbcFieldTest {
     @Test
     public void testBigEndian() {
         {
-            applyOrderForStartOffset = true;
+            compatibilityWithBrokenRusEfiLogic = false;
             DbcField field = create(true);
             assertFalse(field.coversByte(1));
             assertFalse(field.coversByte(2));
@@ -18,13 +18,13 @@ public class DbcFieldTest {
             assertFalse(field.coversByte(0));
         }
         {
-            applyOrderForStartOffset = false;
+            compatibilityWithBrokenRusEfiLogic = true;
             DbcField field = create(true);
             assertTrue(field.coversByte(0));
             assertTrue(field.coversByte(1));
             assertFalse(field.coversByte(3));
         }
-        applyOrderForStartOffset = true;
+        compatibilityWithBrokenRusEfiLogic = false;
     }
 
     private static DbcField create(boolean isBigEndian) {

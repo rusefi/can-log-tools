@@ -17,7 +17,7 @@ public class DbcFile {
      * problem: looks like some DBC files which were created by AndreyB manually were invalid
      * this flag is technical debt of conversion from bad DBC into legit DBC
      */
-    public static boolean applyOrderForStartOffset = true;
+    public static boolean compatibilityWithBrokenRusEfiLogic;
 
     private List<BinaryLogEntry> list;
 
