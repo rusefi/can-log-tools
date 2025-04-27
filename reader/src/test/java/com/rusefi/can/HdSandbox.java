@@ -9,7 +9,6 @@ public class HdSandbox {
         String inputFolderName = "C:\\stuff\\hd-iws\\can-traces-2023-st\\N-switch";
 
         Launcher.dbcFileName = "C:\\stuff\\hd-iws\\hd2021.dbc";
-        DbcFile.applyOrderForStartOffset = true;
 
 
         Launcher.main(new String[]{
