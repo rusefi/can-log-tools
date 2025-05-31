@@ -9,15 +9,14 @@ import java.util.Objects;
  * also known as frame
  */
 public class DbcPacket {
-    private final static int BYTES = 8;
     private final int id;
     private final String name;
     private final List<DbcField> fields = new ArrayList<>();
-    private final boolean[] isUsed = new boolean[8 * BYTES];
 
-    public DbcPacket(int id, String name) {
+    public DbcPacket(int id, String name, List<DbcField> signals) {
         this.id = id;
         this.name = name;
+        fields.addAll(signals);
     }
 
     public int getId() {
@@ -38,13 +37,6 @@ public class DbcPacket {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
-    }
-
-    public void add(DbcField dbcField) {
-        fields.add(dbcField);
-        for (int bitIndex = dbcField.getStartOffset(); bitIndex < dbcField.getStartOffset() + dbcField.getLength(); bitIndex++) {
-            isUsed[bitIndex] = true;
-        }
     }
 
     public DbcField find(String name) {

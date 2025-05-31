@@ -38,7 +38,7 @@ public class DbcFile {
     }
 
     public void read(BufferedReader reader) throws IOException {
-        DbcPacket currentPacket = null;
+        DbcPacketBuilder currentPacket = null;
         String line;
         int lineIndex = -1;
         Set<String> fieldNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
@@ -47,19 +47,7 @@ public class DbcFile {
             line = line.trim();
             if (line.startsWith("BO_ ")) {
                 purgePacket(currentPacket);
-                line = line.replaceAll(":", "");
-                String[] tokens = line.split(" ");
-                if (tokens.length < 3) {
-                    // skipping header line
-                    continue;
-                }
-                long decId = Long.parseLong(tokens[1]);
-                if (decId > 2_000_000_000) {
-                    System.err.println("Huh? Skipping ID=" + decId);
-                    continue;
-                }
-                String packetName = tokens[2];
-                currentPacket = new DbcPacket((int) decId, packetName);
+                currentPacket = startNewPacket(line, currentPacket);
             } else if (line.startsWith("CM_ ")) {
                 purgePacket(currentPacket);
                 line = replaceSpecialWithSpaces(line);
@@ -85,7 +73,7 @@ public class DbcFile {
             } else if (line.startsWith("SG_ ")) {
                 DbcField field;
                 try {
-                    field = DbcField.parseField(currentPacket, line);
+                    field = DbcField.parseField(line, currentPacket.getPacketName());
                 } catch (Throwable e) {
                     throw new IllegalStateException("During [" + line + "]", e);
                 }
@@ -106,6 +94,23 @@ public class DbcFile {
         System.out.println(getClass().getSimpleName() + ": Total " + packets.size() + " packets");
     }
 
+    private static DbcPacketBuilder startNewPacket(String line, DbcPacketBuilder currentPacket) {
+        line = line.replaceAll(":", "");
+        String[] tokens = line.split(" ");
+        if (tokens.length < 3) {
+            // skipping header line
+            return currentPacket;
+        }
+        long decId = Long.parseLong(tokens[1]);
+        if (decId > 2_000_000_000) {
+            System.err.println("Huh? Skipping ID=" + decId);
+            return currentPacket;
+        }
+        String packetName = tokens[2];
+        currentPacket = new DbcPacketBuilder((int) decId, packetName);
+        return currentPacket;
+    }
+
     private static String merge(String[] tokens, int position) {
         StringBuilder sb = new StringBuilder();
         for (int i = position; i < tokens.length; i++) {
@@ -116,12 +121,15 @@ public class DbcFile {
         return sb.toString();
     }
 
-    private void purgePacket(DbcPacket currentPacket) {
+    private void purgePacket(DbcPacketBuilder currentPacket) {
         if (currentPacket != null) {
-            DbcPacket existingPacket = packets.get(currentPacket.getId());
-            if (existingPacket != null && existingPacket != currentPacket)
-                throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + currentPacket.getId());
-            packets.put(currentPacket.getId(), currentPacket);
+            if (currentPacket.isConsumed())
+                return;
+            DbcPacket existingPacket = packets.get(currentPacket.getPacketId());
+            if (existingPacket != null)
+                throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + currentPacket.getPacketId());
+            packets.put(currentPacket.getPacketId(), new DbcPacket(currentPacket.getPacketId(), currentPacket.getPacketName(), currentPacket.getSignals()));
+            currentPacket.markConsumed();
         }
     }
 

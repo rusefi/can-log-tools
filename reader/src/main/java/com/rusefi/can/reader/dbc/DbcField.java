@@ -41,7 +41,7 @@ public class DbcField {
         return b;
     }
 
-    public static DbcField parseField(DbcPacket parent, String line) {
+    public static DbcField parseField(String line, String parentName) {
         line = DbcFile.replaceSpecialWithSpaces(line);
         String[] tokens = line.split(" ");
         if (tokens.length < 2)
@@ -76,7 +76,7 @@ public class DbcField {
         double mult = Double.parseDouble(tokens[index + 3]);
         double offset = Double.parseDouble(tokens[index + 4]);
 
-        return new DbcField(name, startOffset, length, mult, offset, parent.getName(), isBigEndian);
+        return new DbcField(name, startOffset, length, mult, offset, parentName, isBigEndian);
     }
 
     public String getCategory() {
