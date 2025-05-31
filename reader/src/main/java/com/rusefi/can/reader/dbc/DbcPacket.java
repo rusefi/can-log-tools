@@ -6,6 +6,7 @@ import java.util.Objects;
 
 /**
  * Packet describes all the fields for specific can ID
+ * also known as frame
  */
 public class DbcPacket {
     private final int id;

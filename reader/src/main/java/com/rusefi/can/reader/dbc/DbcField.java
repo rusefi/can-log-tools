@@ -2,6 +2,9 @@ package com.rusefi.can.reader.dbc;
 
 import com.rusefi.can.CANPacket;
 
+/**
+ * also known as 'signal'
+ */
 public class DbcField {
     private String name;
     private final int startOffset;
