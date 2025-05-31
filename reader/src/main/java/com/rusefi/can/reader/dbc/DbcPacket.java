@@ -9,9 +9,11 @@ import java.util.Objects;
  * also known as frame
  */
 public class DbcPacket {
+    private final static int BYTES = 8;
     private final int id;
     private final String name;
     private final List<DbcField> fields = new ArrayList<>();
+    private final boolean[] isUsed = new boolean[8 * BYTES];
 
     public DbcPacket(int id, String name) {
         this.id = id;
@@ -40,6 +42,9 @@ public class DbcPacket {
 
     public void add(DbcField dbcField) {
         fields.add(dbcField);
+        for (int bitIndex = dbcField.getStartOffset(); bitIndex < dbcField.getStartOffset() + dbcField.getLength(); bitIndex++) {
+            isUsed[bitIndex] = true;
+        }
     }
 
     public DbcField find(String name) {
@@ -106,6 +111,14 @@ public class DbcPacket {
     public DbcField getFieldAtByte(int byteIndex) {
         for (DbcField field : fields) {
             if (field.coversByte(byteIndex))
+                return field;
+        }
+        return null;
+    }
+
+    public DbcField getByName(String name) {
+        for (DbcField field : fields) {
+            if (field.getName().equalsIgnoreCase(name))
                 return field;
         }
         return null;

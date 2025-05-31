@@ -66,5 +66,21 @@ public class ParseDBCWithCommentTest {
         assertNotNull(field);
         assertTrue(field.isNiceName());
     }
+
+    @Test
+    public void parseMoto() throws IOException {
+        BufferedReader reader = new BufferedReader(new StringReader("BO_ 190 PTEI_BrakeApplyStatus_190_0BE: 6 ECM\n" +
+                "   SG_ PSBPI_PTSnBrkPdlPs : 15|8@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n" +
+                "   SG_ AccPos : 23|8@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n"));
+
+        DbcFile dbc = new DbcFile(false);
+        dbc.read(reader);
+        assertEquals(dbc.packets.size(), 1);
+        DbcPacket p190 = dbc.packets.get(190);
+        DbcField signalBrkPdl = p190.getByName("PSBPI_PTSnBrkPdlPs");
+        assertEquals(8, signalBrkPdl.getStartOffset());
+        assertEquals(8, signalBrkPdl.getLength());
+
+    }
 }
 
