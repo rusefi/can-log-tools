@@ -25,7 +25,7 @@ public class ByteRateOfChangeReports {
     }
 
     private static void compareTwoReports(DbcFile dbc, String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanMetaDataContext context) throws FileNotFoundException {
-        Set<ByteRateOfChange.ByteId> allKeys = new TreeSet<>();
+        Set<DbcField> allKeys = new TreeSet<>();
         allKeys.addAll(traceReport1.getStatistics().keySet());
         allKeys.addAll(traceReport2.getStatistics().keySet());
 
@@ -42,7 +42,8 @@ public class ByteRateOfChangeReports {
         report.println("******************** Sorted by key ********************");
 
 
-        for (ByteRateOfChange.ByteId id : allKeys) {
+        for (DbcField dbcField : allKeys) {
+            ByteRateOfChange.ByteId id = ByteRateOfChange.ByteId.convert(dbcField);
             if (context.isCounter(id)) {
                 // skipping byte with a known counter
                 continue;
@@ -61,13 +62,13 @@ public class ByteRateOfChangeReports {
                 }
             }
 
-            if (id.getByteIndex() == 7 && context.withChecksum.contains(id.sid)) {
+            if (id != null && id.getByteIndex() == 7 && context.withChecksum.contains(id.sid)) {
                 // skipping known checksum byte
                 continue;
             }
 
-            ByteRateOfChange.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(id, ByteRateOfChange.ByteStatistics::new);
-            ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(id, ByteRateOfChange.ByteStatistics::new);
+            ByteRateOfChange.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
+            ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
                 String msg = prefix + id + ": unique_count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
@@ -138,7 +139,7 @@ public class ByteRateOfChangeReports {
             PacketRatio.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
             FirstPacket.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
 
-            ByteRateOfChange.TraceReport report = ByteRateOfChange.process(reportDestinationFolder, simpleFileName, logFileContent);
+            ByteRateOfChange.TraceReport report = ByteRateOfChange.process(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             report.save(simpleFileName + "-ByteRateOfChange.txt");
 
             reports.add(report);

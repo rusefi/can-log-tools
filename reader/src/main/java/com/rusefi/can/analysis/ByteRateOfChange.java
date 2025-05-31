@@ -2,6 +2,9 @@ package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.DualSid;
+import com.rusefi.can.reader.dbc.DbcField;
+import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcPacket;
 
 import java.io.*;
 import java.util.*;
@@ -9,13 +12,13 @@ import java.util.*;
 public class ByteRateOfChange {
 
     static class TraceFileMetaIndex {
-        final HashMap<ByteId, ByteStatistics> statistics = new HashMap<>();
+        final HashMap<DbcField, ByteStatistics> statistics = new HashMap<>();
 
         final Set<Integer> SIDs = new HashSet<>();
     }
 
-    public static TraceReport process(String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
-        TraceFileMetaIndex traceFileMetaIndex = calculateByteStatistics(packets);
+    public static TraceReport process(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
+        TraceFileMetaIndex traceFileMetaIndex = calculateByteStatistics(dbc, packets);
 
         writeByteReport(reportDestinationFolder, simpleFileName, traceFileMetaIndex);
 
@@ -45,22 +48,23 @@ public class ByteRateOfChange {
         PrintStream ps = new PrintStream(new FileOutputStream(fileName, false));
 
         for (ByteStatistics byteStatistics : allStats) {
-            ByteId key = byteStatistics.key;
-            ps.println(DualSid.dualSid(key.sid) + " byte " + key.getByteIndex() + " has " + byteStatistics.getUniqueValuesCount() + " unique value(s)");
+            DbcField key = byteStatistics.key;
+            ps.println(DualSid.dualSid(key.getSid()) + " byte " + key.getByteIndex() + " has " + byteStatistics.getUniqueValuesCount() + " unique value(s)");
         }
 
         ps.close();
     }
 
-    private static TraceFileMetaIndex calculateByteStatistics(List<CANPacket> packets) {
+    private static TraceFileMetaIndex calculateByteStatistics(DbcFile dbc, List<CANPacket> packets) {
         TraceFileMetaIndex traceFileMetaIndex = new TraceFileMetaIndex();
 
-        for (CANPacket packet : packets) {
-            traceFileMetaIndex.SIDs.add(packet.getId());
-            for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
-                ByteId key = ByteId.createByte(packet.getId(), byteIndex);
-                ByteStatistics stats = traceFileMetaIndex.statistics.computeIfAbsent(key, byteId -> new ByteStatistics(key));
-                stats.registerValue(packet.getData()[byteIndex]);
+        for (CANPacket payload : packets) {
+            int sid = payload.getId();
+            traceFileMetaIndex.SIDs.add(sid);
+            DbcPacket meta = dbc.getPacket(sid);
+            for (DbcField field : meta.getFields()) {
+                ByteStatistics stats = traceFileMetaIndex.statistics.computeIfAbsent(field, byteId -> new ByteStatistics(field));
+                stats.registerValue((int) field.getValue(payload));
             }
         }
         return traceFileMetaIndex;
@@ -73,11 +77,11 @@ public class ByteRateOfChange {
     public static class ByteStatistics {
         private final HashSet<Integer> uniqueValues = new HashSet<>();
         int totalTransitions;
-        private final ByteId key;
+        private final DbcField key;
 
         private int previousValue;
 
-        public ByteStatistics(ByteId key) {
+        public ByteStatistics(DbcField key) {
             this.key = key;
         }
 
@@ -87,10 +91,6 @@ public class ByteRateOfChange {
 
         public Set<Integer> getUniqueValues() {
             return Collections.unmodifiableSet(uniqueValues);
-        }
-
-        public ByteId getKey() {
-            return key;
         }
 
         @Override
@@ -118,13 +118,19 @@ public class ByteRateOfChange {
         final int sid;
         final int byteIndex;
 
-        public ByteId(int sid, int byteIndex) {
+        private ByteId(int sid, int byteIndex) {
             this.sid = sid;
             this.byteIndex = byteIndex;
         }
 
         public static ByteId createByte(int sid, int byteIndex) {
             return new ByteId(sid, byteIndex);
+        }
+
+        public static ByteId convert(DbcField dbcField) {
+            if (dbcField.getLength() != 8 || dbcField.getStartOffset() % 8 !=0)
+                return null;
+            return createByte(dbcField.getSid(), dbcField.getByteIndex());
         }
 
         public String getLogKey() {
@@ -168,10 +174,10 @@ public class ByteRateOfChange {
 
     public static class TraceReport {
         private final String simpleFileName;
-        private final HashMap<ByteId, ByteStatistics> statistics;
+        private final HashMap<DbcField, ByteStatistics> statistics;
         private final double durationMs;
 
-        public TraceReport(List<CANPacket> packets, String simpleFileName, HashMap<ByteId, ByteStatistics> statistics) {
+        public TraceReport(List<CANPacket> packets, String simpleFileName, HashMap<DbcField, ByteStatistics> statistics) {
             this.simpleFileName = simpleFileName;
             this.statistics = statistics;
             this.durationMs = getDurationMs(packets);
@@ -185,7 +191,7 @@ public class ByteRateOfChange {
             return simpleFileName;
         }
 
-        public HashMap<ByteId, ByteStatistics> getStatistics() {
+        public HashMap<DbcField, ByteStatistics> getStatistics() {
             return statistics;
         }
 
@@ -200,7 +206,7 @@ public class ByteRateOfChange {
 
         public void save(String file) throws IOException {
             Writer w = new FileWriter(file);
-            for (Map.Entry<ByteId, ByteStatistics> e : statistics.entrySet()) {
+            for (Map.Entry<DbcField, ByteStatistics> e : statistics.entrySet()) {
                 w.append(e.getKey() + " " + e.getValue() + "\r\n");
             }
 

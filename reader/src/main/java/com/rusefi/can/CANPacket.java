@@ -1,5 +1,6 @@
 package com.rusefi.can;
 
+import com.rusefi.can.analysis.ByteRateOfChange;
 import com.rusefi.util.BitMathUtil;
 
 public class CANPacket {
@@ -89,6 +90,10 @@ public class CANPacket {
 
         }
         return result;
+    }
+
+    public int getValue(ByteRateOfChange.ByteId key) {
+        return data[key.getByteIndex()];
     }
 
     public interface PackerAssertion {

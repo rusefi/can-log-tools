@@ -33,7 +33,7 @@ public class DbcFieldTest {
         int length = 16;
 
         startBit = DbcField.crazyMotorolaMath(startBit, length, isBigEndian);
-        return new DbcField("", startBit, length, 1, 0, null, isBigEndian);
+        return new DbcField(-1, "", startBit, length, 1, 0, null, isBigEndian);
     }
 
     @Test

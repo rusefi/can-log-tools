@@ -2,10 +2,7 @@ package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.dbc.DbcField;
-import com.rusefi.can.reader.dbc.DbcPacket;
 import org.junit.Test;
-
-import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +13,7 @@ public class ParseDbcFieldTest {
     @Test
     public void parseIat() {
         String line = "SG_ Ansauglufttemperatur : 8|8@1+ (0.75,-48) [-48|142.5] \"\" XXX";
-        DbcField iatField = DbcField.parseField(line, "hello");
+        DbcField iatField = DbcField.parseField(line, "hello", -1);
         assertEquals("Ansauglufttemperatur", iatField.getName());
         assertEquals(0.75, iatField.getMult(), EPS);
         assertEquals(-48, iatField.getOffset(), EPS);

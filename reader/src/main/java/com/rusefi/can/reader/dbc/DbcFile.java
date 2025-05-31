@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 
 public class DbcFile {
     public final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
@@ -74,7 +75,7 @@ public class DbcFile {
             } else if (line.startsWith("SG_ ")) {
                 DbcField field;
                 try {
-                    field = DbcField.parseField(line, currentPacket.getPacketName());
+                    field = DbcField.parseField(line, currentPacket.getPacketName(), currentPacket.getPacketId());
                 } catch (Throwable e) {
                     throw new IllegalStateException("During [" + line + "]", e);
                 }
@@ -126,11 +127,12 @@ public class DbcFile {
         if (currentPacket != null) {
             if (currentPacket.isConsumed())
                 return;
-            DbcPacket existingPacket = packets.get(currentPacket.getPacketId());
+            int sid = currentPacket.getPacketId();
+            DbcPacket existingPacket = packets.get(sid);
             if (existingPacket != null)
-                throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + currentPacket.getPacketId());
-            List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps();
-            packets.put(currentPacket.getPacketId(), new DbcPacket(currentPacket.getPacketId(), currentPacket.getPacketName(), signals));
+                throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
+            List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
+            packets.put(sid, new DbcPacket(sid, currentPacket.getPacketName(), signals));
             currentPacket.markConsumed();
         }
     }
@@ -157,6 +159,13 @@ public class DbcFile {
     }
 
     public DbcPacket getPacket(int sid) {
-        return packets.get(sid);
+        return packets.computeIfAbsent(sid, new Function<Integer, DbcPacket>() {
+            @Override
+            public DbcPacket apply(Integer integer) {
+                String packetName = Integer.toHexString(sid) + "_" + sid;
+                String packetPrefix = "_unknown_" + sid;
+                return new DbcPacket(sid, packetName, new GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid));
+            }
+        });
     }
 }

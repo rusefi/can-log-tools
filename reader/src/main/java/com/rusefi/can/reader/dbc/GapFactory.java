@@ -22,16 +22,16 @@ public class GapFactory {
         }
     }
 
-    public List<DbcField> withGaps() {
+    public List<DbcField> withGaps(int packetId) {
         for (int bitIndex = 0; bitIndex < isUsed.length; bitIndex++) {
             if (!isUsed[bitIndex]) {
                 int endIndex = findUnusedSectionEndIndex(bitIndex);
 
                 int length = endIndex - bitIndex;
                 if (length == 8) {
-                    signals.add(new DbcField(packetName + "_gap_byte_" + bitIndex, bitIndex, length, 1, 0, "", false));
+                    signals.add(new DbcField(packetId, packetName + "_gap_byte_" + bitIndex, bitIndex, length, 1, 0, "", false));
                 } else {
-                    signals.add(new DbcField(packetName + "_gap_bits_" + bitIndex + "_" + length, bitIndex, length, 1, 0, "", false));
+                    signals.add(new DbcField(packetId, packetName + "_gap_bits_" + bitIndex + "_" + length, bitIndex, length, 1, 0, "", false));
                 }
 
                 bitIndex = endIndex - 1;

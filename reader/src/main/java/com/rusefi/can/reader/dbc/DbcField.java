@@ -5,7 +5,8 @@ import com.rusefi.can.CANPacket;
 /**
  * also known as 'signal'
  */
-public class DbcField {
+public class DbcField implements Comparable<DbcField> {
+    private final int packetId;
     private String name;
     private final int startOffset;
     private final int length;
@@ -15,7 +16,8 @@ public class DbcField {
     private final boolean isBigEndian;
     private boolean isNiceName;
 
-    public DbcField(String name, int startOffset, int length, double mult, double offset, String category, boolean isBigEndian) {
+    public DbcField(int packetId, String name, int startOffset, int length, double mult, double offset, String category, boolean isBigEndian) {
+        this.packetId = packetId;
         this.name = name;
         this.startOffset = crazyMotorolaMath(startOffset, length, isBigEndian);
         this.length = length;
@@ -41,7 +43,7 @@ public class DbcField {
         return b;
     }
 
-    public static DbcField parseField(String line, String parentName) {
+    public static DbcField parseField(String line, String parentName, int packetId) {
         line = DbcFile.replaceSpecialWithSpaces(line);
         String[] tokens = line.split(" ");
         if (tokens.length < 2)
@@ -76,7 +78,7 @@ public class DbcField {
         double mult = Double.parseDouble(tokens[index + 3]);
         double offset = Double.parseDouble(tokens[index + 4]);
 
-        return new DbcField(name, startOffset, length, mult, offset, parentName, isBigEndian);
+        return new DbcField(packetId, name, startOffset, length, mult, offset, parentName, isBigEndian);
     }
 
     public String getCategory() {
@@ -167,5 +169,20 @@ public class DbcField {
         if (startOffset > startBit)
             return false;
         return startOffset + length >= startBit + 8;
+    }
+
+    @Override
+    public int compareTo(DbcField o) {
+        if (packetId != o.packetId)
+            return Integer.compare(packetId, o.packetId);
+        return Integer.compare(startOffset, o.startOffset);
+    }
+
+    public int getSid() {
+        return packetId;
+    }
+
+    public int getByteIndex() {
+        return startOffset / 8;
     }
 }
