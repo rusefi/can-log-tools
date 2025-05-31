@@ -99,4 +99,11 @@ public class CANPacket {
     public interface PackerAssertion {
         boolean test(CANPacket packet);
     }
+
+    @Override
+    public String toString() {
+        return "CANPacket{" +
+                "id=" + id +
+                '}';
+    }
 }

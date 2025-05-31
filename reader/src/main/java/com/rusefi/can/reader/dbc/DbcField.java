@@ -124,12 +124,24 @@ public class DbcField implements Comparable<DbcField> {
                 '}';
     }
 
+    public static int getStartIndex2(int bitIndex, int bitWidth, boolean isBigEndian) {
+        if (isBigEndian) {
+            int byteIndex = getByteIndex(bitIndex);
+            int shift = getShift(byteIndex, bitIndex);
+            int delta = shift + bitWidth - 8;
+            if (delta > 0) {
+                return bitIndex - delta;
+            }
+        }
+        return bitIndex;
+    }
+
     public static int getBitRange(byte[] data, int bitIndex, int bitWidth, boolean isBigEndian) {
         if (bitIndex < 0)
             throw new IllegalArgumentException("Huh? " + bitIndex + " " + bitWidth);
 
-        int byteIndex = bitIndex >> 3;
-        int shift = bitIndex - byteIndex * 8;
+        int byteIndex = getByteIndex(bitIndex);
+        int shift = getShift(byteIndex, bitIndex);
         if (byteIndex >= data.length)
             return 0;
         int value = data[byteIndex] & 0xff;
@@ -141,6 +153,16 @@ public class DbcField implements Comparable<DbcField> {
         }
         int mask = (1 << bitWidth) - 1;
         return (value >> shift) & mask;
+    }
+
+    private static int getShift(int byteIndex, int bitIndex) {
+        int shift = bitIndex - byteIndex * 8;
+        return shift;
+    }
+
+    private static int getByteIndex(int bitIndex) {
+        int byteIndex = bitIndex >> 3;
+        return byteIndex;
     }
 
     public double getValue(CANPacket packet) {

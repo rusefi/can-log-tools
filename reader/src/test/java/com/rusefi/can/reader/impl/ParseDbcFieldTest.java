@@ -23,4 +23,14 @@ public class ParseDbcFieldTest {
 
         assertEquals(25.5, iatField.getValue(packet), EPS);
     }
+
+    @Test
+    public void parseCrksftNTrnsRegCmdTq() {
+        String line = "SG_ CrksftNTrnsRegCmdTq : 51|12@0+ (0.5,-848) [-848|1199.5] \"Nm\"  TCM_HS";
+        DbcField field = DbcField.parseField(line, "hello", -1);
+        assertEquals(56, field.getStartOffset());
+        assertEquals(12, field.getLength());
+
+        assertEquals(52, DbcField.getStartIndex2(field.getStartOffset(), field.getLength(), field.isBigEndian()));
+    }
 }
