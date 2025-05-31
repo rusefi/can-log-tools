@@ -204,8 +204,8 @@ public class ByteRateOfChange {
                     '}';
         }
 
-        public void save(String file) throws IOException {
-            Writer w = new FileWriter(file);
+        public void save(String reportDestinationFolder, String fileName) throws IOException {
+            Writer w = new FileWriter(reportDestinationFolder + File.separator + fileName);
             for (Map.Entry<DbcField, ByteStatistics> e : statistics.entrySet()) {
                 w.append(e.getKey() + " " + e.getValue() + "\r\n");
             }

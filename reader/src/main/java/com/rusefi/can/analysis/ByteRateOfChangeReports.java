@@ -140,7 +140,7 @@ public class ByteRateOfChangeReports {
             FirstPacket.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
 
             ByteRateOfChange.TraceReport report = ByteRateOfChange.process(dbc, reportDestinationFolder, simpleFileName, logFileContent);
-            report.save(simpleFileName + "-ByteRateOfChange.txt");
+            report.save(reportDestinationFolder, simpleFileName + "-ByteRateOfChange.txt");
 
             reports.add(report);
         }, fileNameSuffix);
