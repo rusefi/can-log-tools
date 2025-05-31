@@ -49,7 +49,7 @@ public class ByteRateOfChangeReports {
             }
             String prefix = "";
             if (dbc != null) {
-                DbcPacket packet = dbc.packets.get(id.sid);
+                DbcPacket packet = dbc.getPacket(id.sid);
                 if (packet != null) {
                     prefix = packet.getName() + " ";
                     DbcField field = packet.getFieldAtByte(id.byteIndex);
@@ -113,7 +113,7 @@ public class ByteRateOfChangeReports {
     public static void scanInputFolder(String inputFolderName, String fileNameSuffix) throws IOException {
         String reportDestinationFolder = createOutputFolder(inputFolderName);
 
-        DbcFile dbc = getDbc();
+        DbcFile dbc = DbcFile.readFromFile(Launcher.dbcFileName);
 
         CanMetaDataContext context = CanMetaDataContext.read(inputFolderName);
 
@@ -147,14 +147,6 @@ public class ByteRateOfChangeReports {
 
         System.out.println("Processing " + reports.size() + " report(s)");
         compareEachReportAgainstAllOthers(dbc, reportDestinationFolder, reports, context);
-    }
-
-    private static DbcFile getDbc() throws IOException {
-        DbcFile dbc = null;
-        if (Launcher.dbcFileName != null) {
-            dbc = DbcFile.readFromFile(Launcher.dbcFileName);
-        }
-        return dbc;
     }
 
     static class ByteVariationDifference {

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 
 /**
@@ -19,6 +20,7 @@ import java.util.TreeSet;
  */
 public class PerSidDump {
     public static void handle(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
+        Objects.requireNonNull(dbc);
         String filteredDestinationFolder = reportDestinationFolder + File.separator + "filtered";
         new File(filteredDestinationFolder).mkdirs();
 
@@ -29,7 +31,7 @@ public class PerSidDump {
 
         // O(n*M) is not so bad
         for (int sid : sids) {
-            DbcPacket packet = dbc == null ? null : dbc.packets.get(sid);
+            DbcPacket packet = dbc.getPacket(sid);
             String suffix = packet == null ? "" : ("_" + packet.getName());
 
             String outputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid, "_") + suffix + ".txt";

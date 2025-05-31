@@ -28,9 +28,10 @@ public class DbcFile {
     }
 
     public static DbcFile readFromFile(String fileName) throws IOException {
-        System.out.println(new Date() + " Reading DBC file from " + fileName + "...");
         DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
-        {
+        if (fileName == null)
+            return dbc;
+        System.out.println(new Date() + " Reading DBC file from " + fileName + "..."); {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             dbc.read(reader);
         }
@@ -153,5 +154,9 @@ public class DbcFile {
 
     public DbcPacket getPacketByIndexSlow(int index) {
         return new ArrayList<>(packets.values()).get(index);
+    }
+
+    public DbcPacket getPacket(int sid) {
+        return packets.get(sid);
     }
 }

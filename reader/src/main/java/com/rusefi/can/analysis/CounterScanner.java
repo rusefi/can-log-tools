@@ -76,7 +76,7 @@ public class CounterScanner {
         Map<String, Map<Integer, Integer>> report = new TreeMap<>();
         for (Map.Entry<Integer, Map<Integer, Integer>> e : map.entrySet()) {
             Integer sid = e.getKey();
-            DbcPacket packet = dbc == null ? null : dbc.packets.get(sid);
+            DbcPacket packet = dbc.getPacket(sid);
             String key = packet == null ? Integer.toString(sid) : packet.getName();
             report.put(key, e.getValue());
         }

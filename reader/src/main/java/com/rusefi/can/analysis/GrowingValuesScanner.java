@@ -26,7 +26,7 @@ public class GrowingValuesScanner {
             if (state.isIncrementByte()) {
 
                 int sid = state.byteId.sid;
-                DbcPacket packet = dbc == null ? null : dbc.packets.get(sid);
+                DbcPacket packet = dbc.getPacket(sid);
                 String key = packet == null ? Integer.toString(sid) : packet.getName();
                 if (packet != null) {
                     DbcField field = packet.getFieldAtByte(state.byteId.byteIndex);

@@ -46,7 +46,7 @@ public class FirstPacket {
 
     private static void writeLine(DbcFile dbc, CANPacket packet, Writer w, CANPacket firstPacket) throws IOException {
         int sid = packet.getId();
-        DbcPacket dbcPacket = dbc == null ? null : dbc.packets.get(sid);
+        DbcPacket dbcPacket = dbc.getPacket(sid);
         String key = dbcPacket == null ? Integer.toString(sid) : dbcPacket.getName();
         w.write(key + ": " + (packet.getTimeStamp() - firstPacket.getTimeStamp()) + "\n");
     }

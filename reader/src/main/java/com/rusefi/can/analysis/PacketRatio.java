@@ -30,7 +30,7 @@ public class PacketRatio {
             int countOfThisSid = e.getValue().get();
             double ratio = 100.0 * countOfThisSid / logFileContent.size();
             Integer sid = e.getKey();
-            DbcPacket dbcPacket = dbc == null ? null : dbc.packets.get(sid);
+            DbcPacket dbcPacket = dbc.getPacket(sid);
             String key = dbcPacket == null ? Integer.toString(sid) : dbcPacket.getName();
             w.write(key + " " + ratio + " " + countOfThisSid + "\n");
         }
