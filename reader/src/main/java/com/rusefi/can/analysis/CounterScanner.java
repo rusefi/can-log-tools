@@ -88,7 +88,7 @@ public class CounterScanner {
         private final int bitIndex;
 
         public BitStateKey(int sid, int byteIndex, int bitIndex) {
-            this.byteId = new ByteRateOfChange.ByteId(sid, byteIndex);
+            this.byteId = ByteRateOfChange.ByteId.createByte(sid, byteIndex);
             this.bitIndex = bitIndex;
         }
 

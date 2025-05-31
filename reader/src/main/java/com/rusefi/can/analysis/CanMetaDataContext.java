@@ -11,7 +11,7 @@ public class CanMetaDataContext {
     final Set<Integer> withChecksum = new HashSet<>();
     final Map<Integer, Map<Integer, Integer>> countersMap;
 
-    Set<ByteRateOfChange.ByteId> counterBytes = new HashSet<>();
+    private final Set<ByteRateOfChange.ByteId> counterBytes = new HashSet<>();
 
     private CanMetaDataContext(List<Integer> withChecksum, Map<Integer, Map<Integer, Integer>> countersMap) {
         this.countersMap = countersMap;
@@ -27,7 +27,7 @@ public class CanMetaDataContext {
 
                 if (size > 4) {
                     int byteIndex = bitIndex / 8;
-                    counterBytes.add(new ByteRateOfChange.ByteId(sid, byteIndex));
+                    counterBytes.add(ByteRateOfChange.ByteId.createByte(sid, byteIndex));
                 }
             }
         }
@@ -45,5 +45,9 @@ public class CanMetaDataContext {
         Map<Integer, Map<Integer, Integer>> countersMap = countersYaml.load(new FileReader(inputFolderName + File.separator + CounterScanner.COUNTERS_YAML));
 
         return new CanMetaDataContext(withChecksum, countersMap);
+    }
+
+    public boolean isCounter(ByteRateOfChange.ByteId id) {
+        return counterBytes.contains(id);
     }
 }

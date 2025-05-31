@@ -47,7 +47,7 @@ public class GrowingValuesScanner {
             for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
                 byte byteValue = packet.getData()[byteIndex];
 
-                ByteRateOfChange.ByteId byteId = new ByteRateOfChange.ByteId(packet.getId(), byteIndex);
+                ByteRateOfChange.ByteId byteId = ByteRateOfChange.ByteId.createByte(packet.getId(), byteIndex);
                 if (!states.containsKey(byteId)) {
                     states.put(byteId, new ByteState(byteId, byteValue));
                     continue;

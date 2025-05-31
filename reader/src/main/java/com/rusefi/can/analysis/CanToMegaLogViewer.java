@@ -37,7 +37,7 @@ public class CanToMegaLogViewer {
             SIDs.add(packet.getId());
 
             for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
-                ByteRateOfChange.ByteId key = new ByteRateOfChange.ByteId(packet.getId(), byteIndex);
+                ByteRateOfChange.ByteId key = ByteRateOfChange.ByteId.createByte(packet.getId(), byteIndex);
                 byteIds.add(key);
             }
 
@@ -70,7 +70,7 @@ public class CanToMegaLogViewer {
 
                 int sid = packetContent.getId();
                 {
-                    String name = new ByteRateOfChange.ByteId(sid, i).getLogKey();
+                    String name = ByteRateOfChange.ByteId.createByte(sid, i).getLogKey();
                     context.currentSnapshot.put(name, (double) value);
                 }
                 {

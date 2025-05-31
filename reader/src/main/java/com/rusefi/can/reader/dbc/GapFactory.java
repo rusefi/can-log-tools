@@ -3,6 +3,9 @@ package com.rusefi.can.reader.dbc;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * this class creates synthetic signals/fields for all unused bits in packet/frame
+ */
 public class GapFactory {
     private final static int BYTES = 8;
     private final boolean[] isUsed = new boolean[8 * BYTES];
@@ -20,8 +23,6 @@ public class GapFactory {
     }
 
     public List<DbcField> withGaps() {
-
-
         for (int bitIndex = 0; bitIndex < isUsed.length; bitIndex++) {
             if (!isUsed[bitIndex]) {
                 int endIndex = findUnusedSectionEndIndex(bitIndex);
@@ -36,7 +37,6 @@ public class GapFactory {
                 bitIndex = endIndex - 1;
             }
         }
-
 
         return signals;
     }

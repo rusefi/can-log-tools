@@ -58,7 +58,7 @@ public class ByteRateOfChange {
         for (CANPacket packet : packets) {
             traceFileMetaIndex.SIDs.add(packet.getId());
             for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
-                ByteId key = new ByteId(packet.getId(), byteIndex);
+                ByteId key = ByteId.createByte(packet.getId(), byteIndex);
                 ByteStatistics stats = traceFileMetaIndex.statistics.computeIfAbsent(key, byteId -> new ByteStatistics(key));
                 stats.registerValue(packet.getData()[byteIndex]);
             }
@@ -121,6 +121,10 @@ public class ByteRateOfChange {
         public ByteId(int sid, int byteIndex) {
             this.sid = sid;
             this.byteIndex = byteIndex;
+        }
+
+        public static ByteId createByte(int sid, int byteIndex) {
+            return new ByteId(sid, byteIndex);
         }
 
         public String getLogKey() {

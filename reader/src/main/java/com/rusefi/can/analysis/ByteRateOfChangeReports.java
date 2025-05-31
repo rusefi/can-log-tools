@@ -43,7 +43,7 @@ public class ByteRateOfChangeReports {
 
 
         for (ByteRateOfChange.ByteId id : allKeys) {
-            if (context.counterBytes.contains(id)) {
+            if (context.isCounter(id)) {
                 // skipping byte with a known counter
                 continue;
             }

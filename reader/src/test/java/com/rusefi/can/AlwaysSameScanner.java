@@ -15,7 +15,7 @@ import java.util.TreeMap;
 
 public class AlwaysSameScanner {
 
-    static Map<ByteRateOfChange.ByteId, Integer> existingValue = new TreeMap<>();
+    private static final Map<ByteRateOfChange.ByteId, Integer> existingValue = new TreeMap<>();
 
     public static void run(String inputFolderName, DbcFile dbc) throws IOException {
         File inputFolder = new File(inputFolderName);
@@ -36,7 +36,7 @@ public class AlwaysSameScanner {
             for (CANPacket packet : logFileContent) {
 
                 for (int i = 0; i < packet.getData().length; i++) {
-                    ByteRateOfChange.ByteId id = new ByteRateOfChange.ByteId(packet.getId(), i);
+                    ByteRateOfChange.ByteId id = ByteRateOfChange.ByteId.createByte(packet.getId(), i);
 
                     int currentValue = packet.getData()[i];
                     Integer existing = existingValue.putIfAbsent(id, currentValue);
