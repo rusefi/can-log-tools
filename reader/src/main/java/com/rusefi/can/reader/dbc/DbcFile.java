@@ -128,7 +128,8 @@ public class DbcFile {
             DbcPacket existingPacket = packets.get(currentPacket.getPacketId());
             if (existingPacket != null)
                 throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + currentPacket.getPacketId());
-            packets.put(currentPacket.getPacketId(), new DbcPacket(currentPacket.getPacketId(), currentPacket.getPacketName(), currentPacket.getSignals()));
+            List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps();
+            packets.put(currentPacket.getPacketId(), new DbcPacket(currentPacket.getPacketId(), currentPacket.getPacketName(), signals));
             currentPacket.markConsumed();
         }
     }

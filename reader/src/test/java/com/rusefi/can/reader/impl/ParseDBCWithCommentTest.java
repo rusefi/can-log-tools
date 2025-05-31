@@ -68,7 +68,7 @@ public class ParseDBCWithCommentTest {
     }
 
     @Test
-    public void parseMoto() throws IOException {
+    public void parseMotoTwoBytes() throws IOException {
         BufferedReader reader = new BufferedReader(new StringReader("BO_ 190 PTEI_BrakeApplyStatus_190_0BE: 6 ECM\n" +
                 "   SG_ PSBPI_PTSnBrkPdlPs : 15|8@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n" +
                 "   SG_ AccPos : 23|8@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n"));
@@ -81,6 +81,31 @@ public class ParseDBCWithCommentTest {
         assertEquals(8, signalBrkPdl.getStartOffset());
         assertEquals(8, signalBrkPdl.getLength());
 
+        assertEquals(8, p190.getFields().size());
+
+    }
+
+
+    @Test
+    public void parseOneBit() throws IOException {
+        BufferedReader reader = new BufferedReader(new StringReader("BO_ 190 PTEI_BrakeApplyStatus_190_0BE: 6 ECM\n" +
+                "   SG_ AccPos : 23|1@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n"));
+
+        DbcFile dbc = new DbcFile(false);
+        dbc.read(reader);
+        assertEquals(dbc.packets.size(), 1);
+
+        DbcPacket p190 = dbc.packets.get(190);
+        assertEquals(9, p190.getFields().size());
+
+        DbcField firstByte = p190.findByBitIndex(/*bit index*/3);
+        assertEquals(0, firstByte.getStartOffset());
+        assertEquals(8, firstByte.getLength());
+
+
+        DbcField partial = p190.findByBitIndex(/*bit index*/17);
+        assertEquals(16, partial.getStartOffset());
+        assertEquals(7, partial.getLength());
     }
 }
 

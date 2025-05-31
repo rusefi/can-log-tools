@@ -115,4 +115,12 @@ public class DbcPacket {
         }
         return null;
     }
+
+    public DbcField findByBitIndex(int bitIndex) {
+        for (DbcField field : fields) {
+            if (bitIndex >= field.getStartOffset() && bitIndex < field.getStartOffset() + field.getLength())
+                return field;
+        }
+        return null;
+    }
 }
