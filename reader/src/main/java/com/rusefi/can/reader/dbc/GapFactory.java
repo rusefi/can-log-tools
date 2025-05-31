@@ -16,7 +16,7 @@ public class GapFactory {
         this.packetName = packetName;
         this.signals.addAll(signals);
         for (DbcField dbcField : signals) {
-            for (int bitIndex = dbcField.getStartOffset(); bitIndex < dbcField.getStartOffset() + dbcField.getLength(); bitIndex++) {
+            for (int bitIndex = dbcField.getHumanStartIndex(); bitIndex < dbcField.getHumanStartIndex() + dbcField.getLength(); bitIndex++) {
                 try {
                     isUsed[bitIndex] = true;
                 } catch (ArrayIndexOutOfBoundsException e) {

@@ -124,7 +124,16 @@ public class DbcField implements Comparable<DbcField> {
                 '}';
     }
 
-    public static int getStartIndex2(int bitIndex, int bitWidth, boolean isBigEndian) {
+    /**
+     * There is no way to explain it, only experience it
+     * @see ParseDBCWithCommentTest#parseMoto
+     * @see ParseDbcFieldTest#testHumanStartIndex
+     */
+    public int getHumanStartIndex() {
+        return getHumanStartIndex(startOffset, length, isBigEndian);
+    }
+
+    public static int getHumanStartIndex(int bitIndex, int bitWidth, boolean isBigEndian) {
         if (isBigEndian) {
             int byteIndex = getByteIndex(bitIndex);
             int shift = getShift(byteIndex, bitIndex);

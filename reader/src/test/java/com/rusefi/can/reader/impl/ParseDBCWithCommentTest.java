@@ -107,5 +107,16 @@ public class ParseDBCWithCommentTest {
         assertEquals(16, partial.getStartOffset());
         assertEquals(7, partial.getLength());
     }
+
+    @Test
+    public void parseMoto() throws IOException {
+        BufferedReader reader = new BufferedReader(new StringReader("    BO_ 398 PTEI_EngineTorqueStatus_398_18E: 8 Vector__XXX\n" +
+                "    SG_ CrksftNTrnsRegCmdTq : 51|12@0+ (0.5,-848) [-848|1199.5] \"Nm\"  TCM_HS\n"));
+
+        DbcFile dbc = new DbcFile(false);
+        dbc.read(reader);
+        assertEquals(dbc.packets.size(), 1);
+    }
+
 }
 
