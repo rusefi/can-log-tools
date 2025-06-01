@@ -43,35 +43,33 @@ public class ByteRateOfChangeReports {
 
 
         for (DbcField dbcField : allKeys) {
-            ByteRateOfChange.ByteId id = ByteRateOfChange.ByteId.convert(dbcField);
-            if (context.isCounter(id)) {
-                // skipping byte with a known counter
-                continue;
-            }
-            String prefix = "";
-            if (dbc != null) {
-                DbcPacket packet = dbc.getPacket(id.sid);
-                if (packet != null) {
-                    prefix = packet.getName() + " ";
-                    DbcField field = packet.getFieldAtByte(id.byteIndex);
-                    if (field != null) {
-                        if (filter.rejectPacket(field))
-                            continue;
-                        prefix += field.getName() + " ";
+            {
+                ByteRateOfChange.ByteId asByte = ByteRateOfChange.ByteId.convert(dbcField);
+                if (asByte != null) {
+                    if (context.isCounter(asByte)) {
+                        // skipping byte with a known counter
+                        continue;
+                    }
+                    if (asByte.getByteIndex() == 7 && context.withChecksum.contains(asByte.sid)) {
+                        // skipping known checksum byte
+                        continue;
                     }
                 }
             }
+            String prefix = "";
 
-            if (id != null && id.getByteIndex() == 7 && context.withChecksum.contains(id.sid)) {
-                // skipping known checksum byte
+            DbcPacket packet = dbc.getPacket(dbcField.getSid());
+            Objects.requireNonNull(packet);
+            prefix = packet.getName() + " ";
+            if (filter.rejectPacket(dbcField))
                 continue;
-            }
+            prefix += dbcField.getName() + " ";
 
             ByteRateOfChange.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
             ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
-                String msg = prefix + id + ": unique_count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
+                String msg = prefix + dbcField + ": unique_count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
                 int deltaCount = Math.abs(s1.getUniqueValuesCount() - s2.getUniqueValuesCount());
                 differences.add(new ByteVariationDifference(deltaCount, msg));
                 report.println(msg + " (delta=" + deltaCount + "), transitions=" + s1.totalTransitions + " vs " + s2.totalTransitions);
@@ -81,12 +79,12 @@ public class ByteRateOfChangeReports {
                 diff.removeAll(s2.getUniqueValues());
                 if (!diff.isEmpty()) {
 
-                    report.println(prefix + id + " different sets " + s1.getUniqueValues() + " vs " + s2.getUniqueValues());
+                    report.println(prefix + dbcField + " different sets " + s1.getUniqueValues() + " vs " + s2.getUniqueValues());
 
                 } else {
                     // same number of unique values, same set of values
                     if (s1.totalTransitions != s2.totalTransitions) {
-                        report.println(prefix + id + " total number of transitions " + s1.totalTransitions + "/" + s2.totalTransitions);
+                        report.println(prefix + dbcField + " total number of transitions " + s1.totalTransitions + "/" + s2.totalTransitions);
                     }
                 }
             }
