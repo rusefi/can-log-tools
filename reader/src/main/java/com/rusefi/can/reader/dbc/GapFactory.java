@@ -48,10 +48,12 @@ public class GapFactory {
     /**
      * @return index after current unused section
      */
-    private int findUnusedSectionEndIndex(int bitIndex) {
+    public int findUnusedSectionEndIndex(int bitIndex) {
         bitIndex++; // skipping first unused bit
 
         while (true) {
+            if (bitIndex >= isUsed.length)
+                return bitIndex;
             if (isUsed[bitIndex])
                 return bitIndex;
             bitIndex++;

@@ -1,5 +1,6 @@
 package com.rusefi.can.reader.impl;
 
+import com.rusefi.can.reader.dbc.GapFactory;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
 
 import static junit.framework.TestCase.*;
 
@@ -118,5 +120,11 @@ public class ParseDBCWithCommentTest {
         assertEquals(dbc.packets.size(), 1);
     }
 
+
+    @Test
+    public void testGapFinder() {
+        GapFactory g = new GapFactory(Collections.emptyList(), "1");
+        assertEquals(64, g.findUnusedSectionEndIndex(63));
+    }
 }
 
