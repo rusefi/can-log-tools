@@ -128,7 +128,7 @@ public class ByteRateOfChange {
         }
 
         public static ByteId convert(DbcField dbcField) {
-            if (dbcField.getLength() != 8 || dbcField.getStartOffset() % 8 !=0)
+            if (dbcField.getLength() != 8 || dbcField.getStartOffset() % 8 != 0)
                 return null;
             return createByte(dbcField.getSid(), dbcField.getByteIndex());
         }
@@ -205,11 +205,11 @@ public class ByteRateOfChange {
         }
 
         public void save(String reportDestinationFolder, String fileName) throws IOException {
-            Writer w = new FileWriter(reportDestinationFolder + File.separator + fileName);
-            for (Map.Entry<DbcField, ByteStatistics> e : statistics.entrySet()) {
-                w.append(e.getKey() + " " + e.getValue() + "\r\n");
+            try (Writer w = new FileWriter(reportDestinationFolder + File.separator + fileName)) {
+                for (Map.Entry<DbcField, ByteStatistics> e : statistics.entrySet()) {
+                    w.append(e.getKey() + " " + e.getValue() + "\r\n");
+                }
             }
-
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.rusefi.can.analysis;
 
+import com.rusefi.can.AlwaysSameScanner;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.CANLineReader;
@@ -143,6 +144,7 @@ public class ByteRateOfChangeReports {
             reports.add(report);
         }, fileNameSuffix);
 
+        AlwaysSameScanner.run(reportDestinationFolder, inputFolderName, dbc);
 
         System.out.println("Processing " + reports.size() + " report(s)");
         compareEachReportAgainstAllOthers(dbc, reportDestinationFolder, reports, context);
