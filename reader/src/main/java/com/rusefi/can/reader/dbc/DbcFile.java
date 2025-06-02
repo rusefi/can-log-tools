@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class DbcFile {
-    public final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
+    private final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
 
     public static final boolean debugEnabled = false;
     /**
@@ -26,6 +26,10 @@ public class DbcFile {
 
     public DbcFile(boolean logOnlyTranslatedFields) {
         this.logOnlyTranslatedFields = logOnlyTranslatedFields;
+    }
+
+    public int size() {
+        return packets.size();
     }
 
     public static DbcFile readFromFile(String fileName) throws IOException {
@@ -167,5 +171,13 @@ public class DbcFile {
                 return new DbcPacket(sid, packetName, new GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid));
             }
         });
+    }
+
+    public DbcPacket get(int sid) {
+        return packets.get(sid);
+    }
+
+    public Collection<DbcPacket> values() {
+        return packets.values();
     }
 }

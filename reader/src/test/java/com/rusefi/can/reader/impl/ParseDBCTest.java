@@ -99,7 +99,7 @@ public class ParseDBCTest {
         DbcFile dbc = new DbcFile(false);
         dbc.read(reader);
 
-        assertEquals(dbc.packets.size(), 3);
+        assertEquals(dbc.size(), 3);
 
         DbcPacket zacPacket = dbc.getPacketByIndexSlow(0);
         assertFalse(zacPacket.getFields().get(0).isBigEndian());
@@ -125,8 +125,8 @@ public class ParseDBCTest {
         DbcFile dbc = new DbcFile(false);
         dbc.read(reader);
 
-        assertEquals(dbc.packets.size(), 1);
-        DbcPacket packet = dbc.packets.get(100);
+        assertEquals(dbc.size(), 1);
+        DbcPacket packet = dbc.get(100);
         assertNotNull(packet);
 
         DbcField f = packet.getFields().get(0);

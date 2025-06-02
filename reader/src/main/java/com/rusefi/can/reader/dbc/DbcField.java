@@ -115,13 +115,7 @@ public class DbcField implements Comparable<DbcField> {
 
     @Override
     public String toString() {
-        return "DbcField{" +
-                "name='" + name + '\'' +
-                ", startOffset=" + startOffset +
-                ", length=" + length +
-                ", mult=" + mult +
-                ", isBigEndian=" + isBigEndian +
-                '}';
+        return name;
     }
 
     /**
@@ -175,7 +169,11 @@ public class DbcField implements Comparable<DbcField> {
     }
 
     public double getValue(CANPacket packet) {
-        return getBitRange(packet.getData(), startOffset, length, isBigEndian) * mult + offset;
+        return getRawValue(packet) * mult + offset;
+    }
+
+    public int getRawValue(CANPacket packet) {
+        return getBitRange(packet.getData(), startOffset, length, isBigEndian);
     }
 
     public void rename(String niceName) {

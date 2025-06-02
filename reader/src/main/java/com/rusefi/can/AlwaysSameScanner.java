@@ -1,7 +1,7 @@
 package com.rusefi.can;
 
-import com.rusefi.can.analysis.ByteRateOfChange;
 import com.rusefi.can.reader.CANLineReader;
+import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;
 import com.rusefi.util.FolderUtil;
@@ -16,20 +16,20 @@ import java.util.TreeMap;
 
 public class AlwaysSameScanner {
 
-    private static final Map<ByteRateOfChange.ByteId, Integer> existingValue = new TreeMap<>();
+    private static final Map<DbcField, Integer> existingValue = new TreeMap<>();
 
     public static void run(String reportDestinationFolder, String inputFolderName, DbcFile dbc) throws IOException {
-        runRecursion(inputFolderName);
+        runRecursion(inputFolderName, dbc);
         report(reportDestinationFolder, dbc);
     }
 
-    private static void runRecursion(String inputFolderName) throws IOException {
+    private static void runRecursion(String inputFolderName, DbcFile dbc) throws IOException {
         File inputFolder = new File(inputFolderName);
         for (String simpleFileName : inputFolder.list()) {
             String fullInputFile = inputFolderName + File.separator + simpleFileName;
             if (new File(fullInputFile).isDirectory()) {
                 System.out.println("Recursion " + fullInputFile);
-                runRecursion(fullInputFile);
+                runRecursion(fullInputFile, dbc);
             }
         }
 
@@ -40,11 +40,11 @@ public class AlwaysSameScanner {
 
             for (CANPacket packet : logFileContent) {
 
-                for (int i = 0; i < packet.getData().length; i++) {
-                    ByteRateOfChange.ByteId id = ByteRateOfChange.ByteId.createByte(packet.getId(), i);
+                DbcPacket meta = dbc.getPacket(packet.getId());
+                for (DbcField field : meta.getFields()) {
 
-                    int currentValue = packet.getData()[i];
-                    Integer existing = existingValue.putIfAbsent(id, currentValue);
+                    int currentValue = field.getRawValue(packet);
+                    Integer existing = existingValue.putIfAbsent(field, currentValue);
                     if (existing == null) {
                         // first time we are hitting this byte
                         continue;
@@ -52,7 +52,7 @@ public class AlwaysSameScanner {
                         // same value, still unit
                         continue;
                     } else {
-                        existingValue.put(id, Integer.MAX_VALUE);
+                        existingValue.put(field, Integer.MAX_VALUE);
                     }
                 }
             }
@@ -63,20 +63,22 @@ public class AlwaysSameScanner {
 
         try (Writer w = new FileWriter(reportDestinationFolder + File.separator + "always_same_report.txt")) {
 
-            for (Map.Entry<ByteRateOfChange.ByteId, Integer> e : existingValue.entrySet()) {
-                int sid = e.getKey().getSid();
+            for (Map.Entry<DbcField, Integer> e : existingValue.entrySet()) {
+                DbcField field = e.getKey();
+                int sid = field.getSid();
                 DbcPacket packet = dbc.findPacket(sid);
-                String name = packet == null ? Integer.toString(sid) : packet.getName();
+                String name = packet.getName();
 
                 Integer value = e.getValue();
-                if (value == Integer.MAX_VALUE) {
+                boolean isDynamic = value == Integer.MAX_VALUE;
+                if (isDynamic) {
                     // not unique byte
-                    w.append(name + " index " + e.getKey().getByteIndex() + " is DYNAMIC" + "\n");
+                    w.append(name + " " + field + " is DYNAMIC" + "\n");
                     continue;
                 }
 
 
-                w.append(name + " index " + e.getKey().getByteIndex() + " is always same " + value + "\n");
+                w.append(name + " " + field + " is always same " + value + "\n");
             }
         }
 

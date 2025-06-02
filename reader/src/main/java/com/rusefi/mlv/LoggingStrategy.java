@@ -17,7 +17,7 @@ public class LoggingStrategy {
 
     public static List<BinaryLogEntry> getFieldNameEntries(DbcFile dbc, boolean logOnlyTranslatedFields) {
         List<BinaryLogEntry> entries = new ArrayList<>();
-        for (DbcPacket packet : dbc.packets.values()) {
+        for (DbcPacket packet : dbc.values()) {
             for (DbcField field : packet.getFields()) {
                 if (logOnlyTranslatedFields && !field.isNiceName())
                     continue;
