@@ -151,9 +151,9 @@ public class DbcFile {
         return packets.get(canId);
     }
 
-    public List<BinaryLogEntry> getFieldNameEntries() {
+    public List<BinaryLogEntry> getFieldNameEntries(LoggingStrategy.LoggingFilter filter) {
         if (list == null) {
-            list = LoggingStrategy.getFieldNameEntries(this, logOnlyTranslatedFields);
+            list = LoggingStrategy.getFieldNameEntries(this, logOnlyTranslatedFields, filter);
         }
         return list;
     }

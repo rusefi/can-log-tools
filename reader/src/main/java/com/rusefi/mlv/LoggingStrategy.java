@@ -10,14 +10,22 @@ import com.rusefi.sensor_logs.BinarySensorLog;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class LoggingStrategy {
     public static final String MLG = ".mlg";
     public static boolean LOG_ONLY_TRANSLATED_FIELDS;
 
-    public static List<BinaryLogEntry> getFieldNameEntries(DbcFile dbc, boolean logOnlyTranslatedFields) {
+    public interface LoggingFilter {
+        boolean accept(DbcPacket packet);
+    }
+
+    public static List<BinaryLogEntry> getFieldNameEntries(DbcFile dbc, boolean logOnlyTranslatedFields,
+                                                           LoggingFilter filter) {
         List<BinaryLogEntry> entries = new ArrayList<>();
         for (DbcPacket packet : dbc.values()) {
+            if (!filter.accept(packet))
+                continue;
             for (DbcField field : packet.getFields()) {
                 if (logOnlyTranslatedFields && !field.isNiceName())
                     continue;
@@ -28,7 +36,10 @@ public class LoggingStrategy {
     }
 
     public static void writeLogByDbc(DbcFile dbc, List<CANPacket> packets, String outputFileName) {
-        List<BinaryLogEntry> entries = dbc.getFieldNameEntries();
+        Set<Integer> allIds = CANPacket.getAllIds(packets);
+        // we only log DBC frames if at least one packet is present in the trace
+        LoggingFilter filter = packet -> allIds.contains(packet.getId());
+        List<BinaryLogEntry> entries = dbc.getFieldNameEntries(filter);
 
         System.out.println(new Date() + " writeLog... " + outputFileName);
         LoggingContext snapshot = new LoggingContext();

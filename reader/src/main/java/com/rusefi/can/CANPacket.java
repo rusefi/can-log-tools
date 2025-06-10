@@ -3,6 +3,10 @@ package com.rusefi.can;
 import com.rusefi.can.analysis.ByteRateOfChange;
 import com.rusefi.util.BitMathUtil;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class CANPacket {
     private final double timeStampMs;
     private final int id;
@@ -12,6 +16,14 @@ public class CANPacket {
         this.timeStampMs = timeStampMs;
         this.id = id;
         this.data = data;
+    }
+
+    public static Set<Integer> getAllIds(List<CANPacket> canPackets) {
+        Set<Integer> SIDs = new HashSet<>();
+        for (CANPacket packet : canPackets) {
+            SIDs.add(packet.getId());
+        }
+        return SIDs;
     }
 
     public StringBuilder asLua(String arrayName) {

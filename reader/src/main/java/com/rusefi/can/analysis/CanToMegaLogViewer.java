@@ -35,7 +35,7 @@ public class CanToMegaLogViewer {
             entries.add(BinaryLogEntry.createFloatLogEntry(key.getLogKey(), Integer.toBinaryString(key.sid)));
         }
 
-        for (Integer sid : getAllIds(canPackets)) {
+        for (Integer sid : CANPacket.getAllIds(canPackets)) {
             for (int i = 0; i < 7; i++) {
                 {
                     String twoBytesKey = getTwoBytesKeyM(sid, i);
@@ -90,15 +90,6 @@ public class CanToMegaLogViewer {
         }
         return byteIds;
     }
-
-    private static Set<Integer> getAllIds(List<CANPacket> canPackets) {
-        Set<Integer> SIDs = new HashSet<>();
-        for (CANPacket packet : canPackets) {
-            SIDs.add(packet.getId());
-        }
-        return SIDs;
-    }
-
 
     private static String getTwoBytesKeyM(Integer sid, int i) {
         return DualSid.dualSid(sid) + "__" + i + "_" + (i + 1);
