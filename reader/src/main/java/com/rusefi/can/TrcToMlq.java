@@ -47,7 +47,7 @@ public class TrcToMlq {
             List<CANPacket> packets = getReader().readFile(inputFileName);
 
             String outputFileName = System.getProperty("mlq_file_name", "gauges.mlg");
-            LoggingStrategy.writeLog(dbc, packets, outputFileName);
+            LoggingStrategy.writeLogByDbc(dbc, packets, outputFileName);
         }
     }
 }

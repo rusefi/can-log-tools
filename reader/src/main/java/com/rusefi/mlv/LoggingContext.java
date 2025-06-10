@@ -10,8 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * this data structure holds current status for all signals
+ */
 public class LoggingContext {
-    public Map<String, Double> currentSnapshot = new HashMap<>();
+    private final Map<String, Double> currentSnapshot = new HashMap<>();
     private final AtomicReference<Long> currentTimeUs = new AtomicReference<>();
 
     public BinarySensorLog<BinaryLogEntry> getBinaryLogEntryBinarySensorLog(Collection<BinaryLogEntry> entries, String outputFileName) {
@@ -34,6 +37,10 @@ public class LoggingContext {
     }
 
     public BinarySensorLog.TimeProvider getTimeProvider() {
-        return () -> this.currentTimeUs.get();
+        return currentTimeUs::get;
+    }
+
+    public void put(String name, double value) {
+        currentSnapshot.put(name, value);
     }
 }

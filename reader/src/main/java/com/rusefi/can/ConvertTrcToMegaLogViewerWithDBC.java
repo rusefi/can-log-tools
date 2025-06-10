@@ -22,7 +22,7 @@ public class ConvertTrcToMegaLogViewerWithDBC {
 
             String outputFileName = outputFolder + File.separator + simpleFileName + LoggingStrategy.MLG;
 
-            LoggingStrategy.writeLog(dbc, packets, outputFileName);
+            LoggingStrategy.writeLogByDbc(dbc, packets, outputFileName);
         };
 
 

@@ -27,12 +27,12 @@ public class LoggingStrategy {
         return entries;
     }
 
-    public static void writeLog(DbcFile dbc, List<CANPacket> packets, String outputFileName) {
+    public static void writeLogByDbc(DbcFile dbc, List<CANPacket> packets, String outputFileName) {
         List<BinaryLogEntry> entries = dbc.getFieldNameEntries();
 
         System.out.println(new Date() + " writeLog... " + outputFileName);
-        LoggingContext context = new LoggingContext();
-        BinarySensorLog<BinaryLogEntry> log = context.getBinaryLogEntryBinarySensorLog(entries, outputFileName);
+        LoggingContext snapshot = new LoggingContext();
+        BinarySensorLog<BinaryLogEntry> log = snapshot.getBinaryLogEntryBinarySensorLog(entries, outputFileName);
 
         PacketLogger logger = packetContent -> {
             DbcPacket packetMeta = dbc.findPacket(packetContent.getId());
@@ -40,12 +40,12 @@ public class LoggingStrategy {
                 return false;
 
             for (DbcField field : packetMeta.getFields()) {
-                context.currentSnapshot.put(field.getName(), field.getValue(packetContent));
+                snapshot.put(field.getName(), field.getValue(packetContent));
             }
             return true;
         };
 
-        context.writeLogContent(packets, log, logger);
+        snapshot.writeLogContent(packets, log, logger);
         System.out.println(new Date() + " writeLog " + outputFileName + " done!");
     }
 

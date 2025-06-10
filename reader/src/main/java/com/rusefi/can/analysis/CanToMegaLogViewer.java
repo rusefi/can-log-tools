@@ -22,7 +22,7 @@ public class CanToMegaLogViewer {
         if (Launcher.dbcFileName != null) {
             DbcFile dbc = DbcFile.readFromFile(Launcher.dbcFileName);
             String outputFileName = reportDestinationFolder + File.separator + simpleFileName + ".by_dbc.mlg";
-            LoggingStrategy.writeLog(dbc, canPackets, outputFileName);
+            LoggingStrategy.writeLogByDbc(dbc, canPackets, outputFileName);
         }
 
         writeByIds(reportDestinationFolder, canPackets, simpleFileName);
@@ -30,24 +30,12 @@ public class CanToMegaLogViewer {
 
     private static void writeByIds(String reportDestinationFolder, List<CANPacket> canPackets, String simpleFileName) {
         List<BinaryLogEntry> entries = new ArrayList<>();
-        Set<ByteRateOfChange.ByteId> byteIds = new HashSet<>();
 
-        Set<Integer> SIDs = new HashSet<>();
-        for (CANPacket packet : canPackets) {
-            SIDs.add(packet.getId());
-
-            for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
-                ByteRateOfChange.ByteId key = ByteRateOfChange.ByteId.createByte(packet.getId(), byteIndex);
-                byteIds.add(key);
-            }
-
-        }
-
-        for (ByteRateOfChange.ByteId key : byteIds) {
+        for (ByteRateOfChange.ByteId key : getAllByteIds(canPackets)) {
             entries.add(BinaryLogEntry.createFloatLogEntry(key.getLogKey(), Integer.toBinaryString(key.sid)));
         }
 
-        for (Integer sid : SIDs) {
+        for (Integer sid : getAllIds(canPackets)) {
             for (int i = 0; i < 7; i++) {
                 {
                     String twoBytesKey = getTwoBytesKeyM(sid, i);
@@ -60,10 +48,10 @@ public class CanToMegaLogViewer {
             }
         }
 
-        LoggingContext context = new LoggingContext();
-        BinarySensorLog<BinaryLogEntry> log = context.getBinaryLogEntryBinarySensorLog(entries, reportDestinationFolder + File.separator + simpleFileName + LoggingStrategy.MLG);
+        LoggingContext snapshot = new LoggingContext();
+        BinarySensorLog<BinaryLogEntry> log = snapshot.getBinaryLogEntryBinarySensorLog(entries, reportDestinationFolder + File.separator + simpleFileName + LoggingStrategy.MLG);
 
-        context.writeLogContent(canPackets, log, packetContent -> {
+        snapshot.writeLogContent(canPackets, log, packetContent -> {
             byte[] bytes = packetContent.getData();
             for (int i = 0; i < bytes.length; i++) {
                 int value = bytes[i] & 0xFF;
@@ -71,24 +59,44 @@ public class CanToMegaLogViewer {
                 int sid = packetContent.getId();
                 {
                     String name = ByteRateOfChange.ByteId.createByte(sid, i).getLogKey();
-                    context.currentSnapshot.put(name, (double) value);
+                    snapshot.put(name, value);
                 }
                 {
                     if (i < bytes.length - 1) {
                         int value2 = bytes[i + 1] & 0xFF;
                         {
                             String name = getTwoBytesKeyM(sid, i);
-                            context.currentSnapshot.put(name, (double) value2 * 256 + value);
+                            snapshot.put(name, (double) value2 * 256 + value);
                         }
                         {
                             String name = getTwoBytesKeyL(sid, i);
-                            context.currentSnapshot.put(name, (double) value2 + value * 256);
+                            snapshot.put(name, (double) value2 + value * 256);
                         }
                     }
                 }
             }
             return true;
         });
+    }
+
+    private static Set<ByteRateOfChange.ByteId> getAllByteIds(List<CANPacket> canPackets) {
+        Set<ByteRateOfChange.ByteId> byteIds = new HashSet<>();
+
+        for (CANPacket packet : canPackets) {
+            for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
+                ByteRateOfChange.ByteId key = ByteRateOfChange.ByteId.createByte(packet.getId(), byteIndex);
+                byteIds.add(key);
+            }
+        }
+        return byteIds;
+    }
+
+    private static Set<Integer> getAllIds(List<CANPacket> canPackets) {
+        Set<Integer> SIDs = new HashSet<>();
+        for (CANPacket packet : canPackets) {
+            SIDs.add(packet.getId());
+        }
+        return SIDs;
     }
 
 
