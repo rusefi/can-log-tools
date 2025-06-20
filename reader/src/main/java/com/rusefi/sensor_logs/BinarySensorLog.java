@@ -34,11 +34,6 @@ public class BinarySensorLog<T extends BinaryLogEntry> implements SensorLog, Aut
     }
 
     @Override
-    public double getSecondsSinceFileStart() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void writeSensorLogLine() {
         if (stream == null) {
             System.out.println(getClass().getSimpleName() + ": Writing to " + outputFileName);
