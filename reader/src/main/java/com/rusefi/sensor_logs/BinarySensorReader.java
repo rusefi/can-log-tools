@@ -9,10 +9,20 @@ import java.util.*;
 public class BinarySensorReader {
     private static final int FIXED_HEADER_SIZE = 24;
 
-    private static List<Record> records = new ArrayList<>();
+    private static final List<Record> records = new ArrayList<>();
 
 
-    private static Map<Record, Float> snapshot = new HashMap<>();
+    static class LogLine {
+
+        Map<Record, Float> snapshot = new HashMap<>();
+
+        public LogLine(Map<Record, Float> snapshot) {
+            this.snapshot = snapshot;
+        }
+    }
+
+    private static final List<LogLine> logContent = new ArrayList<>();
+
 
     private static int recordCounter = 0;
 
@@ -37,6 +47,7 @@ public class BinarySensorReader {
 
         int recordLength = bis.readShort();
         int numberOfFields = bis.readShort();
+        System.out.println("numberOfFields=" + numberOfFields);
 
         int fieldsHeaderAreaSize = 89 * numberOfFields;
         System.out.println("fields area size " + fieldsHeaderAreaSize + ", recordLength=" + recordLength);
@@ -79,16 +90,16 @@ public class BinarySensorReader {
 
 
         while (bis.available() > 0) {
-            readBlocks(bis, lineTotalSize);
+            readBlocks(bis);
         }
     }
 
-    private static void readBlocks(DataInputStream bis, int lineTotalSize) throws IOException {
+    private static void readBlocks(DataInputStream bis) throws IOException {
 
         byte blockType = bis.readByte();
         bis.readByte(); // counter
         if (blockType == 0) {
-            readLoggerFieldData(bis, lineTotalSize);
+            readLoggerFieldData(bis);
         } else if (blockType == 1) {
             throw new UnsupportedOperationException("todo support markers");
         } else {
@@ -96,12 +107,14 @@ public class BinarySensorReader {
         }
     }
 
-    private static void readLoggerFieldData(DataInputStream bis, int lineTotalSize) throws IOException {
+    private static void readLoggerFieldData(DataInputStream bis) throws IOException {
         bis.readShort(); // timestamp
-        System.out.println("Reading " + lineTotalSize + " for " + recordCounter);
+//        System.out.println("Reading " + lineTotalSize + " for " + recordCounter);
 //        for (int i = 0; i < lineTotalSize; i++) {
 //            bis.readByte();
 //        }
+
+        Map<Record, Float> snapshot = new HashMap<>();
 
         for (Record record : records) {
             float value = record.read(bis);
@@ -112,6 +125,10 @@ public class BinarySensorReader {
 
         bis.readByte(); // crc
         recordCounter++;
+
+        logContent.add(new LogLine(snapshot));
+
+
     }
 
     private static String readFixedSizeString(DataInputStream bis, int size) throws IOException {
