@@ -68,8 +68,8 @@ public class DbcFile {
                 }
                 if (tokens.length < 4)
                     throw new IllegalStateException("Failing to parse comment: " + line + " at " + lineIndex);
-                int id = Integer.parseInt(tokens[2]);
-                DbcPacket packet = findPacket(id);
+                long id = Long.parseLong(tokens[2]) & 0x1FFFFFFF;    // strip ExtID flag if any
+                DbcPacket packet = findPacket((int)id);
                 Objects.requireNonNull(packet, "packet for " + id);
                 String originalName = tokens[3];
                 String niceName = merge(tokens, 4);
@@ -107,11 +107,8 @@ public class DbcFile {
             // skipping header line
             return currentPacket;
         }
-        long decId = Long.parseLong(tokens[1]);
-        if (decId > 2_000_000_000) {
-            System.err.println("Huh? Skipping ID=" + decId);
-            return currentPacket;
-        }
+        long decId = Long.parseLong(tokens[1]) & 0x1FFFFFFF;    // strip ExtID flag if any
+
         String packetName = tokens[2];
         currentPacket = new DbcPacketBuilder((int) decId, packetName);
         return currentPacket;
