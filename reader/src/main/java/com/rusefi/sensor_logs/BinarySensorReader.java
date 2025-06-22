@@ -1,13 +1,20 @@
 package com.rusefi.sensor_logs;
 
 import java.io.*;
-import java.util.Date;
+import java.util.*;
 
 /**
  * https://www.efianalytics.com/TunerStudio/docs/MLG_Binary_LogFormat_2.0.pdf
  */
 public class BinarySensorReader {
     private static final int FIXED_HEADER_SIZE = 24;
+
+    private static List<Record> records = new ArrayList<>();
+
+
+    private static Map<Record, Float> snapshot = new HashMap<>();
+
+    private static int recordCounter = 0;
 
     static void read(String fileName) throws IOException {
 
@@ -32,7 +39,7 @@ public class BinarySensorReader {
         int numberOfFields = bis.readShort();
 
         int fieldsHeaderAreaSize = 89 * numberOfFields;
-        System.out.println("fields area size " + fieldsHeaderAreaSize);
+        System.out.println("fields area size " + fieldsHeaderAreaSize + ", recordLength=" + recordLength);
 
         int infoBlockExpectedSize = dataBeginIndex - FIXED_HEADER_SIZE - fieldsHeaderAreaSize;
         boolean isInfoBlockExpected = infoBlockExpectedSize > 0;
@@ -40,6 +47,8 @@ public class BinarySensorReader {
             System.out.println("Expecting infoBlock " + infoBlockExpectedSize);
         }
 
+
+        int lineTotalSize = 0;
 
         for (int i = 0; i < numberOfFields; i++) {
             int typeCode = bis.readByte();
@@ -52,17 +61,57 @@ public class BinarySensorReader {
             String categoryAsArray = readFixedSizeString(bis, 34);
 //            System.out.println("fieldName " + fieldName + ", units=[" + units + "]");
 
-
             MlqDataType type = MlqDataType.findByOrdinal(typeCode);
+
+            lineTotalSize += type.getRecordSize();
+
+            records.add(new Record(fieldName, type, scale));
+
         }
 
         if (isInfoBlockExpected) {
             String infoBlock = readFixedSizeString(bis, infoBlockExpectedSize);
             System.out.println("Skipping infoBlock length=" + infoBlock.length());
-            System.out.println("Validation " + (dataBeginIndex - infoBlock.length() - fieldsHeaderAreaSize - FIXED_HEADER_SIZE - 1));
+            int sizeValidation = dataBeginIndex - infoBlock.length() - fieldsHeaderAreaSize - FIXED_HEADER_SIZE - 1;
+            if (sizeValidation != 0)
+                throw new IllegalStateException("Size validation failed by " + sizeValidation);
         }
 
 
+        while (bis.available() > 0) {
+            readBlocks(bis, lineTotalSize);
+        }
+    }
+
+    private static void readBlocks(DataInputStream bis, int lineTotalSize) throws IOException {
+
+        byte blockType = bis.readByte();
+        bis.readByte(); // counter
+        if (blockType == 0) {
+            readLoggerFieldData(bis, lineTotalSize);
+        } else if (blockType == 1) {
+            throw new UnsupportedOperationException("todo support markers");
+        } else {
+            throw new IllegalStateException("Unexpected " + blockType);
+        }
+    }
+
+    private static void readLoggerFieldData(DataInputStream bis, int lineTotalSize) throws IOException {
+        bis.readShort(); // timestamp
+        System.out.println("Reading " + lineTotalSize + " for " + recordCounter);
+//        for (int i = 0; i < lineTotalSize; i++) {
+//            bis.readByte();
+//        }
+
+        for (Record record : records) {
+            float value = record.read(bis);
+//            System.out.println(record.getFieldName() + "=" + value);
+            snapshot.put(record, value);
+
+        }
+
+        bis.readByte(); // crc
+        recordCounter++;
     }
 
     private static String readFixedSizeString(DataInputStream bis, int size) throws IOException {
@@ -75,20 +124,6 @@ public class BinarySensorReader {
                 terminated = true;
             if (!terminated)
                 sb.append(c);
-        }
-
-
-        return sb.toString();
-    }
-
-    private static String readNullTerminatedString(DataInputStream bis) throws IOException {
-        StringBuilder sb = new StringBuilder();
-
-        while (true) {
-            char c = (char) bis.readByte();
-            if (c == 0)
-                break;
-            sb.append(c);
         }
 
 
