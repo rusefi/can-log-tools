@@ -126,7 +126,7 @@ public class ParseDBCTest {
         dbc.read(reader);
 
         assertEquals(dbc.size(), 1);
-        DbcPacket packet = dbc.get(100);
+        DbcPacket packet = dbc.findPacket(100);
         assertNotNull(packet);
 
         DbcField f = packet.getFields().get(0);

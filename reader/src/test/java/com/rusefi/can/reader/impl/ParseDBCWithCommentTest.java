@@ -63,7 +63,7 @@ public class ParseDBCWithCommentTest {
         dbc.read(reader);
 
         assertEquals(dbc.size(), 1);
-        DbcPacket packet = dbc.get(1408);
+        DbcPacket packet = dbc.findPacket(1408);
         DbcField field = packet.find("Number of cylinders");
         assertNotNull(field);
         assertTrue(field.isNiceName());
@@ -78,7 +78,7 @@ public class ParseDBCWithCommentTest {
         DbcFile dbc = new DbcFile(false);
         dbc.read(reader);
         assertEquals(dbc.size(), 1);
-        DbcPacket p190 = dbc.get(190);
+        DbcPacket p190 = dbc.findPacket(190);
         DbcField signalBrkPdl = p190.getByName("PSBPI_PTSnBrkPdlPs");
         assertEquals(8, signalBrkPdl.getStartOffset());
         assertEquals(8, signalBrkPdl.getLength());
@@ -97,7 +97,7 @@ public class ParseDBCWithCommentTest {
         dbc.read(reader);
         assertEquals(dbc.size(), 1);
 
-        DbcPacket p190 = dbc.get(190);
+        DbcPacket p190 = dbc.findPacket(190);
         assertEquals(9, p190.getFields().size());
 
         DbcField firstByte = p190.findByBitIndex(/*bit index*/3);
