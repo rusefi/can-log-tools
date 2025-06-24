@@ -145,7 +145,7 @@ public class DbcFile {
     }
 
     public DbcPacket findPacket(int canId) {
-        return packets.get(canId);
+        return packets.get(trimSid(canId));
     }
 
     public List<BinaryLogEntry> getFieldNameEntries(LoggingStrategy.LoggingFilter filter) {
@@ -160,7 +160,8 @@ public class DbcFile {
     }
 
     public DbcPacket getPacket(int sid) {
-        return packets.computeIfAbsent(sid, new Function<Integer, DbcPacket>() {
+        int trimmedSid = trimSid(sid);
+        return packets.computeIfAbsent(trimmedSid, new Function<Integer, DbcPacket>() {
             @Override
             public DbcPacket apply(Integer integer) {
                 String packetName = Integer.toHexString(sid) + "_" + sid;
@@ -170,11 +171,15 @@ public class DbcFile {
         });
     }
 
-    public DbcPacket get(int sid) {
-        return packets.get(sid);
-    }
-
     public Collection<DbcPacket> values() {
         return packets.values();
+    }
+
+    // GMLAN specific: leave the only ArbID, trim priority and sender fields
+    static private int trimSid(int sid) {
+        if (Launcher.gmlanIgnoreSender && (sid > 0x7FF))
+            return (sid & 0x03FF_FE00);
+        else
+            return sid;
     }
 }

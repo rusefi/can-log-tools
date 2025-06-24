@@ -12,8 +12,12 @@ public class Launcher {
     public static String fileNameFilter;
     public static final String DBC_FILENAME_PROPERTY = "-dbc";
     public static String dbcFileName;
-    public static final String DBC_DUP_FIELD_NAMES = "-allow-dup-names";
+    private static final String DBC_DUP_FIELD_NAMES = "-allow-dup-names";
     public static boolean allowDuplicateNames = false;
+
+    // lower 13 bits in GMLAN IDs is a sender address. DBC may contain the only zeros in this field
+    private static final String GMLAN_IGNORE_SENDER = "-gmlan-ignore-sender";
+    public static boolean gmlanIgnoreSender = false;
 
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
@@ -23,6 +27,7 @@ public class Launcher {
                     FILENAME_FILTER_PROPERTY,
                     DBC_FILENAME_PROPERTY,
                     DBC_DUP_FIELD_NAMES,
+                    GMLAN_IGNORE_SENDER,
             }));
             System.exit(-1);
         }
@@ -43,6 +48,9 @@ public class Launcher {
                 case DBC_FILENAME_PROPERTY:
                     i += 1;
                     dbcFileName = args[i];
+                    break;
+                case GMLAN_IGNORE_SENDER:
+                    gmlanIgnoreSender = true;
                     break;
                 default:
                     throw new IllegalStateException("Unexpected argument " + args[i]);
