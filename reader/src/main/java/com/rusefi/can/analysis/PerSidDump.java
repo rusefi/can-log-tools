@@ -60,6 +60,7 @@ public class PerSidDump {
             String variableName = packet == null ? "CAN_" + decAndHex : packet.getName();
             String methodNameSuffix = packet == null ? ("Can" + decAndHex) : packet.getName();
             String rxMethodName = "on" + methodNameSuffix;
+            boolean isExtId = sid > 0x7ff;
 
             StringBuilder payloadLine = middlePacket.asLua(payloadVariableName);
 
@@ -76,7 +77,8 @@ public class PerSidDump {
             middle.println("\t" + payloadVariableName + "[x] = " + counterVariable);
             //middle.println("\tprint ('MOTOR_" + middlePacket.getId() + "' " ..)
 
-            middle.println("\ttxCan(VEHICLE_BUS, " + variableName + ", 0, " + payloadVariableName + ")");
+            middle.println("\ttxCan(VEHICLE_BUS, " + variableName + ", " + (isExtId ? "1" : "0") + ", " +
+                    payloadVariableName + ")");
 
             middle.println("end");
             middle.println();
@@ -98,10 +100,9 @@ public class PerSidDump {
             middle.println("static int " + counterVariable + ";");
 
             if (packet != null) {
-                middle.println("\tCanTxMessage msg(CanCategory::NBC, " + packet.getName() + ");");
-                middle.println("\tmsg.setArray(" + payloadVariableName + ", " + middlePacket.getData().length + ");");
-
-
+                String extIdSuffix = isExtId ? ", 0, true" : "";
+                middle.println("\tCanTxMessage msg(CanCategory::NBC, " + packet.getName() + extIdSuffix + ");");
+                middle.println("\tmsg.setArray(" + payloadVariableName + ");");
             }
             middle.println("}");
 
