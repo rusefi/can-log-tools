@@ -6,6 +6,7 @@ import java.awt.datatransfer.StringSelection;
 public class PinLine {
 
     private static final String PREFIX = "";
+    private static final String SUFFIX = "";
 
     private static final int INDEX_FROM = 49;
     private static final int INDEX_TO = 64;
@@ -36,7 +37,7 @@ public class PinLine {
 
             int x = (int) (X_FROM + zeroIndex * perPin);
 
-            sb.append("    - pin: " + PREFIX + i + "\n");
+            sb.append("    - pin: " + PREFIX + i + SUFFIX + "\n");
             sb.append("      x: " + x + "\n");
             sb.append("      y: " + Y_FROM + "\n");
 
