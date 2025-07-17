@@ -38,7 +38,7 @@ public class LoggingStrategy {
     public static void writeLogByDbc(DbcFile dbc, List<CANPacket> packets, String outputFileName) {
         Set<Integer> allIds = CANPacket.getAllIds(packets);
         // we only log DBC frames if at least one packet is present in the trace
-        LoggingFilter filter = packet -> allIds.contains(packet.getId());
+        LoggingFilter filter = packet -> packet.isInLog(allIds);
         List<BinaryLogEntry> entries = dbc.getFieldNameEntries(filter);
 
         System.out.println(new Date() + " writeLog... " + outputFileName);
