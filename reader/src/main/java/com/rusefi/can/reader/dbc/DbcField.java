@@ -15,8 +15,9 @@ public class DbcField implements Comparable<DbcField> {
     private final String category;
     private final boolean isBigEndian;
     private boolean isNiceName;
+    private final boolean isSigned;
 
-    public DbcField(int packetId, String name, int startOffset, int length, double mult, double offset, String category, boolean isBigEndian) {
+    public DbcField(int packetId, String name, int startOffset, int length, double mult, double offset, String category, boolean isBigEndian, boolean isSigned) {
         this.packetId = packetId;
         this.name = name;
         this.startOffset = crazyMotorolaMath(startOffset, length, isBigEndian);
@@ -25,6 +26,7 @@ public class DbcField implements Comparable<DbcField> {
         this.offset = offset;
         this.category = category;
         this.isBigEndian = isBigEndian;
+        this.isSigned = isSigned;
         if (mult == 0 && offset == 0)
             throw new IllegalArgumentException("Really? multiplier and offset both zero for " + name);
     }
@@ -67,18 +69,17 @@ public class DbcField implements Comparable<DbcField> {
         }
         int length = Integer.parseInt(tokens[index + 1]);
         String endiannessCodeString = tokens[index + 2];
-        // todo: what is this about exactly?
-        if (endiannessCodeString.endsWith("-"))
-            endiannessCodeString = endiannessCodeString.substring(0, endiannessCodeString.length() - 1);
-        int endiannessCode = Integer.parseInt(endiannessCodeString);
+        int endiannessCode = Integer.parseInt(endiannessCodeString.substring(0,1));
+        boolean isSigned = endiannessCodeString.endsWith("-");
+
         if (endiannessCode != 0 && endiannessCode != 1)
-            throw new IllegalStateException("Unexpected endiannessCode " + endiannessCode);
+            throw new IllegalStateException("Unexpected endiannessCode " + endiannessCodeString);
         boolean isBigEndian = endiannessCode == 0;
 
         double mult = Double.parseDouble(tokens[index + 3]);
         double offset = Double.parseDouble(tokens[index + 4]);
 
-        return new DbcField(packetId, name, startOffset, length, mult, offset, parentName, isBigEndian);
+        return new DbcField(packetId, name, startOffset, length, mult, offset, parentName, isBigEndian, isSigned);
     }
 
     public String getCategory() {
@@ -112,6 +113,8 @@ public class DbcField implements Comparable<DbcField> {
     public boolean isBigEndian() {
         return isBigEndian;
     }
+
+    public boolean isSigned() { return isSigned; }
 
     @Override
     public String toString() {
@@ -169,7 +172,13 @@ public class DbcField implements Comparable<DbcField> {
     }
 
     public double getValue(CANPacket packet) {
-        return getRawValue(packet) * mult + offset;
+        long raw = getRawValue(packet);
+        if (isSigned) {
+            // extend the upper bit as sign
+            raw <<= (64 - length);
+            raw >>= (64 - length);
+        }
+        return raw * mult + offset;
     }
 
     public int getRawValue(CANPacket packet) {
