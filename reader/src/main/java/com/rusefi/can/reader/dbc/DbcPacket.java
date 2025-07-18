@@ -1,8 +1,11 @@
 package com.rusefi.can.reader.dbc;
 
+import com.rusefi.can.Launcher;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Packet describes all the fields for specific can ID
@@ -122,5 +125,18 @@ public class DbcPacket {
                 return field;
         }
         return null;
+    }
+
+    public boolean isInLog(Set<Integer> sidList) {
+        if (Launcher.gmlanIgnoreSender) {
+            for (int sid : sidList) {
+                if (DbcFile.trimSid(sid) == getId())
+                    return true;
+            }
+            return false;
+        }
+        else {
+            return sidList.contains(getId());
+        }
     }
 }

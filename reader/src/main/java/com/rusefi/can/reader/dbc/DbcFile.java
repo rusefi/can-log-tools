@@ -176,7 +176,7 @@ public class DbcFile {
     }
 
     // GMLAN specific: leave the only ArbID, trim priority and sender fields
-    static private int trimSid(int sid) {
+    static public int trimSid(int sid) {
         if (Launcher.gmlanIgnoreSender && (sid > 0x7FF))
             return (sid & 0x03FF_FE00);
         else
