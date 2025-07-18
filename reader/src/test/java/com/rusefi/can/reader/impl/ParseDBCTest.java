@@ -86,20 +86,21 @@ public class ParseDBCTest {
             " SG_ Ansteuerung_Frontwischer_Normal : 2|1@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Ansteuerung_Wascher_Front : 1|1@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Frontwischer__eingeschaltet : 0|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            "" +
-            "" +
-            "" +
             "\n" +
             VAG_MOTOR_1;
 
-    @Test
-    public void parse() throws IOException {
-        BufferedReader reader = new BufferedReader(new StringReader(RPM_DBC));
-
+    private DbcFile readDbc(String text) throws IOException {
+        BufferedReader reader = new BufferedReader(new StringReader(text));
         DbcFile dbc = new DbcFile(false);
         dbc.read(reader);
+        return dbc;
+    }
 
-        assertEquals(dbc.size(), 3);
+    @Test
+    public void parse() throws IOException {
+
+        DbcFile dbc = readDbc(RPM_DBC);
+        assertEquals(3, dbc.size());
 
         DbcPacket zacPacket = dbc.getPacketByIndexSlow(0);
         assertFalse(zacPacket.getFields().get(0).isBigEndian());
@@ -107,7 +108,7 @@ public class ParseDBCTest {
 
         DbcPacket motorPacket = dbc.getPacketByIndexSlow(2);
         assertNotNull(motorPacket);
-        assertEquals(motorPacket.getId(), 640);
+        assertEquals(640, motorPacket.getId());
 
         DbcField rpm = motorPacket.find("RPM");
         assertEquals(0.25, rpm.getMult());
@@ -119,13 +120,8 @@ public class ParseDBCTest {
         String moto = "BO_ 100 P: 8 ECM_HS\n" +
                 " SG_ OAT : 63|8@0+ (1,0) [0|8] \"deg C\"  VICS";
 
-        BufferedReader reader = new BufferedReader(new StringReader(moto));
-
-
-        DbcFile dbc = new DbcFile(false);
-        dbc.read(reader);
-
-        assertEquals(dbc.size(), 1);
+        DbcFile dbc = readDbc(moto);
+        assertEquals(1, dbc.size());
         DbcPacket packet = dbc.findPacket(100);
         assertNotNull(packet);
 
@@ -142,4 +138,25 @@ public class ParseDBCTest {
 
         assertEquals(24, DbcField.crazyMotorolaMath(17, 10, true));
     }
+
+    @Test
+    public void signedValue() throws IOException {
+        String engStatus =
+                "BO_ 201 Engine_General_Status_1: 8 hsCAN\n" +
+                " SG_ AccActPos : 32|8@1+ (0.392157,0.0) [0|255] \"%\" Vector__XXX\n" +
+                " SG_ EngAirIntBstPr : 56|8@1- (1.0,0.0) [-128|127] \"kPaG\" Vector__XXX";
+
+        DbcFile dbc = readDbc(engStatus);
+        DbcPacket packet = dbc.findPacket(201);
+        assertNotNull(packet);
+
+        DbcField AccActPos = packet.getByName("AccActPos");
+        assertNotNull(AccActPos);
+        assertFalse(AccActPos.isSigned());
+
+        DbcField EngAirIntBstPr = packet.getByName("EngAirIntBstPr");
+        assertNotNull(EngAirIntBstPr);
+        assertTrue(EngAirIntBstPr.isSigned());
+    }
+
 }

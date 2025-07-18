@@ -32,11 +32,13 @@ public class GapFactory {
                 int endIndex = findUnusedSectionEndIndex(bitIndex);
 
                 int length = endIndex - bitIndex;
+                String name;
                 if (length == 8) {
-                    signals.add(new DbcField(packetId, packetName + "_gap_byte_" + bitIndex, bitIndex, length, 1, 0, "", false));
+                    name = packetName + "_gap_byte_" + bitIndex;
                 } else {
-                    signals.add(new DbcField(packetId, packetName + "_gap_bits_" + bitIndex + "_" + length, bitIndex, length, 1, 0, "", false));
+                    name = packetName + "_gap_bits_" + bitIndex + "_" + length;
                 }
+                signals.add(new DbcField(packetId, name, bitIndex, length, 1, 0, "", false, false));
 
                 bitIndex = endIndex - 1;
             }
