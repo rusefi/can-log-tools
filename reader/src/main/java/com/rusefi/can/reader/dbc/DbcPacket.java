@@ -50,7 +50,7 @@ public class DbcPacket {
         return null;
     }
 
-    public void replaceName(String originalName, String niceName) {
+    public void addComment(String originalName, String niceName) {
         if (niceName.charAt(niceName.length() - 1) == ';')
             niceName = niceName.substring(0, niceName.length() - 1);
         niceName = unquote(niceName);
@@ -59,8 +59,8 @@ public class DbcPacket {
             System.err.println("Field not found by [" + originalName + "]");
             return;
         }
-        Objects.requireNonNull(field, "By " + originalName);
-        field.rename(niceName);
+
+        field.rename(originalName + ": " + niceName);
     }
 
     private static String unquote(String q) {

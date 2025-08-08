@@ -73,7 +73,7 @@ public class DbcFile {
                 Objects.requireNonNull(packet, "packet for " + id);
                 String originalName = tokens[3];
                 String niceName = merge(tokens, 4);
-                packet.replaceName(originalName, niceName);
+                packet.addComment(originalName, niceName);
 
 
             } else if (line.startsWith("SG_ ")) {
