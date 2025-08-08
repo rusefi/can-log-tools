@@ -89,7 +89,7 @@ public class ParseDBCTest {
             "\n" +
             VAG_MOTOR_1;
 
-    private DbcFile readDbc(String text) throws IOException {
+    public static DbcFile readDbc(String text) throws IOException {
         BufferedReader reader = new BufferedReader(new StringReader(text));
         DbcFile dbc = new DbcFile(false);
         dbc.read(reader);

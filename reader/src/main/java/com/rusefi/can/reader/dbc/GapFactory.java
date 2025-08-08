@@ -20,7 +20,9 @@ public class GapFactory {
                 try {
                     isUsed[bitIndex] = true;
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    throw new IllegalStateException("While " + packetName + " " + dbcField, e);
+                    //throw new IllegalStateException("While " + packetName + " " + dbcField, e);
+                    System.err.println("Too long indexes in " + packetName + " " + dbcField);
+                    break;
                 }
             }
         }

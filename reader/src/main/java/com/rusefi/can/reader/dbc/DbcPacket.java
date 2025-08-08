@@ -80,8 +80,8 @@ public class DbcPacket {
                         break;
                     case '\\':
                     case '\"':
-                    case '*':
-                    case '?':
+                    //case '*':
+                    //case '?':
                         break;
                     default:
                         throw new IllegalArgumentException(
@@ -89,8 +89,8 @@ public class DbcPacket {
                 }
             } else {
                 switch (c) {
-                    case '*':
-                    case '?':
+                    //case '*':
+                    //case '?':
                     case '\"':
                     case '\n':
                         throw new IllegalArgumentException(
@@ -128,7 +128,7 @@ public class DbcPacket {
     }
 
     public boolean isInLog(Set<Integer> sidList) {
-        if (Launcher.gmlanIgnoreSender) {
+        if (Launcher.gmlanIgnoreSender || Launcher.j1939_mode) {
             for (int sid : sidList) {
                 if (DbcFile.trimSid(sid) == getId())
                     return true;

@@ -19,6 +19,10 @@ public class Launcher {
     private static final String GMLAN_IGNORE_SENDER = "-gmlan-ignore-sender";
     public static boolean gmlanIgnoreSender = false;
 
+    // J1939: lower 8 bits are sender, higher 3 bits - Priority. DBC contains weird 'FE' in these fields
+    private static final String J1939_MODE = "-j1939-mode";
+    public static boolean j1939_mode = false;
+
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.err.println("At least folder name is expected");
@@ -28,6 +32,7 @@ public class Launcher {
                     DBC_FILENAME_PROPERTY,
                     DBC_DUP_FIELD_NAMES,
                     GMLAN_IGNORE_SENDER,
+                    J1939_MODE
             }));
             System.exit(-1);
         }
@@ -51,6 +56,9 @@ public class Launcher {
                     break;
                 case GMLAN_IGNORE_SENDER:
                     gmlanIgnoreSender = true;
+                    break;
+                case J1939_MODE:
+                    j1939_mode = true;
                     break;
                 default:
                     throw new IllegalStateException("Unexpected argument " + args[i]);
