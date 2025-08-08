@@ -39,9 +39,6 @@ public class ParseDBCWithCommentTest {
                     " SG_ Driving_Cycle : 4|1@1+ (1,0) [0|0] \"\" XXX\n" +
                     " SG_ Zaehler_Motor_Flexia : 1|3@1+ (1,0) [0|15] \"\" XXX\n" +
                     " SG_ Multiplex_Schalter_Motor_Flexia M : 0|1@1+ (1,0) [0|0] \"\" XXX\n" +
-                    "" +
-                    "" +
-                    "" +
                     "\n" +
                     "\n" +
                     "CM_ SG_ 1408 Zaehler_Motor_Flexia \"Counter Motor_Flexia\";\n" +
@@ -52,8 +49,7 @@ public class ParseDBCWithCommentTest {
                     "CM_ SG_ 1408 Anzahl_Zylinder \"Number of cylinders\";\n" +
                     "CM_ SG_ 1408 Anzahl_Ventile \"Number of valves\";\n" +
                     "CM_ SG_ 1408 Ansaugsystem \"Induction System\";\n" +
-                    "CM_ SG_ 1408 Motorleistung \"Maximum engine power\";\n" +
-                    "";
+                    "CM_ SG_ 1408 Motorleistung \"Maximum engine power\";\n";
 
     @Test
     public void parse() throws IOException {
@@ -62,9 +58,9 @@ public class ParseDBCWithCommentTest {
         DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
         dbc.read(reader);
 
-        assertEquals(dbc.size(), 1);
+        assertEquals(1, dbc.size());
         DbcPacket packet = dbc.findPacket(1408);
-        DbcField field = packet.find("Number of cylinders");
+        DbcField field = packet.find("Anzahl_Zylinder: Number of cylinders");
         assertNotNull(field);
         assertTrue(field.isNiceName());
     }

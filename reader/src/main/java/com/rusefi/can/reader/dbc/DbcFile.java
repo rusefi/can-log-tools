@@ -73,7 +73,7 @@ public class DbcFile {
                 Objects.requireNonNull(packet, "packet for " + id);
                 String originalName = tokens[3];
                 String niceName = merge(tokens, 4);
-                packet.replaceName(originalName, niceName);
+                packet.addComment(originalName, niceName);
 
 
             } else if (line.startsWith("SG_ ")) {
@@ -108,9 +108,9 @@ public class DbcFile {
             return currentPacket;
         }
         long decId = Long.parseLong(tokens[1]) & 0x1FFFFFFF;    // strip ExtID flag if any
-
+        int trimmedId = trimSid((int) decId);
         String packetName = tokens[2];
-        currentPacket = new DbcPacketBuilder((int) decId, packetName);
+        currentPacket = new DbcPacketBuilder(trimmedId, packetName);
         return currentPacket;
     }
 
@@ -130,8 +130,12 @@ public class DbcFile {
                 return;
             int sid = currentPacket.getPacketId();
             DbcPacket existingPacket = packets.get(sid);
-            if (existingPacket != null)
-                throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
+            if (existingPacket != null) {
+                //throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
+                currentPacket.markConsumed();
+                System.err.println("Packets conflict: " + existingPacket.getName() + " and " + currentPacket.getPacketName() +
+                    " have the same ID = " + sid);
+            }
             List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
             packets.put(sid, new DbcPacket(sid, currentPacket.getPacketName(), signals));
             currentPacket.markConsumed();
@@ -176,9 +180,18 @@ public class DbcFile {
     }
 
     // GMLAN specific: leave the only ArbID, trim priority and sender fields
+    // J1939 specific: trim source and destination (if any)
     static public int trimSid(int sid) {
-        if (Launcher.gmlanIgnoreSender && (sid > 0x7FF))
+        boolean longId = (sid > 0x7FF);
+        if (Launcher.gmlanIgnoreSender && longId)
             return (sid & 0x03FF_FE00);
+        else if (Launcher.j1939_mode && longId) {
+            int pduFormat = (sid >> 16) & 0xFF;
+            if (pduFormat < 0xF0) // PDU1 - peer to peer
+                return (sid & 0x03FF_0000);
+            else // PDU2 - broadcast
+                return (sid & 0x03FF_FF00);
+        }
         else
             return sid;
     }
