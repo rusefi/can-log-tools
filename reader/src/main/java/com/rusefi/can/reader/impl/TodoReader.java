@@ -22,8 +22,14 @@ public enum TodoReader implements CANLineReader {
         String[] tokens = line.split(",");
         if (!tokens[0].startsWith("\"USB-to-CAN V2 compact"))
             return null;
-        int sid = Integer.parseInt(unquote(tokens[4]), 16);
-        int size = Integer.parseInt(unquote(tokens[5]));
+        int sid;
+        int size;
+        try {
+            sid = Integer.parseInt(unquote(tokens[4]), 16);
+            size = Integer.parseInt(unquote(tokens[5]));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("While parting " + line, e);
+        }
         byte[] data = new byte[size];
         String payload = unquote(tokens[6]);
         String[] payloadTokens = payload.split(" ");
