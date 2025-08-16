@@ -28,15 +28,15 @@ public class AutoFormatReader implements CANLineReader {
         String firstLine = Files.lines(Paths.get(fileName)).findFirst().get();
         if (!firstLine.contains(PcanTrcReader2_0.FILEVERSION)
                 && !firstLine.contains(CanHackerReader.HEADER)
-                && !firstLine.contains(TodoReader.START_TIME)
+                && !firstLine.contains(IxxatReader.START_TIME)
                 && !firstLine.contains(SomethingLinuxReader.HEADER)
                 && !firstLine.contains(BusMasterReader.HEADER)
         )
             throw new IllegalStateException(PcanTrcReader2_0.FILEVERSION + " expected in first line");
         if (firstLine.contains(CanHackerReader.HEADER)) {
             delegate = CanHackerReader.INSTANCE;
-        } else if (firstLine.startsWith(TodoReader.START_TIME)) {
-            delegate = TodoReader.INSTANCE;
+        } else if (firstLine.startsWith(IxxatReader.START_TIME)) {
+            delegate = IxxatReader.INSTANCE;
         } else if (firstLine.contains(SomethingLinuxReader.HEADER)) {
             delegate = SomethingLinuxReader.INSTANCE;
         } else if (firstLine.contains(BusMasterReader.HEADER)) {
