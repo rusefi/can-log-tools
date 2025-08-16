@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class AutoFormatReader implements CANLineReader {
-    public static final CANLineReader INSTANCE = new AutoFormatReader();
+    public static final AutoFormatReader INSTANCE = new AutoFormatReader();
 
     private CANLineReader delegate;
 
@@ -26,16 +26,26 @@ public class AutoFormatReader implements CANLineReader {
     @Override
     public List<CANPacket> readFile(String fileName) throws IOException {
         String firstLine = Files.lines(Paths.get(fileName)).findFirst().get();
+        detectReader(firstLine);
+        try {
+            return delegate.readFile(fileName);
+        } catch (Throwable e) {
+            throw new IllegalStateException("While " + fileName, e);
+        }
+    }
+
+    public void detectReader(String firstLine) {
         if (!firstLine.contains(PcanTrcReader2_0.FILEVERSION)
                 && !firstLine.contains(CanHackerReader.HEADER)
                 && !firstLine.contains(IxxatReader.START_TIME)
+                && !firstLine.contains(IxxatReader.BusNo)
                 && !firstLine.contains(SomethingLinuxReader.HEADER)
                 && !firstLine.contains(BusMasterReader.HEADER)
         )
             throw new IllegalStateException(PcanTrcReader2_0.FILEVERSION + " expected in first line");
         if (firstLine.contains(CanHackerReader.HEADER)) {
             delegate = CanHackerReader.INSTANCE;
-        } else if (firstLine.startsWith(IxxatReader.START_TIME)) {
+        } else if (firstLine.startsWith(IxxatReader.START_TIME) || firstLine.startsWith(IxxatReader.BusNo)     ) {
             delegate = IxxatReader.INSTANCE;
         } else if (firstLine.contains(SomethingLinuxReader.HEADER)) {
             delegate = SomethingLinuxReader.INSTANCE;
@@ -47,11 +57,6 @@ public class AutoFormatReader implements CANLineReader {
             delegate = PcanTrcReader2_0.INSTANCE;
         } else {
             throw new IllegalStateException("Unsupported version in " + firstLine);
-        }
-        try {
-            return delegate.readFile(fileName);
-        } catch (Throwable e) {
-            throw new IllegalStateException("While " + fileName, e);
         }
     }
 

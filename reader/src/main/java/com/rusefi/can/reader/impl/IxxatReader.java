@@ -19,6 +19,7 @@ public enum IxxatReader implements CANLineReader {
     static Pattern pattern = Pattern.compile("\"([^\"]*(?:\"\"[^\"]*)*)\"|([^,]+)");
 
     public static final String START_TIME = "Start Time";
+    public static final String BusNo = "\"Bus\",\"No\"";
 
     public static List<String> tokenize(String line) {
         List<String> tokens = new ArrayList<>();

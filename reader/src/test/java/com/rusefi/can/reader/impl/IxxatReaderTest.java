@@ -22,5 +22,8 @@ public class IxxatReaderTest {
             assertEquals(0x1EF, p.getId());
             assertEquals(4, p.getData().length);
         }
+
+        AutoFormatReader.INSTANCE.detectReader("Start Time  Sunday June 15 2025 11:20:17");
+        AutoFormatReader.INSTANCE.detectReader("\"Bus\",\"No\",\"Time (abs)\",\"State\",\"ID (hex)\",\"DLC\",\"Data (hex)\",\"ASCII\"");
     }
 }
