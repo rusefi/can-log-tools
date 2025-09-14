@@ -41,8 +41,9 @@ public class AutoFormatReader implements CANLineReader {
                 && !firstLine.contains(IxxatReader.BusNo)
                 && !firstLine.contains(SomethingLinuxReader.HEADER)
                 && !firstLine.contains(BusMasterReader.HEADER)
+                && !firstLine.equals(EcuMasterDongleReader.HEADER)
         )
-            throw new IllegalStateException(PcanTrcReader2_0.FILEVERSION + " expected in first line");
+            throw new IllegalStateException("Unexpected first line");
         if (firstLine.contains(CanHackerReader.HEADER)) {
             delegate = CanHackerReader.INSTANCE;
         } else if (firstLine.startsWith(IxxatReader.START_TIME) || firstLine.startsWith(IxxatReader.BusNo)     ) {
