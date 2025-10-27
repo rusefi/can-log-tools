@@ -45,6 +45,9 @@ public abstract class IsoTpCanDecoder {
         int dataOffset;
         switch (frameType) {
             case IsoTpConstants.ISO_TP_FRAME_SINGLE:
+                if (this.waitingForNumBytes > 0) {
+                    throw new IllegalStateException("ISO_TP_FRAME_SINGLE: got new frame while previous is not complete");
+                }
                 numBytesAvailable = data[isoHeaderByteIndex] & 0xf;
                 dataOffset = isoHeaderByteIndex + 1;
                 this.waitingForNumBytes = 0;
@@ -53,6 +56,9 @@ public abstract class IsoTpCanDecoder {
                 setComplete(true);
                 break;
             case IsoTpConstants.ISO_TP_FRAME_FIRST:
+                if (this.waitingForNumBytes > 0) {
+                    throw new IllegalStateException("ISO_TP_FRAME_FIRST: got new frame while previous is not complete");
+                }
                 this.waitingForNumBytes = ((data[isoHeaderByteIndex] & 0xf) << 8) | (data[isoHeaderByteIndex + 1] & 0xFF);
                 if (log.debugEnabled())
                     log.debug("Total expected: " + waitingForNumBytes);
