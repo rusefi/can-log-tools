@@ -53,7 +53,7 @@ public abstract class IsoTpCanDecoder {
                 setComplete(true);
                 break;
             case IsoTpConstants.ISO_TP_FRAME_FIRST:
-                this.waitingForNumBytes = (((data[isoHeaderByteIndex] & 0xf) << 8) & 0xFF) | (data[isoHeaderByteIndex + 1] & 0xFF);
+                this.waitingForNumBytes = ((data[isoHeaderByteIndex] & 0xf) << 8) | (data[isoHeaderByteIndex + 1] & 0xFF);
                 if (log.debugEnabled())
                     log.debug("Total expected: " + waitingForNumBytes);
                 this.waitingForFrameIndex = 1;

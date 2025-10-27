@@ -16,7 +16,7 @@ public class IsoTpFileDecoder {
     public static void run(String fileName) throws IOException {
         File f = new File(fileName);
 
-        try (FileWriter fw = new FileWriter("processed_" + f.getName())) {
+        try (FileWriter fw = new FileWriter(f.getParent() + File.separator + "processed_" + f.getName())) {
             process(fileName, fw);
         }
 
@@ -60,7 +60,8 @@ public class IsoTpFileDecoder {
                 list.add(b);
 
             if (decoder.isComplete()) {
-                fw.append(Integer.toHexString(p.getId()) + ": Got " + HexBinary.printHexBinary(list) + "\n");
+                //fw.append(Integer.toHexString(p.getId()) + ": Got " + HexBinary.printHexBinary(list) + "\n");
+                fw.append(String.format("%3H [%4d]: %s\n", p.getId(), list.size(), HexBinary.printHexBinary(list)));
                 list.clear();
                 decoder.reset();
             }
