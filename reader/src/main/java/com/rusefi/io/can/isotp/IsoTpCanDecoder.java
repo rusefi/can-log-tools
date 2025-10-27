@@ -53,7 +53,7 @@ public abstract class IsoTpCanDecoder {
                 setComplete(true);
                 break;
             case IsoTpConstants.ISO_TP_FRAME_FIRST:
-                this.waitingForNumBytes = ((data[isoHeaderByteIndex] & 0xf) << 8) | data[isoHeaderByteIndex + 1];
+                this.waitingForNumBytes = (((data[isoHeaderByteIndex] & 0xf) << 8) & 0xFF) | (data[isoHeaderByteIndex + 1] & 0xFF);
                 if (log.debugEnabled())
                     log.debug("Total expected: " + waitingForNumBytes);
                 this.waitingForFrameIndex = 1;
@@ -81,7 +81,7 @@ public abstract class IsoTpCanDecoder {
                 int separationTime = data[isoHeaderByteIndex + 2];
                 if (flowStatus == FC_ContinueToSend && blockSize == 0 && separationTime == 0)
                     return new byte[0];
-                throw new IllegalStateException("ISO_TP_FRAME_FLOW_CONTROL: should we just ignore the FC frame? " + flowStatus + " " + blockSize + " " + separationTime);
+                return handleFlowControl(flowStatus, blockSize, separationTime);
             default:
                 throw new IllegalStateException("Unknown frame type: " + frameType);
         }
@@ -89,6 +89,10 @@ public abstract class IsoTpCanDecoder {
         if (log.debugEnabled())
             log.debug(numBytesAvailable + " bytes(s) arrived in this packet: " + HexBinary.printByteArray(bytes));
         return bytes;
+    }
+
+    protected byte[] handleFlowControl(int flowStatus, int blockSize, int separationTime) {
+        throw new IllegalStateException("ISO_TP_FRAME_FLOW_CONTROL: should we just ignore the FC frame? " + flowStatus + " " + blockSize + " " + separationTime);
     }
 
     protected abstract void onTpFirstFrame();
