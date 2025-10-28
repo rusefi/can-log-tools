@@ -13,17 +13,15 @@ import java.util.function.Function;
 
 public class IsoTpFileDecoder {
 
-    public static void run(String fileName) throws IOException {
+    public static void run(String fileName, Set<Integer> isoTpIds) throws IOException {
         File f = new File(fileName);
 
         try (FileWriter fw = new FileWriter(f.getParent() + File.separator + "processed_" + f.getName())) {
-            process(fileName, fw);
+            process(fileName, fw, isoTpIds);
         }
-
     }
 
-    private static void process(String fileName, FileWriter fw) throws IOException {
-        Set<Integer> isoTpIds = new HashSet<>(Arrays.asList(0x618, 0x6F4));
+    private static void process(String fileName, FileWriter fw, Set<Integer> isoTpIds) throws IOException {
 
 
         List<CANPacket> packets = AutoFormatReader.INSTANCE.readFile(fileName);
