@@ -25,7 +25,7 @@ public class IsoTpFileDecoder {
 
 
         List<CANPacket> packets = AutoFormatReader.INSTANCE.readFile(fileName);
-        System.out.println("Got " + packets.size());
+        System.out.println("Got " + packets.size() + " packets from " + fileName);
 
         Map<Integer, IsoTpCanDecoder> decoderById = new HashMap<>();
 
