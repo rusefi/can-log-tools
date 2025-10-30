@@ -13,15 +13,15 @@ import java.util.function.Function;
 
 public class IsoTpFileDecoder {
 
-    public static void run(String fileName, Set<Integer> isoTpIds) throws IOException {
+    public static void run(String fileName, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
         File f = new File(fileName);
 
         try (FileWriter fw = new FileWriter(f.getParent() + File.separator + "processed_" + f.getName())) {
-            process(fileName, fw, isoTpIds);
+            process(fileName, fw, isoTpIds, isoHeaderByteIndex);
         }
     }
 
-    private static void process(String fileName, FileWriter fw, Set<Integer> isoTpIds) throws IOException {
+    private static void process(String fileName, FileWriter fw, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
 
 
         List<CANPacket> packets = AutoFormatReader.INSTANCE.readFile(fileName);
@@ -39,7 +39,7 @@ public class IsoTpFileDecoder {
             IsoTpCanDecoder decoder = decoderById.computeIfAbsent(p.getId(), new Function<Integer, IsoTpCanDecoder>() {
                 @Override
                 public IsoTpCanDecoder apply(Integer integer) {
-                    return new IsoTpCanDecoder(1) {
+                    return new IsoTpCanDecoder(isoHeaderByteIndex) {
                         @Override
                         protected void onTpFirstFrame() {
 
