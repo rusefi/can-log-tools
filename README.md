@@ -27,6 +27,10 @@ gradlew :playback:shadowJar
 java -jar playback/build/libs/playback-all.jar playback/src/main/resources/atlas.trc
 ```
 
+# MIM
+
+Offline trace analysis would only get you that far - at some point you really have to promote your efforts towards https://en.wikipedia.org/wiki/Man-in-the-middle_attack
+
 # CAN decoding hints
 
 CAN log file utilities to help me work with https://github.com/brent-stone/CAN_Reverse_Engineering and https://github.com/HeinrichG-V12/E65_ReverseEngineering
