@@ -29,7 +29,9 @@ java -jar playback/build/libs/playback-all.jar playback/src/main/resources/atlas
 
 # MIM
 
-Offline trace analysis would only get you that far - at some point you really have to promote your efforts towards https://en.wikipedia.org/wiki/Man-in-the-middle_attack
+Offline trace analysis would only get you that far: once/when you run out of luck guessting, you have to promote your efforts towards https://en.wikipedia.org/wiki/Man-in-the-middle_attack
+
+Man-in-the-middle requires a device with at least two CAN buses and something along the lines of https://github.com/rusefi/rusefi/blob/master/firmware/controllers/lua/examples/man-in-the-middle.txt
 
 # CAN decoding hints
 
