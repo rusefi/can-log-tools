@@ -53,7 +53,13 @@ public class IsoTpFileDecoder {
                 }
             });
 
-            byte[] dataNow = decoder.decodePacket(p.getData(), p.getData().length);
+            byte[] dataNow;
+            try {
+                dataNow = decoder.decodePacket(p.getData(), p.getData().length);
+            } catch (IllegalStateException e) {
+                fw.append("BAD " + e);
+                return;
+            }
             for (byte b : dataNow)
                 list.add(b);
 
