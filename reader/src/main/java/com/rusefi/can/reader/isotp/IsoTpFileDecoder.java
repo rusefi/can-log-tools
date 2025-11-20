@@ -30,7 +30,11 @@ public class IsoTpFileDecoder {
         Map<Integer, IsoTpCanDecoder> decoderById = new HashMap<>();
 
 
-        List<Byte> list = new ArrayList<>();
+        Map<Integer, List<Byte>> bytesById = new HashMap<>();
+
+        File inputFile = new File(fileName);
+        File outputDir = inputFile.getParentFile();
+        UDSDecoder udsDecoder = new UDSDecoder(outputDir);
 
         for (CANPacket p : packets) {
             if (!isoTpIds.contains(p.getId()))
@@ -60,10 +64,18 @@ public class IsoTpFileDecoder {
                 fw.append("BAD " + e);
                 return;
             }
+            List<Byte> list = bytesById.computeIfAbsent(p.getId(), id -> new ArrayList<>());
             for (byte b : dataNow)
                 list.add(b);
 
             if (decoder.isComplete()) {
+                // Collect payload before clearing
+                byte[] payload = new byte[list.size()];
+                for (int i = 0; i < list.size(); i++) payload[i] = list.get(i);
+                // Decode UDS
+                if (payload.length > 0) {
+                    udsDecoder.handle(payload);
+                }
                 //fw.append(Integer.toHexString(p.getId()) + ": Got " + HexBinary.printHexBinary(list) + "\n");
                 fw.append(String.format("%3H [%4d]: %s\n", p.getId(), list.size(), HexBinary.printHexBinary(list)));
                 list.clear();

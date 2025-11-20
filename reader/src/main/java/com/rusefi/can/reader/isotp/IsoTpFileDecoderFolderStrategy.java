@@ -28,7 +28,13 @@ public class IsoTpFileDecoderFolderStrategy {
 
     private static void processFolder(String folder) throws IOException {
         String excludeProcessed = "^(?!processed).+\\.trc$";
-        for (File f : new File(folder).listFiles((dir, name) -> name.matches(excludeProcessed))) {
+        File[] files = new File(folder).listFiles((dir, name) -> name.matches(excludeProcessed));
+
+        if (files == null) {
+            throw new IOException("Failed to list files in folder: " + folder);
+        }
+
+        for (File f : files) {
             IsoTpFileDecoder.run(f.getAbsolutePath(), new HashSet<>(isoTpIds), isoHeaderByteIndex);
         }
     }
