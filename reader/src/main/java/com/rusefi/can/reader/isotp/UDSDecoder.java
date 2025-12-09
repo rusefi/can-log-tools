@@ -172,8 +172,9 @@ public class UDSDecoder {
         if (!downloadActive) return;
 
         if (expectedSize >= 0 && expectedSize != receivedSize) {
+            // todo: do not print scary message when we know that compressed content?!
             System.out.printf(
-                    "\u001B[33m[UDS][RequestTransferExit][WARN] expectedSize=0x%s (%d) but receivedSize=0x%s (%d). File may be incomplete or oversized.\n \033[0m",
+                    "\u001B[33m[UDS][RequestTransferExit][WARN] maybe compressed content? expectedSize=0x%s (%d) but receivedSize=0x%s (%d). File may be incomplete or oversized.\n \033[0m",
                     Long.toHexString(expectedSize).toUpperCase(), expectedSize,
                     Long.toHexString(receivedSize).toUpperCase(), receivedSize
             );
