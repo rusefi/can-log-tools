@@ -13,27 +13,28 @@ import java.util.function.Function;
 
 public class IsoTpFileDecoder {
 
-    public static void run(String fileName, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
-        File f = new File(fileName);
+    public static void run(String traceFileName, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
+        File f = new File(traceFileName);
 
-        try (FileWriter fw = new FileWriter(f.getParent() + File.separator + "processed_" + f.getName())) {
-            process(fileName, fw, isoTpIds, isoHeaderByteIndex);
+        try (FileWriter decodedUdsAsText = new FileWriter(f.getParent() + File.separator + "processed_" + f.getName())) {
+            process(traceFileName, decodedUdsAsText, isoTpIds, isoHeaderByteIndex);
         }
     }
 
-    private static void process(String fileName, FileWriter fw, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
+    private static void process(String traceFileName, FileWriter fw, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
 
 
-        List<CANPacket> packets = AutoFormatReader.INSTANCE.readFile(fileName);
-        System.out.println("Got " + packets.size() + " packets from " + fileName);
+        List<CANPacket> packets = AutoFormatReader.INSTANCE.readFile(traceFileName);
+        System.out.println("Got " + packets.size() + " packets from " + traceFileName);
 
         Map<Integer, IsoTpCanDecoder> decoderById = new HashMap<>();
 
 
         Map<Integer, List<Byte>> bytesById = new HashMap<>();
 
-        File inputFile = new File(fileName);
-        File outputDir = inputFile.getParentFile();
+        File inputFile = new File(traceFileName);
+        File outputDir = new File(inputFile.getParentFile() + File.separator + "from_" + inputFile.getName());
+        outputDir.mkdirs();
         UDSDecoder udsDecoder = new UDSDecoder(outputDir);
 
         for (CANPacket p : packets) {
