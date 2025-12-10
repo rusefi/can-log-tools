@@ -35,6 +35,8 @@ public class IsoTpFileDecoderFolderStrategy {
         }
 
         for (File f : files) {
+            if (f.isDirectory())
+                continue;
             IsoTpFileDecoder.run(f.getAbsolutePath(), new HashSet<>(isoTpIds), isoHeaderByteIndex);
         }
     }
