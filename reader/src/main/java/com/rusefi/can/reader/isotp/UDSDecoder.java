@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Handles UDS download session logic.
@@ -20,6 +21,9 @@ public class UDSDecoder {
     long currentAddress = 0;
     long expectedSize = -1;
     long receivedSize = 0;
+
+    private static AtomicInteger counter = new AtomicInteger();
+
     String outputFileName = null;
     // TransferData order handling
     private int expectedSeq = -1; // -1 means unknown/not started; otherwise 0..255
@@ -203,7 +207,7 @@ public class UDSDecoder {
 
         byte[] toWrite = downloadBuffer.toByteArray();
         long finalSize = toWrite.length;
-        File out = new File(outputDir, outputFileName);
+        File out = new File(outputDir, counter.incrementAndGet() + "_" + outputFileName);
         try (FileOutputStream fos = new FileOutputStream(out)) {
             fos.write(toWrite);
         } catch (IOException e) {
