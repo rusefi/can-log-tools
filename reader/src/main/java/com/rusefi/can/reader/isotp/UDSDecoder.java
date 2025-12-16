@@ -11,8 +11,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Handles UDS download session logic.
+ * Writes binary files
+ * @see IsoTpFileDecoder
  */
 public class UDSDecoder {
+    public static final int RequestDownload = 0x34;
+    public static final int TransferData = 0x36;
     private final ByteArrayOutputStream downloadBuffer = new ByteArrayOutputStream(1024 * 1024);
     final Map<Integer, byte[]> pendingBySeq = new HashMap<>(); // out-of-order buffer
     private final File outputDir;
@@ -49,10 +53,10 @@ public class UDSDecoder {
 
         int sid = payload[0] & 0xFF;
         switch (sid) {
-            case 0x34: // RequestDownload
+            case RequestDownload: // RequestDownload
                 handleRequestDownload(payload);
                 break;
-            case 0x36: // TransferData
+            case TransferData: // TransferData
                 handleTransferData(payload);
                 break;
             case 0x37: // RequestTransferExit

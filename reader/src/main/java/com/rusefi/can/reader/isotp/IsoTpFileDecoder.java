@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * takes can frames, writes text files of ISO-TP flow
+ * @see UDSDecoder
+ */
 public class IsoTpFileDecoder {
 
     public static void run(String traceFileName, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
@@ -21,8 +25,7 @@ public class IsoTpFileDecoder {
         }
     }
 
-    private static void process(String traceFileName, FileWriter fw, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
-
+    private static void process(String traceFileName, FileWriter decodedUdsAsText, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
 
         List<CANPacket> packets = AutoFormatReader.INSTANCE.readFile(traceFileName);
         System.out.println("Got " + packets.size() + " packets from " + traceFileName);
@@ -62,7 +65,7 @@ public class IsoTpFileDecoder {
             try {
                 dataNow = decoder.decodePacket(p.getData(), p.getData().length);
             } catch (IllegalStateException e) {
-                fw.append("BAD " + e);
+                decodedUdsAsText.append("BAD " + e);
                 return;
             }
             List<Byte> list = bytesById.computeIfAbsent(p.getId(), id -> new ArrayList<>());
@@ -76,10 +79,12 @@ public class IsoTpFileDecoder {
                     payload[i] = list.get(i);
                 // Decode UDS
                 if (payload.length > 0) {
+                    int sid = payload[0] & 0xFF;
+                    decodedUdsAsText.append("SID " + Integer.toHexString(sid) + " at " + p.getTimeStampMs() + "ms\n");
                     udsDecoder.handle(payload);
                 }
                 //fw.append(Integer.toHexString(p.getId()) + ": Got " + HexBinary.printHexBinary(list) + "\n");
-                fw.append(String.format("%3H [%4d]: %s\n", p.getId(), list.size(), HexBinary.printHexBinary(list)));
+                decodedUdsAsText.append(String.format("%3H [%4d]: %s\n", p.getId(), list.size(), HexBinary.printHexBinary(list)));
                 list.clear();
                 decoder.reset();
             }
