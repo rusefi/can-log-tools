@@ -26,6 +26,7 @@ public class IsoTpFileDecoder {
     }
 
     private static void process(String traceFileName, FileWriter decodedUdsAsText, Set<Integer> isoTpIds, int isoHeaderByteIndex) throws IOException {
+        long previousTimestamp = -1;
 
         List<CANPacket> packets = AutoFormatReader.INSTANCE.readFile(traceFileName);
         System.out.println("Got " + packets.size() + " packets from " + traceFileName);
@@ -79,8 +80,17 @@ public class IsoTpFileDecoder {
                     payload[i] = list.get(i);
                 // Decode UDS
                 if (payload.length > 0) {
+                    String durationStr = "";
+                    if (previousTimestamp != -1) {
+                        long duration = (long) (p.getTimeStampMs() - previousTimestamp);
+                        if (duration > 500) {
+                            durationStr = " duration " + duration;
+                        }
+                    }
+                    previousTimestamp = (long) p.getTimeStampMs();
+
                     int sid = payload[0] & 0xFF;
-                    decodedUdsAsText.append("SID " + Integer.toHexString(sid) + " at " + p.getTimeStampMs() + "ms\n");
+                    decodedUdsAsText.append("SID " + Integer.toHexString(sid) + " at " + p.getTimeStampMs() + "ms"  + durationStr + "\n");
                     udsDecoder.handle(payload);
                 }
                 //fw.append(Integer.toHexString(p.getId()) + ": Got " + HexBinary.printHexBinary(list) + "\n");
