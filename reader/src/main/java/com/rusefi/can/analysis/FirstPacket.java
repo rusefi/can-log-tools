@@ -24,7 +24,7 @@ public class FirstPacket {
         for (CANPacket packet : logFileContent) {
             if (!firstPacketById.containsKey(packet.getId())) {
                 firstPacketById.put(packet.getId(), packet);
-                sorterByFirstPacket.put(packet.getTimeStamp() - firstPacket.getTimeStamp(), packet);
+                sorterByFirstPacket.put(packet.getTimeStampMs() - firstPacket.getTimeStampMs(), packet);
             }
         }
 
@@ -48,6 +48,6 @@ public class FirstPacket {
         int sid = packet.getId();
         DbcPacket dbcPacket = dbc.getPacket(sid);
         String key = dbcPacket == null ? Integer.toString(sid) : dbcPacket.getName();
-        w.write(key + ": " + (packet.getTimeStamp() - firstPacket.getTimeStamp()) + "\n");
+        w.write(key + ": " + (packet.getTimeStampMs() - firstPacket.getTimeStampMs()) + "\n");
     }
 }

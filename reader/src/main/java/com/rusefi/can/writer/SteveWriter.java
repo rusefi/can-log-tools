@@ -35,7 +35,7 @@ public class SteveWriter implements CANTextWriter {
 
 
     public static void append(Appendable sb, CANPacket p) throws IOException {
-        sb.append(p.getTimeStamp() + ":\t");
+        sb.append(p.getTimeStampMs() + ":\t");
         sb.append(printHex3(p.getId()).toLowerCase() + "\t");
         byte[] data = p.getData();
         sb.append(Integer.toString(data.length));

@@ -28,7 +28,7 @@ public class LoggingContext {
 
     public void writeLogContent(List<CANPacket> packets, BinarySensorLog<BinaryLogEntry> log, LoggingStrategy.PacketLogger logger) {
         for (CANPacket packetContent : packets) {
-            currentTimeUs.set((long) (packetContent.getTimeStamp() * 1000));
+            currentTimeUs.set((long) (packetContent.getTimeStampMs() * 1000));
             boolean needLine = logger.takeValues(packetContent);
             if (needLine)
                 log.writeSensorLogLine();

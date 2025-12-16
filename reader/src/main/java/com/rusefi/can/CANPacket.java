@@ -67,7 +67,7 @@ public class CANPacket {
         return value >> shift & BitMathUtil.mask(bitWidth);
     }
 
-    public double getTimeStamp() {
+    public double getTimeStampMs() {
         return timeStampMs;
     }
 

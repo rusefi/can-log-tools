@@ -71,7 +71,7 @@ public class ByteRateOfChange {
     }
 
     private static double getDurationMs(List<CANPacket> packets) {
-        return packets.isEmpty() ? 0 : packets.get(packets.size() - 1).getTimeStamp() - packets.get(0).getTimeStamp();
+        return packets.isEmpty() ? 0 : packets.get(packets.size() - 1).getTimeStampMs() - packets.get(0).getTimeStampMs();
     }
 
     public static class ByteStatistics {

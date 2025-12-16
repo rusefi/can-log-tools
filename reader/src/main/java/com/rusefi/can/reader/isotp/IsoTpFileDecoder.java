@@ -72,7 +72,8 @@ public class IsoTpFileDecoder {
             if (decoder.isComplete()) {
                 // Collect payload before clearing
                 byte[] payload = new byte[list.size()];
-                for (int i = 0; i < list.size(); i++) payload[i] = list.get(i);
+                for (int i = 0; i < list.size(); i++)
+                    payload[i] = list.get(i);
                 // Decode UDS
                 if (payload.length > 0) {
                     udsDecoder.handle(payload);
