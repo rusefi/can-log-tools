@@ -90,7 +90,8 @@ public class IsoTpFileDecoder {
                     previousTimestamp = (long) p.getTimeStampMs();
 
                     int sid = payload[0] & 0xFF;
-                    decodedUdsAsText.append("SID " + Integer.toHexString(sid) + " at " + p.getTimeStampMs() + "ms"  + durationStr + "\n");
+                    String sidAsText = getById(sid);
+                    decodedUdsAsText.append("SID " + Integer.toHexString(sid) + sidAsText + " at " + p.getTimeStampMs() + "ms"  + durationStr + "\n");
                     udsDecoder.handle(payload);
                 }
                 //fw.append(Integer.toHexString(p.getId()) + ": Got " + HexBinary.printHexBinary(list) + "\n");
@@ -99,5 +100,17 @@ public class IsoTpFileDecoder {
                 decoder.reset();
             }
         }
+    }
+
+    private static String getById(int sid) {
+        if (sid == 0x22)
+            return "SID_ReadDataByIdentifier ";
+        if (sid == 0x10)
+            return "SID_DiagnosticSessionControl ";
+        if (sid == 0x28)
+            return "SID_CommunicationControl ";
+        if (sid == 0x31)
+            return "SID_RoutineControl ";
+        return "";
     }
 }
