@@ -109,6 +109,8 @@ public class IsoTpFileDecoder {
             return " SID_DiagnosticSessionControl";
         if (sid == 0x11)
             return " SID_ECUReset";
+        if (sid == 0x14)
+            return " SID_ClearDiagnosticInformation";
         if (sid == 0x27)
             return " SID_SecurityAccess";
         if (sid == 0x28)
@@ -117,6 +119,9 @@ public class IsoTpFileDecoder {
             return " SID_RoutineControl";
         if (sid == 0x7F)
             return" SID_NegativeResponse";
+        if (sid >= 0x40) {
+            return " RESP" + getById(sid - 0x40);
+        }
         return "";
     }
 }
