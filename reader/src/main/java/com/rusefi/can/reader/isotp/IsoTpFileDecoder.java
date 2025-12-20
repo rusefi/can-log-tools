@@ -104,13 +104,13 @@ public class IsoTpFileDecoder {
 
     private static String getById(int sid) {
         if (sid == 0x22)
-            return "SID_ReadDataByIdentifier ";
+            return " SID_ReadDataByIdentifier";
         if (sid == 0x10)
-            return "SID_DiagnosticSessionControl ";
+            return " SID_DiagnosticSessionControl";
         if (sid == 0x28)
-            return "SID_CommunicationControl ";
+            return " SID_CommunicationControl";
         if (sid == 0x31)
-            return "SID_RoutineControl ";
+            return " SID_RoutineControl";
         return "";
     }
 }
