@@ -107,10 +107,16 @@ public class IsoTpFileDecoder {
             return " SID_ReadDataByIdentifier";
         if (sid == 0x10)
             return " SID_DiagnosticSessionControl";
+        if (sid == 0x11)
+            return " SID_ECUReset";
+        if (sid == 0x27)
+            return " SID_SecurityAccess";
         if (sid == 0x28)
             return " SID_CommunicationControl";
         if (sid == 0x31)
             return " SID_RoutineControl";
+        if (sid == 0x7F)
+            return" SID_NegativeResponse";
         return "";
     }
 }
