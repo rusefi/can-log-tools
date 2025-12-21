@@ -117,13 +117,21 @@ public class IsoTpFileDecoder {
             return " SID_SecurityAccess";
         if (sid == 0x28)
             return " SID_CommunicationControl";
+        if (sid == 0x2E)
+            return " SID_WriteDataByIdentifier";
         if (sid == 0x31)
             return " SID_RoutineControl";
+        if (sid == 0x34)
+            return " SID_RequestDownload";
+        if (sid == 0x35)
+            return " SID_RequestUpload";
+        if (sid == 0x36)
+            return " SID_TransferData";
         if (sid == 0x7F)
             return" SID_NegativeResponse";
         if (sid >= 0x40) {
             return " RESP" + getById(sid - 0x40);
         }
-        return "";
+        return " unknown";
     }
 }
