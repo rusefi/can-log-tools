@@ -18,11 +18,18 @@ public class IsoTpFileDecoderFolderStrategy {
     );
     static private final int isoHeaderByteIndex = 1;    // 1 for BMW, 0 for standard UDS
 
+    public static boolean withTimestamp = true;
+
     public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
+        if (args.length < 1) {
             throw new IllegalStateException("Folder name argument expected");
         }
         String folderName = args[0];
+        if (args.length > 1) {
+            withTimestamp = Boolean.parseBoolean(args[1]);
+            System.out.println("withTimestamp=" + withTimestamp);
+        }
+
         processFolder(folderName);
     }
 

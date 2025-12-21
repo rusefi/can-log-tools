@@ -83,7 +83,7 @@ public class IsoTpFileDecoder {
                     String durationStr = "";
                     if (previousTimestamp != -1) {
                         long duration = (long) (p.getTimeStampMs() - previousTimestamp);
-                        if (duration > 500) {
+                        if (duration > 500 && IsoTpFileDecoderFolderStrategy.withTimestamp) {
                             durationStr = " duration " + duration;
                         }
                     }
@@ -91,7 +91,8 @@ public class IsoTpFileDecoder {
 
                     int sid = payload[0] & 0xFF;
                     String sidAsText = getById(sid);
-                    decodedUdsAsText.append("SID " + Integer.toHexString(sid) + sidAsText + " at " + p.getTimeStampMs() + "ms"  + durationStr + "\n");
+                    String timestampString = IsoTpFileDecoderFolderStrategy.withTimestamp ? (" at " + p.getTimeStampMs() + "ms") : "";
+                    decodedUdsAsText.append("SID " + Integer.toHexString(sid) + sidAsText + timestampString  + durationStr + "\n");
                     udsDecoder.handle(payload);
                 }
                 //fw.append(Integer.toHexString(p.getId()) + ": Got " + HexBinary.printHexBinary(list) + "\n");
