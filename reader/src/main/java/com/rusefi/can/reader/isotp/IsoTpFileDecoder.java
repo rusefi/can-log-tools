@@ -105,6 +105,8 @@ public class IsoTpFileDecoder {
     private static String getById(int sid) {
         if (sid == 0x22)
             return " SID_ReadDataByIdentifier";
+        if (sid == 0x09)
+            return " Calibration ID";
         if (sid == 0x10)
             return " SID_DiagnosticSessionControl";
         if (sid == 0x11)
