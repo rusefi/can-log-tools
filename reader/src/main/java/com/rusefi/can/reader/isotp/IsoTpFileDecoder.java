@@ -128,8 +128,16 @@ public class IsoTpFileDecoder {
             return " SID_RequestUpload";
         if (sid == 0x36)
             return " SID_TransferData";
+        if (sid == 0x37)
+            return " SID_RequestTransferExit";
+        if (sid == 0x3E)
+            return " SID_TesterPresent";
         if (sid == 0x7F)
             return" SID_NegativeResponse";
+        if (sid == 0x85)
+            return" SID_ControlDTCSetting";
+        if (sid == 0x86)
+            return" SID_ResponseOnEvent";
         if (sid >= 0x40) {
             return " RESP" + getById(sid - 0x40);
         }
