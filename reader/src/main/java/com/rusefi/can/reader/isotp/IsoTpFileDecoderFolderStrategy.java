@@ -16,7 +16,7 @@ public class IsoTpFileDecoderFolderStrategy {
             0x618,  // BMW EGS
             0x6F1, 0x6F2, 0x6F3, 0x6F4  // BMW scanner
     );
-    static private final int isoHeaderByteIndex = 1;    // 1 for BMW, 0 for standard UDS
+    static private int isoHeaderByteIndex = 1;    // 1 for BMW, 0 for standard UDS
 
     public static boolean withTimestamp = true;
 
@@ -28,6 +28,9 @@ public class IsoTpFileDecoderFolderStrategy {
         if (args.length > 1) {
             withTimestamp = Boolean.parseBoolean(args[1]);
             System.out.println("withTimestamp=" + withTimestamp);
+        }
+        if (args.length > 2) {
+            isoHeaderByteIndex = Integer.parseInt(args[2]);
         }
 
         processFolder(folderName);
