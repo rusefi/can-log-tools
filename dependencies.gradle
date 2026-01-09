@@ -3,5 +3,6 @@ ext {
           junit          : "junit:junit:4.13",
           annotations    : "org.jetbrains:annotations:16.0.1",
           snakeyaml      : "org.yaml:snakeyaml:1.26",
+          jcommander     : "com.beust:jcommander:1.82",
   ]
 }
