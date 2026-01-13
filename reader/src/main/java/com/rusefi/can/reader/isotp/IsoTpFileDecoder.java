@@ -138,7 +138,7 @@ public class IsoTpFileDecoder {
             return" SID_ControlDTCSetting";
         if (sid == 0x86)
             return" SID_ResponseOnEvent";
-        if (sid >= 0x40) {
+        if ((sid & 0x40) != 0) {
             return " RESP" + getById(sid - 0x40);
         }
         return " unknown";
