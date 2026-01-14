@@ -28,7 +28,11 @@ public enum CanHackerReader implements CANLineReader {
             return null;
 
         String[] tokens = line.split("\\s+");
-        double timeStamp = Double.parseDouble(CANLineReader.attemptToFixLocalization(tokens[0]));
+
+        // microseconds part may skip leading zeros!!
+        String[] timeStr = tokens[0].split(",");
+        double timeStamp = Integer.parseInt(timeStr[0]) * 1000.0 +
+                            Integer.parseInt(timeStr[1]) / 1000.0;
 
         int sid = Integer.parseInt(tokens[3], 16);
         int size = Integer.parseInt(tokens[4]);
