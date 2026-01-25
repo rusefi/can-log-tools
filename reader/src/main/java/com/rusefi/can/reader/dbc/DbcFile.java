@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class DbcFile {
     private final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
@@ -70,7 +71,8 @@ public class DbcFile {
                     throw new IllegalStateException("Failing to parse comment: " + line + " at " + lineIndex);
                 long id = Long.parseLong(tokens[2]) & 0x1FFFFFFF;    // strip ExtID flag if any
                 DbcPacket packet = findPacket((int)id);
-                Objects.requireNonNull(packet, "packet for " + id);
+                String finalLine = line;
+                Objects.requireNonNull(packet, () -> "While parsing CM_ line packet for " + id + finalLine);
                 String originalName = tokens[3];
                 String niceName = merge(tokens, 4);
                 packet.addComment(originalName, niceName);
