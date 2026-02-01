@@ -66,8 +66,9 @@ public class IsoTpFileDecoder {
             try {
                 dataNow = decoder.decodePacket(p.getData(), p.getData().length);
             } catch (IllegalStateException e) {
-                decodedUdsAsText.append("BAD " + e);
-                return;
+                decodedUdsAsText.append("BAD " + e + "\n");
+                //return;
+                continue;
             }
             List<Byte> list = bytesById.computeIfAbsent(p.getId(), id -> new ArrayList<>());
             for (byte b : dataNow)
