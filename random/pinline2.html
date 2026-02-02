@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PinLine Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 800px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+        }
+        input {
+            padding: 5px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #output {
+            margin-top: 20px;
+            white-space: pre;
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .actions {
+            margin-top: 20px;
+        }
+        #imageContainer {
+            margin-top: 20px;
+            border: 2px dashed #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        #uploadedImage {
+            display: block;
+            margin: 0 auto;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+    <h1>PinLine Generator</h1>
+    <div class="input-group">
+        <label for="prefix">PREFIX:</label>
+        <input type="text" id="prefix" value="2-">
+    </div>
+    <div class="input-group">
+        <label for="suffix">SUFFIX:</label>
+        <input type="text" id="suffix" value="">
+    </div>
+    <div class="input-group">
+        <label for="indexFrom">INDEX_FROM:</label>
+        <input type="number" id="indexFrom" value="19">
+    </div>
+    <div class="input-group">
+        <label for="indexTo">INDEX_TO:</label>
+        <input type="number" id="indexTo" value="24">
+    </div>
+    <div class="input-group">
+        <label for="xFrom">X_FROM:</label>
+        <input type="number" id="xFrom" value="510">
+    </div>
+    <div class="input-group">
+        <label for="xTo">X_TO:</label>
+        <input type="number" id="xTo" value="685">
+    </div>
+    <div class="input-group">
+        <label for="yFrom">Y_FROM:</label>
+        <input type="number" id="yFrom" value="143">
+    </div>
+
+    <div class="actions">
+        <button onclick="generate()">Generate</button>
+        <button onclick="copyToClipboard()" style="background-color: #28a745;">Copy to Clipboard</button>
+        <input type="file" id="imageInput" accept="image/*" style="margin-left: 20px;">
+    </div>
+
+    <div id="output">Generated output will appear here...</div>
+
+    <div id="imageContainer">
+        <p>Uploaded image will appear here. Click to set coordinates (1st click: X_FROM/Y_FROM, 2nd click: X_TO).</p>
+        <img id="uploadedImage" style="display:none;">
+    </div>
+
+    <script>
+        let clickCount = 0;
+
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = document.getElementById('uploadedImage');
+                img.src = event.target.result;
+                img.style.display = 'block';
+                document.querySelector('#imageContainer p').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('uploadedImage').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            // Get coordinates relative to the image
+            const x = Math.round(e.clientX - rect.left);
+            const y = Math.round(e.clientY - rect.top);
+
+            if (clickCount === 0) {
+                document.getElementById('xFrom').value = x;
+                document.getElementById('yFrom').value = y;
+                clickCount = 1;
+                console.log('Set X_FROM/Y_FROM:', x, y);
+            } else {
+                document.getElementById('xTo').value = x;
+                clickCount = 0;
+                console.log('Set X_TO:', x);
+                generate(); // Auto generate after second click
+            }
+        });
+
+        function generate() {
+            const prefix = document.getElementById('prefix').value;
+            const suffix = document.getElementById('suffix').value;
+            const indexFrom = parseInt(document.getElementById('indexFrom').value);
+            const indexTo = parseInt(document.getElementById('indexTo').value);
+            const xFrom = parseInt(document.getElementById('xFrom').value);
+            const xTo = parseInt(document.getElementById('xTo').value);
+            const yFrom = parseInt(document.getElementById('yFrom').value);
+
+            if (indexFrom > indexTo) {
+                document.getElementById('output').innerText = "Error: INDEX_FROM > INDEX_TO";
+                return;
+            }
+
+            const count = indexTo - indexFrom;
+            const width = xTo - xFrom;
+            const perPin = count === 0 ? 0 : width / count;
+
+            let result = "";
+            // Reproducing the header logic from Java
+            result += "# auto-generated by pinline2.html\n";
+            result += "# " + indexFrom + " " + indexTo + "\n";
+            result += "# " + xFrom + " " + xTo + "\n";
+            result += "# " + yFrom + "\n";
+
+            for (let i = indexFrom; i <= indexTo; i++) {
+                const zeroIndex = i - indexFrom;
+                const x = Math.floor(xFrom + zeroIndex * perPin);
+
+                result += "    - pin: " + prefix + i + suffix + "\n";
+                result += "      x: " + x + "\n";
+                result += "      y: " + yFrom + "\n";
+
+                if (i % 10 === 0) {
+                    result += "\n";
+                }
+            }
+
+            document.getElementById('output').innerText = result;
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('output').innerText;
+            navigator.clipboard.writeText(output).then(() => {
+                alert("Copied to clipboard!");
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
