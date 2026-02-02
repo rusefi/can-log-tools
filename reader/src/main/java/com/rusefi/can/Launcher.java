@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class Launcher {
     public static final String FILENAME_SUFFIX_PROPERTY = "-suffix";
-    public static String fileNameSuffixValue = ".trc";
+    public static String fileNameSuffixValue = ".trc"; // default value
     public static final String FILENAME_FILTER_PROPERTY = "-filter";
     public static String fileNameFilter;
     public static final String DBC_FILENAME_PROPERTY = "-dbc";
