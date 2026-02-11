@@ -20,6 +20,11 @@ public enum PcanTrcReader2_0 implements CANLineReader {
         if (line.startsWith(";"))
             return null;
         String[] tokens = line.split("\\s+");
+
+        String type = tokens[2];
+        if (type.contentEquals("EV"))   //  "167300     95596.500 EV Hardware plug-out"
+            return null;
+
         double timeStamp = Double.parseDouble(tokens[1]);
         int sid = Integer.parseInt(tokens[3], 16);
         int size = Integer.parseInt(tokens[5]);
