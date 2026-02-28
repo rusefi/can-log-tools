@@ -84,11 +84,11 @@ public class ByteRateOfChangeReports {
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount() || !s1.getUniqueValues().equals(s2.getUniqueValues()) || s1.totalTransitions != s2.totalTransitions) {
                 String imageName = simpleName1 + "-vs-" + simpleName2 + "_" + DbcImageTool.escapeFileName(dbcField.getName()) + ".png";
-                double[] minMax = DbcImageTool.renderComparison(dbcField,
+                DbcImageTool.ComparisonResult result = DbcImageTool.renderComparison(dbcField,
                         packetsById1.get(dbcField.getSid()), traceReport1.getMinTimeMs(), traceReport1.getDurationMs(),
                         packetsById2.get(dbcField.getSid()), traceReport2.getMinTimeMs(), traceReport2.getDurationMs(),
                         imagesFolder, imageName);
-                entries.add(new DbcImageTool.ComparisonEntry(dbcField, imageName, minMax[0], minMax[1]));
+                entries.add(new DbcImageTool.ComparisonEntry(dbcField, imageName, result));
             }
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
@@ -136,6 +136,10 @@ public class ByteRateOfChangeReports {
         });
 
         DbcImageTool.createComparisonHtml(entries, comparingFolder, "Comparison: " + simpleName1 + " vs " + simpleName2, simpleName1 + "-vs-" + simpleName2 + ".html");
+
+        // Sort by difference descending
+        entries.sort((e1, e2) -> Double.compare(e2.getDifference(), e1.getDifference()));
+        DbcImageTool.createComparisonHtml(entries, comparingFolder, "Comparison (Sorted by Difference): " + simpleName1 + " vs " + simpleName2, simpleName1 + "-vs-" + simpleName2 + "-diff.html");
     }
 
     public static String createOutputFolder(String inputFolderName) {

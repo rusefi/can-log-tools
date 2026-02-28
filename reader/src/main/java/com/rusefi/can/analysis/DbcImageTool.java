@@ -84,39 +84,80 @@ public class DbcImageTool {
     }
 
     public static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir, String fileName, double[] minMax) throws IOException {
-        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = image.createGraphics();
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
-        g.setColor(Color.BLACK);
+        TraceResult tr = processTrace(field, packets, minTime, duration);
 
-        if (packets != null && !packets.isEmpty()) {
-            List<Point> points = new ArrayList<>();
-            double minValue = Double.MAX_VALUE;
-            double maxValue = -Double.MAX_VALUE;
-
-            for (CANPacket packet : packets) {
-                double value = field.getValue(packet);
-                minValue = Math.min(minValue, value);
-                maxValue = Math.max(maxValue, value);
-                double x = (packet.getTimeStampMs() - minTime) / duration * (WIDTH - 1);
-                points.add(new Point((int) x, value));
-            }
-
-            if (minMax != null) {
-                minMax[0] = minValue;
-                minMax[1] = maxValue;
-            }
-
-            drawPoints(g, points, minValue, maxValue, Color.BLACK);
-
-            g.setColor(Color.BLACK);
-            g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 3f));
-            g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, 50);
-        } else {
-            g.drawString("No data", WIDTH / 2 - 20, HEIGHT / 2);
+        if (minMax != null && !tr.points.isEmpty()) {
+            minMax[0] = tr.min;
+            minMax[1] = tr.max;
         }
 
+        BufferedImage image = prepareImage();
+        Graphics2D g = image.createGraphics();
+        drawBackground(g);
+
+        if (tr.points.isEmpty()) {
+            drawNoData(g);
+        } else {
+            drawPoints(g, tr.points, tr.min, tr.max, Color.BLACK);
+            drawLabel(g, tr.min, tr.max, Color.BLACK, 50);
+        }
+
+        saveImage(image, outputDir, fileName);
+    }
+
+    private static class TraceResult {
+        List<Point> points = new ArrayList<>();
+        double min = Double.MAX_VALUE;
+        double max = -Double.MAX_VALUE;
+        double mean;
+        double stdDev;
+    }
+
+    private static TraceResult processTrace(DbcField field, List<CANPacket> packets, double minTime, double duration) {
+        TraceResult result = new TraceResult();
+        if (packets == null || packets.isEmpty()) return result;
+
+        double sum = 0;
+        double sumSq = 0;
+
+        for (CANPacket packet : packets) {
+            double value = field.getValue(packet);
+            result.min = Math.min(result.min, value);
+            result.max = Math.max(result.max, value);
+            sum += value;
+            sumSq += value * value;
+            double x = (packet.getTimeStampMs() - minTime) / duration * (WIDTH - 1);
+            result.points.add(new Point((int) x, value));
+        }
+
+        result.mean = result.points.isEmpty() ? 0 : sum / result.points.size();
+        result.stdDev = result.points.isEmpty() ? 0 : Math.sqrt(Math.max(0, sumSq / result.points.size() - result.mean * result.mean));
+
+        return result;
+    }
+
+    private static BufferedImage prepareImage() {
+        return new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+    }
+
+    private static void drawBackground(Graphics2D g) {
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+    }
+
+    private static void drawNoData(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.drawString("No data", WIDTH / 2 - 20, HEIGHT / 2);
+    }
+
+    private static void drawLabel(Graphics2D g, double minValue, double maxValue, Color color, int y) {
+        g.setColor(color);
+        g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 3f));
+        g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, y);
+    }
+
+    private static void saveImage(BufferedImage image, String outputDir, String fileName) throws IOException {
+        Graphics2D g = (Graphics2D) image.getGraphics();
         g.dispose();
         File outFile = new File(outputDir, fileName);
         ImageIO.write(image, "png", outFile);
@@ -136,74 +177,58 @@ public class DbcImageTool {
         }
     }
 
-    public static double[] renderComparison(DbcField field,
+    public static class ComparisonResult {
+        public final double minValue;
+        public final double maxValue;
+        public final double mean1;
+        public final double stdDev1;
+        public final double mean2;
+        public final double stdDev2;
+        public final double difference;
+
+        public ComparisonResult(double minValue, double maxValue, double mean1, double stdDev1, double mean2, double stdDev2, double difference) {
+            this.minValue = minValue;
+            this.maxValue = maxValue;
+            this.mean1 = mean1;
+            this.stdDev1 = stdDev1;
+            this.mean2 = mean2;
+            this.stdDev2 = stdDev2;
+            this.difference = difference;
+        }
+    }
+
+    public static ComparisonResult renderComparison(DbcField field,
                                         List<CANPacket> packets1, double minTime1, double duration1,
                                         List<CANPacket> packets2, double minTime2, double duration2,
                                         String outputDir, String fileName) throws IOException {
-        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        TraceResult tr1 = processTrace(field, packets1, minTime1, duration1);
+        TraceResult tr2 = processTrace(field, packets2, minTime2, duration2);
+
+        double minValue = Math.min(tr1.min, tr2.min);
+        double maxValue = Math.max(tr1.max, tr2.max);
+        double difference = Math.abs(tr1.mean - tr2.mean) + Math.abs(tr1.stdDev - tr2.stdDev);
+
+        BufferedImage image = prepareImage();
         Graphics2D g = image.createGraphics();
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+        drawBackground(g);
 
-        double minValue = Double.MAX_VALUE;
-        double maxValue = -Double.MAX_VALUE;
-
-        double minValue1 = Double.MAX_VALUE;
-        double maxValue1 = -Double.MAX_VALUE;
-
-        List<Point> points1 = new ArrayList<>();
-        if (packets1 != null && !packets1.isEmpty()) {
-            for (CANPacket packet : packets1) {
-                double value = field.getValue(packet);
-                minValue = Math.min(minValue, value);
-                maxValue = Math.max(maxValue, value);
-                minValue1 = Math.min(minValue1, value);
-                maxValue1 = Math.max(maxValue1, value);
-                double x = (packet.getTimeStampMs() - minTime1) / duration1 * (WIDTH - 1);
-                points1.add(new Point((int) x, value));
-            }
-        }
-
-        double minValue2 = Double.MAX_VALUE;
-        double maxValue2 = -Double.MAX_VALUE;
-
-        List<Point> points2 = new ArrayList<>();
-        if (packets2 != null && !packets2.isEmpty()) {
-            for (CANPacket packet : packets2) {
-                double value = field.getValue(packet);
-                minValue = Math.min(minValue, value);
-                maxValue = Math.max(maxValue, value);
-                minValue2 = Math.min(minValue2, value);
-                maxValue2 = Math.max(maxValue2, value);
-                double x = (packet.getTimeStampMs() - minTime2) / duration2 * (WIDTH - 1);
-                points2.add(new Point((int) x, value));
-            }
-        }
-
-        if (points1.isEmpty() && points2.isEmpty()) {
-            g.setColor(Color.BLACK);
-            g.drawString("No data", WIDTH / 2 - 20, HEIGHT / 2);
+        if (tr1.points.isEmpty() && tr2.points.isEmpty()) {
+            drawNoData(g);
         } else {
-            drawPoints(g, points1, minValue, maxValue, Color.GREEN);
-            drawPoints(g, points2, minValue, maxValue, Color.RED);
+            drawPoints(g, tr1.points, minValue, maxValue, Color.GREEN);
+            drawPoints(g, tr2.points, minValue, maxValue, Color.RED);
 
-            g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 3f));
-
-            if (!points1.isEmpty()) {
-                g.setColor(Color.GREEN);
-                g.drawString(String.format("Min: %.2f Max: %.2f", minValue1, maxValue1), 10, 50);
+            if (!tr1.points.isEmpty()) {
+                drawLabel(g, tr1.min, tr1.max, Color.GREEN, 50);
             }
 
-            if (!points2.isEmpty()) {
-                g.setColor(Color.RED);
-                g.drawString(String.format("Min: %.2f Max: %.2f", minValue2, maxValue2), 10, 100);
+            if (!tr2.points.isEmpty()) {
+                drawLabel(g, tr2.min, tr2.max, Color.RED, 100);
             }
         }
 
-        g.dispose();
-        File outFile = new File(outputDir, fileName);
-        ImageIO.write(image, "png", outFile);
-        return new double[]{minValue, maxValue};
+        saveImage(image, outputDir, fileName);
+        return new ComparisonResult(minValue, maxValue, tr1.mean, tr1.stdDev, tr2.mean, tr2.stdDev, difference);
     }
 
     public static void createComparisonHtml(List<ComparisonEntry> entries, String outputDir, String title, String outputFileName) throws IOException {
@@ -219,10 +244,12 @@ public class DbcImageTool {
             writer.println("<div id='yValue' class='y-label'></div>");
             writer.println("<h1>" + title + "</h1>");
             writer.println("<table border='1'>");
-            writer.println("<tr><th>Packet ID</th><th>Start Bit</th><th>Field Name</th><th>Visualization</th></tr>");
+            writer.println("<tr><th>Packet ID</th><th>Start Bit</th><th>Field Name</th><th>Mean 1</th><th>StdDev 1</th><th>Mean 2</th><th>StdDev 2</th><th>Difference</th><th>Visualization</th></tr>");
             for (ComparisonEntry entry : entries) {
-                writer.printf("<tr><td>0x%X</td><td>%d</td><td>%s</td><td><img src='images/%s' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
-                        entry.field.getSid(), entry.field.getStartOffset(), entry.field.getName(), entry.imageName, entry.minValue, entry.maxValue);
+                writer.printf("<tr><td>0x%X</td><td>%d</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.4f</td><td><img src='images/%s' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
+                        entry.getField().getSid(), entry.getField().getStartOffset(), entry.getField().getName(),
+                        entry.getMean1(), entry.getStdDev1(), entry.getMean2(), entry.getStdDev2(), entry.getDifference(),
+                        entry.getImageName(), entry.getMinValue(), entry.getMaxValue());
             }
             writer.println("</table>");
             writer.println("<script>");
@@ -247,22 +274,24 @@ public class DbcImageTool {
     public static class ComparisonEntry {
         private final DbcField field;
         private final String imageName;
-        private final double minValue;
-        private final double maxValue;
+        private final ComparisonResult result;
 
-        public ComparisonEntry(DbcField field, String imageName, double minValue, double maxValue) {
+        public ComparisonEntry(DbcField field, String imageName, ComparisonResult result) {
             this.field = field;
             this.imageName = imageName;
-            this.minValue = minValue;
-            this.maxValue = maxValue;
+            this.result = result;
+        }
+
+        public double getDifference() {
+            return result.difference;
         }
 
         public double getMinValue() {
-            return minValue;
+            return result.minValue;
         }
 
         public double getMaxValue() {
-            return maxValue;
+            return result.maxValue;
         }
 
         public DbcField getField() {
@@ -271,6 +300,22 @@ public class DbcImageTool {
 
         public String getImageName() {
             return imageName;
+        }
+
+        public double getMean1() {
+            return result.mean1;
+        }
+
+        public double getStdDev1() {
+            return result.stdDev1;
+        }
+
+        public double getMean2() {
+            return result.mean2;
+        }
+
+        public double getStdDev2() {
+            return result.stdDev2;
         }
     }
 
