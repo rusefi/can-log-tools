@@ -61,18 +61,25 @@ public class DbcImageTool {
             return Integer.compare(f1.getStartOffset(), f2.getStartOffset());
         });
 
+        Map<DbcField, double[]> minMaxMap = new HashMap<>();
         for (DbcField field : allFields) {
-            renderField(field, packetsById.get(field.getSid()), minTime, duration, outputDir);
+            double[] minMax = new double[2];
+            renderField(field, packetsById.get(field.getSid()), minTime, duration, outputDir, minMax);
+            minMaxMap.put(field, minMax);
         }
 
-        createIndexHtml(allFields, outputDir);
+        createIndexHtml(allFields, minMaxMap);
     }
 
     public static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir) throws IOException {
-        renderField(field, packets, minTime, duration, outputDir, field.getName() + ".png");
+        renderField(field, packets, minTime, duration, outputDir, null);
     }
 
-    public static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir, String fileName) throws IOException {
+    public static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir, double[] minMax) throws IOException {
+        renderField(field, packets, minTime, duration, outputDir, field.getName() + ".png", minMax);
+    }
+
+    public static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir, String fileName, double[] minMax) throws IOException {
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = image.createGraphics();
         g.setColor(Color.WHITE);
@@ -92,9 +99,15 @@ public class DbcImageTool {
                 points.add(new Point((int) x, value));
             }
 
+            if (minMax != null) {
+                minMax[0] = minValue;
+                minMax[1] = maxValue;
+            }
+
             drawPoints(g, points, minValue, maxValue, Color.BLACK);
 
             g.setColor(Color.BLACK);
+            g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 3f));
             g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, 20);
         } else {
             g.drawString("No data", WIDTH / 2 - 20, HEIGHT / 2);
@@ -119,7 +132,7 @@ public class DbcImageTool {
         }
     }
 
-    public static void renderComparison(DbcField field,
+    public static double[] renderComparison(DbcField field,
                                         List<CANPacket> packets1, double minTime1, double duration1,
                                         List<CANPacket> packets2, double minTime2, double duration2,
                                         String outputDir, String fileName) throws IOException {
@@ -161,26 +174,50 @@ public class DbcImageTool {
             drawPoints(g, points2, minValue, maxValue, Color.RED);
 
             g.setColor(Color.BLACK);
+            g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 3f));
             g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, 20);
         }
 
         g.dispose();
         File outFile = new File(outputDir, fileName);
         ImageIO.write(image, "png", outFile);
+        return new double[]{minValue, maxValue};
     }
 
     public static void createComparisonHtml(List<ComparisonEntry> entries, String outputDir, String title) throws IOException {
         File htmlFile = new File(outputDir, "comparison.html");
         try (PrintWriter writer = new PrintWriter(new FileWriter(htmlFile))) {
-            writer.println("<html><body>");
+            writer.println("<html>");
+            writer.println("<head>");
+            writer.println("<style>");
+            writer.println(".y-label { position: fixed; bottom: 10px; right: 10px; font-weight: bold; color: blue; background: rgba(255,255,255,0.7); padding: 5px; border-radius: 5px; pointer-events: none; }");
+            writer.println("</style>");
+            writer.println("</head>");
+            writer.println("<body>");
+            writer.println("<div id='yValue' class='y-label'></div>");
             writer.println("<h1>" + title + "</h1>");
             writer.println("<table border='1'>");
             writer.println("<tr><th>Packet ID</th><th>Start Bit</th><th>Field Name</th><th>Visualization</th></tr>");
             for (ComparisonEntry entry : entries) {
-                writer.printf("<tr><td>0x%X</td><td>%d</td><td>%s</td><td><img src='images/%s' width='750'></td></tr>%n",
-                        entry.field.getSid(), entry.field.getStartOffset(), entry.field.getName(), entry.imageName);
+                writer.printf("<tr><td>0x%X</td><td>%d</td><td>%s</td><td><img src='images/%s' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
+                        entry.field.getSid(), entry.field.getStartOffset(), entry.field.getName(), entry.imageName, entry.minValue, entry.maxValue);
             }
             writer.println("</table>");
+            writer.println("<script>");
+            writer.println("function updateY(event, img) {");
+            writer.println("  var rect = img.getBoundingClientRect();");
+            writer.println("  var y = event.clientY - rect.top;");
+            writer.println("  var min = parseFloat(img.getAttribute('data-min'));");
+            writer.println("  var max = parseFloat(img.getAttribute('data-max'));");
+            writer.println("  var val = max - (y / rect.height) * (max - min);");
+            writer.println("  var label = document.getElementById('yValue');");
+            writer.println("  label.innerText = 'Value: ' + val.toFixed(2);");
+            writer.println("  label.style.display = 'block';");
+            writer.println("}");
+            writer.println("function hideY() {");
+            writer.println("  document.getElementById('yValue').style.display = 'none';");
+            writer.println("}");
+            writer.println("</script>");
             writer.println("</body></html>");
         }
     }
@@ -188,10 +225,22 @@ public class DbcImageTool {
     public static class ComparisonEntry {
         private final DbcField field;
         private final String imageName;
+        private final double minValue;
+        private final double maxValue;
 
-        public ComparisonEntry(DbcField field, String imageName) {
+        public ComparisonEntry(DbcField field, String imageName, double minValue, double maxValue) {
             this.field = field;
             this.imageName = imageName;
+            this.minValue = minValue;
+            this.maxValue = maxValue;
+        }
+
+        public double getMinValue() {
+            return minValue;
+        }
+
+        public double getMaxValue() {
+            return maxValue;
         }
 
         public DbcField getField() {
@@ -203,18 +252,43 @@ public class DbcImageTool {
         }
     }
 
-    private static void createIndexHtml(List<DbcField> fields, String outputDir) throws IOException {
+    private static void createIndexHtml(List<DbcField> fields, Map<DbcField, double[]> minMaxMap) throws IOException {
         File htmlFile = new File("index.html");
         try (PrintWriter writer = new PrintWriter(new FileWriter(htmlFile))) {
-            writer.println("<html><body>");
+            writer.println("<html>");
+            writer.println("<head>");
+            writer.println("<style>");
+            writer.println(".y-label { position: fixed; bottom: 10px; right: 10px; font-weight: bold; color: blue; background: rgba(255,255,255,0.7); padding: 5px; border-radius: 5px; pointer-events: none; }");
+            writer.println("</style>");
+            writer.println("</head>");
+            writer.println("<body>");
+            writer.println("<div id='yValue' class='y-label'></div>");
             writer.println("<h1>CAN Field Visualizations</h1>");
             writer.println("<table border='1'>");
             writer.println("<tr><th>Packet ID</th><th>Start Bit</th><th>Field Name</th><th>Visualization</th></tr>");
             for (DbcField field : fields) {
-                writer.printf("<tr><td>0x%X</td><td>%d</td><td>%s</td><td><img src='processed/images/%s.png' width='750'></td></tr>%n",
-                        field.getSid(), field.getStartOffset(), field.getName(), field.getName());
+                double[] minMax = minMaxMap.get(field);
+                double min = minMax != null ? minMax[0] : 0;
+                double max = minMax != null ? minMax[1] : 0;
+                writer.printf("<tr><td>0x%X</td><td>%d</td><td>%s</td><td><img src='processed/images/%s.png' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
+                        field.getSid(), field.getStartOffset(), field.getName(), field.getName(), min, max);
             }
             writer.println("</table>");
+            writer.println("<script>");
+            writer.println("function updateY(event, img) {");
+            writer.println("  var rect = img.getBoundingClientRect();");
+            writer.println("  var y = event.clientY - rect.top;");
+            writer.println("  var min = parseFloat(img.getAttribute('data-min'));");
+            writer.println("  var max = parseFloat(img.getAttribute('data-max'));");
+            writer.println("  var val = max - (y / rect.height) * (max - min);");
+            writer.println("  var label = document.getElementById('yValue');");
+            writer.println("  label.innerText = 'Value: ' + val.toFixed(2);");
+            writer.println("  label.style.display = 'block';");
+            writer.println("}");
+            writer.println("function hideY() {");
+            writer.println("  document.getElementById('yValue').style.display = 'none';");
+            writer.println("}");
+            writer.println("</script>");
             writer.println("</body></html>");
         }
     }

@@ -84,11 +84,11 @@ public class ByteRateOfChangeReports {
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount() || !s1.getUniqueValues().equals(s2.getUniqueValues()) || s1.totalTransitions != s2.totalTransitions) {
                 String imageName = simpleName1 + "-vs-" + simpleName2 + "_" + dbcField.getName() + ".png";
-                DbcImageTool.renderComparison(dbcField,
+                double[] minMax = DbcImageTool.renderComparison(dbcField,
                         packetsById1.get(dbcField.getSid()), traceReport1.getMinTimeMs(), traceReport1.getDurationMs(),
                         packetsById2.get(dbcField.getSid()), traceReport2.getMinTimeMs(), traceReport2.getDurationMs(),
                         imagesFolder, imageName);
-                entries.add(new DbcImageTool.ComparisonEntry(dbcField, imageName));
+                entries.add(new DbcImageTool.ComparisonEntry(dbcField, imageName, minMax[0], minMax[1]));
             }
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
