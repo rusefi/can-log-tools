@@ -169,6 +169,40 @@ public class DbcImageTool {
         ImageIO.write(image, "png", outFile);
     }
 
+    public static void createComparisonHtml(List<ComparisonEntry> entries, String outputDir, String title) throws IOException {
+        File htmlFile = new File(outputDir, "comparison.html");
+        try (PrintWriter writer = new PrintWriter(new FileWriter(htmlFile))) {
+            writer.println("<html><body>");
+            writer.println("<h1>" + title + "</h1>");
+            writer.println("<table border='1'>");
+            writer.println("<tr><th>Packet ID</th><th>Start Bit</th><th>Field Name</th><th>Visualization</th></tr>");
+            for (ComparisonEntry entry : entries) {
+                writer.printf("<tr><td>0x%X</td><td>%d</td><td>%s</td><td><img src='images/%s' width='750'></td></tr>%n",
+                        entry.field.getSid(), entry.field.getStartOffset(), entry.field.getName(), entry.imageName);
+            }
+            writer.println("</table>");
+            writer.println("</body></html>");
+        }
+    }
+
+    public static class ComparisonEntry {
+        private final DbcField field;
+        private final String imageName;
+
+        public ComparisonEntry(DbcField field, String imageName) {
+            this.field = field;
+            this.imageName = imageName;
+        }
+
+        public DbcField getField() {
+            return field;
+        }
+
+        public String getImageName() {
+            return imageName;
+        }
+    }
+
     private static void createIndexHtml(List<DbcField> fields, String outputDir) throws IOException {
         File htmlFile = new File("index.html");
         try (PrintWriter writer = new PrintWriter(new FileWriter(htmlFile))) {

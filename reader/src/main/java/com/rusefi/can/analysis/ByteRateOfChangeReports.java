@@ -54,6 +54,8 @@ public class ByteRateOfChangeReports {
         Map<Integer, List<CANPacket>> packetsById2 = traceReport2.getPackets().stream()
                 .collect(Collectors.groupingBy(CANPacket::getId));
 
+        List<DbcImageTool.ComparisonEntry> entries = new ArrayList<>();
+
         for (DbcField dbcField : allKeys) {
             {
                 ByteRateOfChange.ByteId asByte = ByteRateOfChange.ByteId.convert(dbcField);
@@ -86,6 +88,7 @@ public class ByteRateOfChangeReports {
                         packetsById1.get(dbcField.getSid()), traceReport1.getMinTimeMs(), traceReport1.getDurationMs(),
                         packetsById2.get(dbcField.getSid()), traceReport2.getMinTimeMs(), traceReport2.getDurationMs(),
                         imagesFolder, imageName);
+                entries.add(new DbcImageTool.ComparisonEntry(dbcField, imageName));
             }
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
@@ -121,6 +124,18 @@ public class ByteRateOfChangeReports {
         report.println();
         report.println();
         report.close();
+
+        // Sort entries by packet ID and starting bit
+        entries.sort((e1, e2) -> {
+            DbcField f1 = e1.getField();
+            DbcField f2 = e2.getField();
+            if (f1.getSid() != f2.getSid()) {
+                return Integer.compare(f1.getSid(), f2.getSid());
+            }
+            return Integer.compare(f1.getStartOffset(), f2.getStartOffset());
+        });
+
+        DbcImageTool.createComparisonHtml(entries, comparingFolder, "Comparison: " + simpleName1 + " vs " + simpleName2);
     }
 
     public static String createOutputFolder(String inputFolderName) {
