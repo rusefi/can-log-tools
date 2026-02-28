@@ -112,7 +112,7 @@ public class DbcImageTool {
 
             g.setColor(Color.BLACK);
             g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 3f));
-            g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, 20);
+            g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, 50);
         } else {
             g.drawString("No data", WIDTH / 2 - 20, HEIGHT / 2);
         }
@@ -148,16 +148,24 @@ public class DbcImageTool {
         double minValue = Double.MAX_VALUE;
         double maxValue = -Double.MAX_VALUE;
 
+        double minValue1 = Double.MAX_VALUE;
+        double maxValue1 = -Double.MAX_VALUE;
+
         List<Point> points1 = new ArrayList<>();
         if (packets1 != null && !packets1.isEmpty()) {
             for (CANPacket packet : packets1) {
                 double value = field.getValue(packet);
                 minValue = Math.min(minValue, value);
                 maxValue = Math.max(maxValue, value);
+                minValue1 = Math.min(minValue1, value);
+                maxValue1 = Math.max(maxValue1, value);
                 double x = (packet.getTimeStampMs() - minTime1) / duration1 * (WIDTH - 1);
                 points1.add(new Point((int) x, value));
             }
         }
+
+        double minValue2 = Double.MAX_VALUE;
+        double maxValue2 = -Double.MAX_VALUE;
 
         List<Point> points2 = new ArrayList<>();
         if (packets2 != null && !packets2.isEmpty()) {
@@ -165,6 +173,8 @@ public class DbcImageTool {
                 double value = field.getValue(packet);
                 minValue = Math.min(minValue, value);
                 maxValue = Math.max(maxValue, value);
+                minValue2 = Math.min(minValue2, value);
+                maxValue2 = Math.max(maxValue2, value);
                 double x = (packet.getTimeStampMs() - minTime2) / duration2 * (WIDTH - 1);
                 points2.add(new Point((int) x, value));
             }
@@ -177,9 +187,17 @@ public class DbcImageTool {
             drawPoints(g, points1, minValue, maxValue, Color.GREEN);
             drawPoints(g, points2, minValue, maxValue, Color.RED);
 
-            g.setColor(Color.BLACK);
             g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 3f));
-            g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, 20);
+
+            if (!points1.isEmpty()) {
+                g.setColor(Color.GREEN);
+                g.drawString(String.format("Min: %.2f Max: %.2f", minValue1, maxValue1), 10, 50);
+            }
+
+            if (!points2.isEmpty()) {
+                g.setColor(Color.RED);
+                g.drawString(String.format("Min: %.2f Max: %.2f", minValue2, maxValue2), 10, 100);
+            }
         }
 
         g.dispose();
