@@ -135,7 +135,7 @@ public class ByteRateOfChangeReports {
             return Integer.compare(f1.getStartOffset(), f2.getStartOffset());
         });
 
-        DbcImageTool.createComparisonHtml(entries, comparingFolder, "Comparison: " + simpleName1 + " vs " + simpleName2);
+        DbcImageTool.createComparisonHtml(entries, comparingFolder, "Comparison: " + simpleName1 + " vs " + simpleName2, simpleName1 + "-vs-" + simpleName2 + ".html");
     }
 
     public static String createOutputFolder(String inputFolderName) {

@@ -188,8 +188,8 @@ public class DbcImageTool {
         return new double[]{minValue, maxValue};
     }
 
-    public static void createComparisonHtml(List<ComparisonEntry> entries, String outputDir, String title) throws IOException {
-        File htmlFile = new File(outputDir, "comparison.html");
+    public static void createComparisonHtml(List<ComparisonEntry> entries, String outputDir, String title, String outputFileName) throws IOException {
+        File htmlFile = new File(outputDir, outputFileName);
         try (PrintWriter writer = new PrintWriter(new FileWriter(htmlFile))) {
             writer.println("<html>");
             writer.println("<head>");
