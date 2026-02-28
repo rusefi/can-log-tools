@@ -101,8 +101,8 @@ public class ByteRateOfChangeReports {
                 diff.addAll(s1.getUniqueValues());
                 diff.removeAll(s2.getUniqueValues());
                 if (!diff.isEmpty()) {
-
-                    report.println(prefix + dbcField + " different sets " + s1.getUniqueValues() + " vs " + s2.getUniqueValues());
+                    String message = s1.getUniqueValues().size() == 1 ? "different values" : "different sets";
+                    report.println(prefix + dbcField + " " + message + " " + s1.getUniqueValues() + " vs " + s2.getUniqueValues());
 
                 } else {
                     // same number of unique values, same set of values
