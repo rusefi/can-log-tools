@@ -1,11 +1,12 @@
 package com.rusefi.can.reader.isotp;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class IsoTpFileDecoderFolderStrategy {
 
@@ -20,18 +21,39 @@ public class IsoTpFileDecoderFolderStrategy {
 
     public static boolean withTimestamp = true;
 
+    @Parameter(description = "<mandatory_filename>")
+    private List<String> mainParameters = new ArrayList<>();
+
+    @Parameter(names = {"--withTimestamp", "-t"})
+    private boolean withTimestampArg = false;
+
+    @Parameter(names = "--isoIndex")
+    private Integer isoHeaderByteIndexArg = 1; // Default value
+
     public static void main(String[] args) throws IOException {
+        IsoTpFileDecoderFolderStrategy appArgs = new IsoTpFileDecoderFolderStrategy();
+
+        JCommander jc = JCommander.newBuilder()
+                .addObject(appArgs)
+                .build();
+
+        try {
+            jc.parse(args);
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            jc.usage(); // Prints help menu if user enters wrong args
+            return;
+        }
+
         if (args.length < 1) {
             throw new IllegalStateException("Folder name argument expected");
         }
-        String folderName = args[0];
-        if (args.length > 1) {
-            withTimestamp = Boolean.parseBoolean(args[1]);
-            System.out.println("withTimestamp=" + withTimestamp);
+        if (appArgs.mainParameters.size() != 1) {
+            throw new ParameterException("The first unnamed argument (filename) is mandatory.");
         }
-        if (args.length > 2) {
-            isoHeaderByteIndex = Integer.parseInt(args[2]);
-        }
+        String folderName = appArgs.mainParameters.get(0);
+        withTimestamp = appArgs.withTimestampArg;
+        isoHeaderByteIndex = appArgs.isoHeaderByteIndexArg;
 
         processFolder(folderName);
     }
