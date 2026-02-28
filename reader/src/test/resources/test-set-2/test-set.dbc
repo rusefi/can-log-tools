@@ -1,0 +1,54 @@
+VERSION ""
+
+NS_ :
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: EGS DKG IHKA DME Kombi CAS JBBF Tester ZGW AHM EMF LM ACSM SEC1 EPS ICM_QL DSC FRMFA CVM SM_BFH SM_FA SM_BF FKA HKA EKP GWS Vector__XXX
+
+
+CM_ "EGS received";
+
+
+BO_ 239 BrakePressure_0EF_239: 8 DSC
+ SG_ CRC_0EF : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ ALIV_0EF : 8|4@1+ (1,0) [0|14] "" Vector__XXX
+ SG_ BrakePressure1 : 16|16@1+ (1,0) [0|65535] "" Vector__XXX
+ SG_ BrakePressure_b4 : 32|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ BrakePressure2 : 40|16@1+ (1,0) [0|65535] "" Vector__XXX
+
+BO_ 143 Radmoment_Antrieb_1_08F_143: 8 DME
+ SG_ CRC_WMOM_DRV_1 : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ ALIV_WMOM_DRV_1 : 8|4@1+ (1,0) [0|14] "" Vector__XXX
+ SG_ AVL_WMOM_PT_SUM_ERR_AMP : 36|12@1+ (4,0) [0|16000] "Nm" Vector__XXX
+ SG_ AVL_WMOM_PT_SUM : 16|16@1+ (1,-32000) [-32000|32000] "Nm" Vector__XXX
+ SG_ REIN_PT : 48|12@1+ (0.125,0) [0|511.75] "" Vector__XXX
+ SG_ QU_REIN_PT : 60|4@1+ (1,0) [0|15] "" Vector__XXX
