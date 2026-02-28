@@ -11,6 +11,7 @@ import com.rusefi.util.FolderUtil;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ByteRateOfChangeReports {
     public static Filter filter = packet -> false;
@@ -25,7 +26,7 @@ public class ByteRateOfChangeReports {
         }
     }
 
-    private static void compareTwoReports(DbcFile dbc, String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanMetaDataContext context) throws FileNotFoundException {
+    private static void compareTwoReports(DbcFile dbc, String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanMetaDataContext context) throws IOException {
         Set<DbcField> allKeys = new TreeSet<>();
         allKeys.addAll(traceReport1.getStatistics().keySet());
         allKeys.addAll(traceReport2.getStatistics().keySet());
@@ -33,7 +34,13 @@ public class ByteRateOfChangeReports {
         String comparingFolder = reportDestinationFolder + File.separator + "comparison";
         new File(comparingFolder).mkdirs();
 
-        String outputFileName = comparingFolder + File.separator + traceReport1.getSimpleFileName() + "-vs-" + traceReport2.getSimpleFileName() + ".txt";
+        String imagesFolder = comparingFolder + File.separator + "images";
+        new File(imagesFolder).mkdirs();
+
+        String simpleName1 = traceReport1.getSimpleFileName();
+        String simpleName2 = traceReport2.getSimpleFileName();
+
+        String outputFileName = comparingFolder + File.separator + simpleName1 + "-vs-" + simpleName2 + ".txt";
         PrintWriter report = new PrintWriter(new FileOutputStream(outputFileName));
 
         report.println("Comparing unique value count per byte " + traceReport1.getSummary() + " and " + traceReport2.getSummary());
@@ -42,6 +49,10 @@ public class ByteRateOfChangeReports {
 
         report.println("******************** Sorted by key ********************");
 
+        Map<Integer, List<CANPacket>> packetsById1 = traceReport1.getPackets().stream()
+                .collect(Collectors.groupingBy(CANPacket::getId));
+        Map<Integer, List<CANPacket>> packetsById2 = traceReport2.getPackets().stream()
+                .collect(Collectors.groupingBy(CANPacket::getId));
 
         for (DbcField dbcField : allKeys) {
             {
@@ -68,6 +79,14 @@ public class ByteRateOfChangeReports {
 
             ByteRateOfChange.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
             ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
+
+            if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount() || !s1.getUniqueValues().equals(s2.getUniqueValues()) || s1.totalTransitions != s2.totalTransitions) {
+                String imageName = simpleName1 + "-vs-" + simpleName2 + "_" + dbcField.getName() + ".png";
+                DbcImageTool.renderComparison(dbcField,
+                        packetsById1.get(dbcField.getSid()), traceReport1.getMinTimeMs(), traceReport1.getDurationMs(),
+                        packetsById2.get(dbcField.getSid()), traceReport2.getMinTimeMs(), traceReport2.getDurationMs(),
+                        imagesFolder, imageName);
+            }
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
                 String msg = prefix + dbcField + ": unique_count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();

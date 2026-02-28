@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DbcImageTool {
-    private static final int WIDTH = 1500;
-    private static final int HEIGHT = 700;
+    public static final int WIDTH = 1500;
+    public static final int HEIGHT = 700;
 
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
@@ -68,7 +68,11 @@ public class DbcImageTool {
         createIndexHtml(allFields, outputDir);
     }
 
-    private static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir) throws IOException {
+    public static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir) throws IOException {
+        renderField(field, packets, minTime, duration, outputDir, field.getName() + ".png");
+    }
+
+    public static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir, String fileName) throws IOException {
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = image.createGraphics();
         g.setColor(Color.WHITE);
@@ -88,24 +92,80 @@ public class DbcImageTool {
                 points.add(new Point((int) x, value));
             }
 
-            double valueRange = maxValue - minValue;
-            if (valueRange == 0) valueRange = 1;
+            drawPoints(g, points, minValue, maxValue, Color.BLACK);
 
-            for (int i = 0; i < points.size() - 1; i++) {
-                Point p1 = points.get(i);
-                Point p2 = points.get(i + 1);
-                int y1 = HEIGHT - 1 - (int) ((p1.value - minValue) / valueRange * (HEIGHT - 1));
-                int y2 = HEIGHT - 1 - (int) ((p2.value - minValue) / valueRange * (HEIGHT - 1));
-                g.drawLine(p1.x, y1, p2.x, y2);
-            }
-            
+            g.setColor(Color.BLACK);
             g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, 20);
         } else {
             g.drawString("No data", WIDTH / 2 - 20, HEIGHT / 2);
         }
 
         g.dispose();
-        File outFile = new File(outputDir, field.getName() + ".png");
+        File outFile = new File(outputDir, fileName);
+        ImageIO.write(image, "png", outFile);
+    }
+
+    private static void drawPoints(Graphics2D g, List<Point> points, double minValue, double maxValue, Color color) {
+        double valueRange = maxValue - minValue;
+        if (valueRange == 0) valueRange = 1;
+
+        g.setColor(color);
+        for (int i = 0; i < points.size() - 1; i++) {
+            Point p1 = points.get(i);
+            Point p2 = points.get(i + 1);
+            int y1 = HEIGHT - 1 - (int) ((p1.value - minValue) / valueRange * (HEIGHT - 1));
+            int y2 = HEIGHT - 1 - (int) ((p2.value - minValue) / valueRange * (HEIGHT - 1));
+            g.drawLine(p1.x, y1, p2.x, y2);
+        }
+    }
+
+    public static void renderComparison(DbcField field,
+                                        List<CANPacket> packets1, double minTime1, double duration1,
+                                        List<CANPacket> packets2, double minTime2, double duration2,
+                                        String outputDir, String fileName) throws IOException {
+        BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+
+        double minValue = Double.MAX_VALUE;
+        double maxValue = -Double.MAX_VALUE;
+
+        List<Point> points1 = new ArrayList<>();
+        if (packets1 != null && !packets1.isEmpty()) {
+            for (CANPacket packet : packets1) {
+                double value = field.getValue(packet);
+                minValue = Math.min(minValue, value);
+                maxValue = Math.max(maxValue, value);
+                double x = (packet.getTimeStampMs() - minTime1) / duration1 * (WIDTH - 1);
+                points1.add(new Point((int) x, value));
+            }
+        }
+
+        List<Point> points2 = new ArrayList<>();
+        if (packets2 != null && !packets2.isEmpty()) {
+            for (CANPacket packet : packets2) {
+                double value = field.getValue(packet);
+                minValue = Math.min(minValue, value);
+                maxValue = Math.max(maxValue, value);
+                double x = (packet.getTimeStampMs() - minTime2) / duration2 * (WIDTH - 1);
+                points2.add(new Point((int) x, value));
+            }
+        }
+
+        if (points1.isEmpty() && points2.isEmpty()) {
+            g.setColor(Color.BLACK);
+            g.drawString("No data", WIDTH / 2 - 20, HEIGHT / 2);
+        } else {
+            drawPoints(g, points1, minValue, maxValue, Color.GREEN);
+            drawPoints(g, points2, minValue, maxValue, Color.RED);
+
+            g.setColor(Color.BLACK);
+            g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, 20);
+        }
+
+        g.dispose();
+        File outFile = new File(outputDir, fileName);
         ImageIO.write(image, "png", outFile);
     }
 
