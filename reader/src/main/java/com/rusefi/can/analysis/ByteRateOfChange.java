@@ -173,14 +173,30 @@ public class ByteRateOfChange {
     }
 
     public static class TraceReport {
+        private final List<CANPacket> packets;
         private final String simpleFileName;
         private final HashMap<DbcField, ByteStatistics> statistics;
         private final double durationMs;
+        private final double minTimeMs;
 
         public TraceReport(List<CANPacket> packets, String simpleFileName, HashMap<DbcField, ByteStatistics> statistics) {
+            this.packets = packets;
             this.simpleFileName = simpleFileName;
             this.statistics = statistics;
-            this.durationMs = getDurationMs(packets);
+            this.durationMs = ByteRateOfChange.getDurationMs(packets);
+            this.minTimeMs = packets.isEmpty() ? 0 : packets.get(0).getTimeStampMs();
+        }
+
+        public List<CANPacket> getPackets() {
+            return packets;
+        }
+
+        public double getMinTimeMs() {
+            return minTimeMs;
+        }
+
+        public double getDurationMs() {
+            return durationMs;
         }
 
         String getSummary() {
