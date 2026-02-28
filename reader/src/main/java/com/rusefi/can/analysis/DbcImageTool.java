@@ -72,7 +72,7 @@ public class DbcImageTool {
             minMaxMap.put(field, minMax);
         }
 
-        createIndexHtml(allFields, minMaxMap);
+        createIndexHtml(allFields, minMaxMap, dbc);
     }
 
     public static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir) throws IOException {
@@ -152,8 +152,10 @@ public class DbcImageTool {
 
     private static void drawLabel(Graphics2D g, double minValue, double maxValue, Color color, int y) {
         g.setColor(color);
-        g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 3f));
+        Font oldFont = g.getFont();
+        g.setFont(oldFont.deriveFont(oldFont.getSize2D() * 3f));
         g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, y);
+        g.setFont(oldFont);
     }
 
     private static void saveImage(BufferedImage image, String outputDir, String fileName) throws IOException {
@@ -231,7 +233,7 @@ public class DbcImageTool {
         return new ComparisonResult(minValue, maxValue, tr1.mean, tr1.stdDev, tr2.mean, tr2.stdDev, difference);
     }
 
-    public static void createComparisonHtml(List<ComparisonEntry> entries, String outputDir, String title, String outputFileName) throws IOException {
+    public static void createComparisonHtml(List<ComparisonEntry> entries, String outputDir, String traceName1, String traceName2, String outputFileName, DbcFile dbc) throws IOException {
         File htmlFile = new File(outputDir, outputFileName);
         try (PrintWriter writer = new PrintWriter(new FileWriter(htmlFile))) {
             writer.println("<html>");
@@ -242,13 +244,17 @@ public class DbcImageTool {
             writer.println("</head>");
             writer.println("<body>");
             writer.println("<div id='yValue' class='y-label'></div>");
-            writer.println("<h1>" + title + "</h1>");
+            writer.println("<h1>Comparison: <span style='color: green'>" + traceName1 + "</span> vs <span style='color: red'>" + traceName2 + "</span></h1>");
             writer.println("<table border='1'>");
-            writer.println("<tr><th>Packet ID</th><th>Start Bit</th><th>Field Name</th><th>Mean 1</th><th>StdDev 1</th><th>Mean 2</th><th>StdDev 2</th><th>Difference</th><th>Visualization</th></tr>");
+            writer.println("<tr><th>Field Info</th><th>Statistics</th><th>Visualization</th></tr>");
             for (ComparisonEntry entry : entries) {
-                writer.printf("<tr><td>0x%X</td><td>%d</td><td>%s</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.2f</td><td>%.4f</td><td><img src='images/%s' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
-                        entry.getField().getSid(), entry.getField().getStartOffset(), entry.getField().getName(),
-                        entry.getMean1(), entry.getStdDev1(), entry.getMean2(), entry.getStdDev2(), entry.getDifference(),
+                DbcField field = entry.getField();
+                DbcPacket packet = dbc.getPacket(field.getSid());
+                String packetName = packet != null ? packet.getName() : "Unknown";
+
+                writer.printf("<tr><td>%s<br>%s</td><td>Mean 1: %.2f<br>StdDev 1: %.2f<br>Mean 2: %.2f<br>StdDev 2: %.2f</td><td><img src='images/%s' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
+                        packetName, field.getName(),
+                        entry.getMean1(), entry.getStdDev1(), entry.getMean2(), entry.getStdDev2(),
                         entry.getImageName(), entry.getMinValue(), entry.getMaxValue());
             }
             writer.println("</table>");
@@ -319,7 +325,7 @@ public class DbcImageTool {
         }
     }
 
-    private static void createIndexHtml(List<DbcField> fields, Map<DbcField, double[]> minMaxMap) throws IOException {
+    private static void createIndexHtml(List<DbcField> fields, Map<DbcField, double[]> minMaxMap, DbcFile dbc) throws IOException {
         File htmlFile = new File("index.html");
         try (PrintWriter writer = new PrintWriter(new FileWriter(htmlFile))) {
             writer.println("<html>");
@@ -332,13 +338,17 @@ public class DbcImageTool {
             writer.println("<div id='yValue' class='y-label'></div>");
             writer.println("<h1>CAN Field Visualizations</h1>");
             writer.println("<table border='1'>");
-            writer.println("<tr><th>Packet ID</th><th>Start Bit</th><th>Field Name</th><th>Visualization</th></tr>");
+            writer.println("<tr><th>Packet Name</th><th>Field Name</th><th>Visualization</th></tr>");
             for (DbcField field : fields) {
                 double[] minMax = minMaxMap.get(field);
                 double min = minMax != null ? minMax[0] : 0;
                 double max = minMax != null ? minMax[1] : 0;
-                writer.printf("<tr><td>0x%X</td><td>%d</td><td>%s</td><td><img src='processed/images/%s.png' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
-                        field.getSid(), field.getStartOffset(), field.getName(), field.getName(), min, max);
+
+                DbcPacket packet = dbc.getPacket(field.getSid());
+                String packetName = packet != null ? packet.getName() : "Unknown";
+
+                writer.printf("<tr><td>%s</td><td>%s</td><td><img src='processed/images/%s.png' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
+                        packetName, field.getName(), field.getName(), min, max);
             }
             writer.println("</table>");
             writer.println("<script>");

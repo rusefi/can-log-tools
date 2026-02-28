@@ -135,11 +135,11 @@ public class ByteRateOfChangeReports {
             return Integer.compare(f1.getStartOffset(), f2.getStartOffset());
         });
 
-        DbcImageTool.createComparisonHtml(entries, comparingFolder, "Comparison: " + simpleName1 + " vs " + simpleName2, simpleName1 + "-vs-" + simpleName2 + ".html");
+        DbcImageTool.createComparisonHtml(entries, comparingFolder, simpleName1, simpleName2, simpleName1 + "-vs-" + simpleName2 + ".html", dbc);
 
         // Sort by difference descending
         entries.sort((e1, e2) -> Double.compare(e2.getDifference(), e1.getDifference()));
-        DbcImageTool.createComparisonHtml(entries, comparingFolder, "Comparison (Sorted by Difference): " + simpleName1 + " vs " + simpleName2, simpleName1 + "-vs-" + simpleName2 + "-diff.html");
+        DbcImageTool.createComparisonHtml(entries, comparingFolder, simpleName1, simpleName2, simpleName1 + "-vs-" + simpleName2 + "-diff.html", dbc);
     }
 
     public static String createOutputFolder(String inputFolderName) {
