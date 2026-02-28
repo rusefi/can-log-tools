@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class DbcImageTool {
     private static final int WIDTH = 1500;
-    private static final int HEIGHT = 200;
+    private static final int HEIGHT = 700;
 
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
