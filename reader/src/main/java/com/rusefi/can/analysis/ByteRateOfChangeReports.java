@@ -83,7 +83,7 @@ public class ByteRateOfChangeReports {
             ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
 
             if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount() || !s1.getUniqueValues().equals(s2.getUniqueValues()) || s1.totalTransitions != s2.totalTransitions) {
-                String imageName = simpleName1 + "-vs-" + simpleName2 + "_" + dbcField.getName() + ".png";
+                String imageName = simpleName1 + "-vs-" + simpleName2 + "_" + DbcImageTool.escapeFileName(dbcField.getName()) + ".png";
                 double[] minMax = DbcImageTool.renderComparison(dbcField,
                         packetsById1.get(dbcField.getSid()), traceReport1.getMinTimeMs(), traceReport1.getDurationMs(),
                         packetsById2.get(dbcField.getSid()), traceReport2.getMinTimeMs(), traceReport2.getDurationMs(),
@@ -140,7 +140,10 @@ public class ByteRateOfChangeReports {
 
     public static String createOutputFolder(String inputFolderName) {
         String reportDestinationFolder = inputFolderName + File.separator + "processed";
-        new File(reportDestinationFolder).mkdirs();
+        File folder = new File(reportDestinationFolder);
+        if (!folder.exists() && !folder.mkdirs()) {
+            throw new IllegalStateException("Failed to create " + reportDestinationFolder);
+        }
         return reportDestinationFolder;
     }
 

@@ -21,6 +21,10 @@ public class DbcImageTool {
     public static final int WIDTH = 1500;
     public static final int HEIGHT = 700;
 
+    public static String escapeFileName(String name) {
+        return name.replaceAll("[\\\\/:*?\"<>|]", "_");
+    }
+
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.out.println("Usage: DbcImageTool <dbcFile> <traceFile>");
@@ -64,7 +68,7 @@ public class DbcImageTool {
         Map<DbcField, double[]> minMaxMap = new HashMap<>();
         for (DbcField field : allFields) {
             double[] minMax = new double[2];
-            renderField(field, packetsById.get(field.getSid()), minTime, duration, outputDir, minMax);
+            renderField(field, packetsById.get(field.getSid()), minTime, duration, outputDir, escapeFileName(field.getName()) + ".png", minMax);
             minMaxMap.put(field, minMax);
         }
 
