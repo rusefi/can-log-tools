@@ -6,7 +6,7 @@ import com.rusefi.can.reader.CANLineReader;
 import org.jetbrains.annotations.NotNull;
 import peak.can.basic.HackLoadLibraryFlag;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -32,8 +32,12 @@ public class SenderSandbox {
     public static CanSender create() {
         if (isWindows()) {
             HackLoadLibraryFlag.LOAD_LIBRARY = false;
-            //System.load(getFullResourceFileName("PCANBasic_JNI.dll"));
-            System.load(new File("ext/peak-can-basic/src/main/resources/PCANBasic_JNI.dll").getAbsolutePath());
+            try {
+                NativeLibraryLoader.loadLibrary("PCANBasic");
+                NativeLibraryLoader.loadLibrary("PCANBasic_JNI");
+            } catch (IOException e) {
+                throw new RuntimeException("Error loading PCAN libraries", e);
+            }
         }
 
         return isWindows() ? PCanHelper.create() : SocketCANHelper.create();

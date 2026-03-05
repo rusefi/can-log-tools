@@ -38,6 +38,7 @@ public class PCanHelper {
 
     public static CanSender create() {
         PCANBasic pcan = createAndInit();
+        System.out.println("Created " + pcan);
         return (id, payload) -> {
             TPCANStatus status = send(pcan, id, payload);
 

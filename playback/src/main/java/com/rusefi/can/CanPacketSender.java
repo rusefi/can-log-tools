@@ -16,7 +16,7 @@ public class CanPacketSender {
                 okCounter++;
             }
 
-            if (okCounter % 1000 == 0) {
+            if (okCounter % Math.min(1000, packets.size() - 1) == 0) {
                 System.out.println(new Date() + ": Total " + okCounter + " OK messages");
             }
         }
