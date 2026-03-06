@@ -12,6 +12,8 @@ public class ToolSelector {
 
     public static void main(String[] args) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         TOOLS.put("trc2mlq", TrcToMlq.class);
+        TOOLS.put("SyncTrcFiles", SyncTrcFiles.class);
+        TOOLS.put("SyncFolder", SyncFolder.class);
 
         if (args.length == 0 || !TOOLS.containsKey(args[0])) {
             System.err.println("First argument should be tool name, one of: " + TOOLS.keySet());
