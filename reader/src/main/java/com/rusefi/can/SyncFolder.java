@@ -3,24 +3,25 @@ package com.rusefi.can;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SyncFolder {
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length < 3) {
-            System.out.println("Usage: SyncFolder <folder> <suffix1> <suffix2>");
+            System.out.println("Usage: SyncFolder <folder> <suffix1> <suffix2> [suffix3]");
             return;
         }
 
         String folderPath = args[0];
-        String suffix1 = args[1];
-        String suffix2 = args[2];
+        String[] suffixes = new String[args.length - 1];
+        System.arraycopy(args, 1, suffixes, 0, suffixes.length);
 
-        runJob(folderPath, suffix1, suffix2);
+        runJob(folderPath, suffixes);
     }
 
-    private static void runJob(String folderPath, String suffix1, String suffix2) throws IOException, ParseException {
+    private static void runJob(String folderPath, String[] suffixes) throws IOException, ParseException {
         File folder = new File(folderPath);
         if (!folder.exists() || !folder.isDirectory()) {
             System.out.println("Invalid folder: " + folderPath);
@@ -32,30 +33,44 @@ public class SyncFolder {
             return;
         }
 
-        Map<String, File> suffix1Files = new HashMap<>();
-        Map<String, File> suffix2Files = new HashMap<>();
+        Map<String, File>[] suffixFiles = new Map[suffixes.length];
+        for (int i = 0; i < suffixes.length; i++) {
+            suffixFiles[i] = new HashMap<>();
+        }
 
         for (File file : files) {
             if (!file.isFile()) continue;
 
             String name = file.getName();
-            if (name.endsWith(suffix1)) {
-                String prefix = name.substring(0, name.length() - suffix1.length());
-                suffix1Files.put(prefix, file);
-            } else if (name.endsWith(suffix2)) {
-                String prefix = name.substring(0, name.length() - suffix2.length());
-                suffix2Files.put(prefix, file);
+            for (int i = 0; i < suffixes.length; i++) {
+                String suffix = suffixes[i];
+                if (name.endsWith(suffix)) {
+                    String prefix = name.substring(0, name.length() - suffix.length());
+                    suffixFiles[i].put(prefix, file);
+                    break;
+                }
             }
         }
 
-        for (Map.Entry<String, File> entry : suffix1Files.entrySet()) {
+        for (Map.Entry<String, File> entry : suffixFiles[0].entrySet()) {
             String prefix = entry.getKey();
-            if (suffix2Files.containsKey(prefix)) {
-                File file1 = entry.getValue();
-                File file2 = suffix2Files.get(prefix);
+            
+            boolean allFound = true;
+            String[] paths = new String[suffixes.length];
+            paths[0] = entry.getValue().getAbsolutePath();
+            
+            for (int i = 1; i < suffixes.length; i++) {
+                if (suffixFiles[i].containsKey(prefix)) {
+                    paths[i] = suffixFiles[i].get(prefix).getAbsolutePath();
+                } else {
+                    allFound = false;
+                    break;
+                }
+            }
 
-                System.out.println("Syncing pair: " + file1.getName() + " and " + file2.getName());
-                SyncTrcFiles.sync(file1.getAbsolutePath(), file2.getAbsolutePath());
+            if (allFound) {
+                System.out.println("Syncing group for prefix [" + prefix + "]: " + Arrays.toString(paths));
+                SyncTrcFiles.sync(paths);
             }
         }
     }
