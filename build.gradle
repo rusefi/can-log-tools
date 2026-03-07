@@ -13,6 +13,11 @@ allprojects {
     }
 }
 
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'java-test-fixtures'
+}
+
 defaultTasks 'jar'
 
 jar {

@@ -23,10 +23,6 @@ public class CANPacket {
         return data;
     }
 
-    public int getUnsigned(int i) {
-        return Byte.toUnsignedInt(data[i]);
-    }
-
     @Override
     public String toString() {
         return "CANPacket{" +

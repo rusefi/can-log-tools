@@ -89,7 +89,7 @@ public class PerSidDump {
 
             middle.println();
 
-            middle.println(getBytesAsString(middlePacket.data));
+            middle.println(getBytesAsString(middlePacket.getData()));
 
             String txMethodName = "send" + methodNameSuffix;
 

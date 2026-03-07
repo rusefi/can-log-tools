@@ -14,6 +14,6 @@ public class PcanReaderTest {
         assertEquals(4, packet.getData().length);
         assertEquals(0x192, packet.getId());
 
-        assertEquals(0x80, packet.getUnsigned(2));
+        assertEquals(0x80, Byte.toUnsignedInt(packet.getData()[2]));
     }
 }

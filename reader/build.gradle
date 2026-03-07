@@ -1,9 +1,9 @@
 plugins {
-    id 'java'
     id 'com.github.johnrengelman.shadow' version "${shadowVersion}"
 }
 
 dependencies {
+    api project(':model')
     implementation libs.jcommander
     implementation libs.snakeyaml
     testImplementation libs.junit
