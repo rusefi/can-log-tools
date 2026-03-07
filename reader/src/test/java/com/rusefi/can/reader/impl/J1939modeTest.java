@@ -5,7 +5,7 @@ import com.rusefi.can.CANPacketUtil;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
-import com.rusefi.can.reader.dbc.DbcPacket;
+import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.dbc.J1939Logic;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;

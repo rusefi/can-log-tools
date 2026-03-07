@@ -35,7 +35,7 @@ public class DbcFileReader {
                 if (tokens.length < 4)
                     throw new IllegalStateException("Failing to parse comment: " + line + " at " + lineIndex);
                 long id = Long.parseLong(tokens[2]) & 0x1FFFFFFF;    // strip ExtID flag if any
-                DbcPacket packet = dbc.findPacket((int)id);
+                com.rusefi.can.dbc.DbcPacket packet = dbc.findPacket((int)id);
                 String finalLine = line;
                 Objects.requireNonNull(packet, () -> "While parsing CM_ line packet for " + id + finalLine);
                 String originalName = tokens[3];
@@ -97,7 +97,7 @@ public class DbcFileReader {
             if (currentPacket.isConsumed())
                 return;
             int sid = currentPacket.getPacketId();
-            DbcPacket existingPacket = dbc.getPacket(sid);
+            com.rusefi.can.dbc.DbcPacket existingPacket = dbc.getPacket(sid);
             if (existingPacket != null) {
                 //throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
                 currentPacket.markConsumed();
@@ -105,7 +105,7 @@ public class DbcFileReader {
                     " have the same ID = " + sid);
             }
             List<DbcField> signals = new com.rusefi.can.dbc.util.GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
-            DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), currentPacket.getSource(), signals, dbc);
+            com.rusefi.can.dbc.DbcPacket packet = new com.rusefi.can.dbc.DbcPacket(sid, currentPacket.getPacketName(), currentPacket.getSource(), signals, dbc);
             dbc.addPacket(packet);
             currentPacket.markConsumed();
         }

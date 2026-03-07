@@ -13,7 +13,7 @@ public class ValidateDbc {
     public static List<String> checkDbc(DbcFile dbc) {
         List<String> errors = new ArrayList<>();
 
-        for (DbcPacket packet : dbc.values()) {
+        for (com.rusefi.can.dbc.DbcPacket packet : dbc.values()) {
             errors.addAll(checkPacket(packet.getId(), packet.getName()));
         }
 
