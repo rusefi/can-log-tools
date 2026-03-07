@@ -12,6 +12,7 @@ import java.util.*;
 
 public class SyncTrcFiles {
     private static final String START_TIME_HEADER = ";   Start time: ";
+    public static final String PATHNAME = "synced";
 
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length < 2) {
@@ -66,13 +67,14 @@ public class SyncTrcFiles {
         System.out.println("Overlap Start: " + new Date(overlapStart));
         System.out.println("Overlap End: " + new Date(overlapEnd));
 
-        File synchedDir = new File("synched");
+        File synchedDir = new File(PATHNAME);
         if (!synchedDir.exists()) {
             synchedDir.mkdir();
         }
 
         for (int i = 0; i < n; i++) {
-            processFile(paths[i], "synched/" + new File(paths[i]).getName(), fileStartTimes[i], overlapStart, overlapEnd);
+            processFile(paths[i], PATHNAME +
+                    "/" + new File(paths[i]).getName(), fileStartTimes[i], overlapStart, overlapEnd);
         }
 
         for (int i = 0; i < n; i++) {
