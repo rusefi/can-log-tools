@@ -1,6 +1,7 @@
 package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.CANPacketUtil;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.dbc.DbcField;
@@ -79,7 +80,7 @@ public class J1939modeTest {
 
         // dumb copy-paste from LoggingStrategy.writeLogByDbc()
 
-        Set<Integer> allIds = CANPacket.getAllIds(packets);
+        Set<Integer> allIds = CANPacketUtil.getAllIds(packets);
         // we only log DBC frames if at least one packet is present in the trace
         LoggingStrategy.LoggingFilter filter = packet -> packet.isInLog(allIds);
         List<BinaryLogEntry> entries = dbc.getFieldNameEntries(filter);

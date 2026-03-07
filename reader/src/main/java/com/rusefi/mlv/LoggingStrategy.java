@@ -1,6 +1,7 @@
 package com.rusefi.mlv;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.CANPacketUtil;
 import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;
@@ -36,7 +37,7 @@ public class LoggingStrategy {
     }
 
     public static void writeLogByDbc(DbcFile dbc, List<CANPacket> packets, String outputFileName) {
-        Set<Integer> allIds = CANPacket.getAllIds(packets);
+        Set<Integer> allIds = CANPacketUtil.getAllIds(packets);
         // we only log DBC frames if at least one packet is present in the trace
         LoggingFilter filter = packet -> packet.isInLog(allIds);
         List<BinaryLogEntry> entries = dbc.getFieldNameEntries(filter);

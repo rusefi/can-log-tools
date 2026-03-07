@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.CANPacketUtil;
 import com.rusefi.can.DualSid;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.dbc.DbcFile;
@@ -35,7 +36,7 @@ public class CanToMegaLogViewer {
             entries.add(BinaryLogEntry.createFloatLogEntry(key.getLogKey(), Integer.toBinaryString(key.sid)));
         }
 
-        for (Integer sid : CANPacket.getAllIds(canPackets)) {
+        for (Integer sid : CANPacketUtil.getAllIds(canPackets)) {
             for (int i = 0; i < 7; i++) {
                 {
                     String twoBytesKey = getTwoBytesKeyM(sid, i);

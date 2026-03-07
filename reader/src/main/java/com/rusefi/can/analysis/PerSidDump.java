@@ -62,7 +62,7 @@ public class PerSidDump {
             String rxMethodName = "on" + methodNameSuffix;
             boolean isExtId = sid > 0x7ff;
 
-            StringBuilder payloadLine = middlePacket.asLua(payloadVariableName);
+            StringBuilder payloadLine = asLua(middlePacket, payloadVariableName);
 
             middle.println(variableName + " = " + middlePacket.getId());
             middle.println(payloadLine);
@@ -89,14 +89,14 @@ public class PerSidDump {
 
             middle.println();
 
-            middle.println(middlePacket.getBytesAsString());
+            middle.println(getBytesAsString(middlePacket.data));
 
             String txMethodName = "send" + methodNameSuffix;
 
             middle.println();
             middle.println();
             middle.println("static void " + txMethodName + "() {");
-            middle.println("static uint8_t " + payloadVariableName + "[] = {" + middlePacket.arrayToCode() + "};");
+            middle.println("static uint8_t " + payloadVariableName + "[] = {" + arrayToCode(middlePacket) + "};");
             middle.println("static int " + counterVariable + ";");
 
             if (packet != null) {
@@ -148,5 +148,41 @@ public class PerSidDump {
         }
 
         pw.close();
+    }
+
+    public static StringBuilder asLua(CANPacket canPacket, String arrayName) {
+        StringBuilder result = new StringBuilder();
+        result.append(arrayName + " = {");
+
+        result.append(arrayToCode(canPacket));
+        result.append("}\n");
+        return result;
+    }
+
+    public static StringBuilder arrayToCode(CANPacket canPacket) {
+        StringBuilder result = new StringBuilder();
+        byte[] data = canPacket.getData();
+//        System.out.println(String.format("Got ECU 0x%x", getId()) + " " + data.length);
+
+        for (int index = 0; index < data.length; index++) {
+            if (index > 0)
+                result.append(", ");
+
+            result.append(String.format("0x%02x", data[index]));
+
+        }
+        return result;
+    }
+
+    public static CharSequence getBytesAsString(byte[] data) {
+        StringBuilder result = new StringBuilder();
+        for (int index = 0; index < data.length; index++) {
+            if (index > 0)
+                result.append(" ");
+
+            result.append(String.format("0x%02x", data[index]));
+
+        }
+        return result;
     }
 }
