@@ -47,7 +47,7 @@ public class PerSidDumpTest {
             assertTrue("Should contain SOURCE2", content.contains("Source: SOURCE2"));
             assertTrue("Should contain MSG1 under SOURCE1 with count 2", content.contains("Frame: 100_0x64 MSG1: 2"));
             assertTrue("Should contain MSG2 under SOURCE2 with count 1", content.contains("Frame: 200_0xc8 MSG2: 1"));
-            assertTrue("Should contain MSG3 under SOURCE1 with count 0", content.contains("Frame: 300_0x12c MSG3: 0"));
+            assertTrue("Should contain MSG3 under SOURCE1 with NO PACKETS", content.contains("Frame: 300_0x12c MSG3 NO PACKETS"));
 
         } finally {
             recursiveDelete(tempDir.toFile());
