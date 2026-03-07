@@ -14,6 +14,7 @@ public class ConvertTrcToMegaLogViewerWithDBC {
 
     public static void doJob(String dbcFileName, String inputFolderName, String outputFolder) throws IOException {
         DbcFile dbc = DbcFileReader.readFromFile(dbcFileName);
+        LoggingStrategy loggingStrategy = new LoggingStrategy();
 
         System.out.println("inputFolderName " + inputFolderName);
         System.out.println("outputFolder " + outputFolder);
@@ -23,7 +24,7 @@ public class ConvertTrcToMegaLogViewerWithDBC {
 
             String outputFileName = outputFolder + File.separator + simpleFileName + LoggingStrategy.MLG;
 
-            LoggingStrategy.writeLogByDbc(dbc, packets, outputFileName);
+            loggingStrategy.writeLogByDbc(dbc, packets, outputFileName);
         };
 
 

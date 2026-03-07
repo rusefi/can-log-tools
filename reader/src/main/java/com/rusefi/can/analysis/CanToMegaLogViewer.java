@@ -23,8 +23,9 @@ public class CanToMegaLogViewer {
 
         if (Launcher.dbcFileName != null) {
             DbcFile dbc = DbcFileReader.readFromFile(Launcher.dbcFileName);
+            LoggingStrategy loggingStrategy = new LoggingStrategy();
             String outputFileName = reportDestinationFolder + File.separator + simpleFileName + ".by_dbc.mlg";
-            LoggingStrategy.writeLogByDbc(dbc, canPackets, outputFileName);
+            loggingStrategy.writeLogByDbc(dbc, canPackets, outputFileName);
         }
 
         writeByIds(reportDestinationFolder, canPackets, simpleFileName);

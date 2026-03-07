@@ -83,7 +83,8 @@ public class J1939modeTest {
         Set<Integer> allIds = CANPacketUtil.getAllIds(packets);
         // we only log DBC frames if at least one packet is present in the trace
         LoggingStrategy.LoggingFilter filter = packet -> packet.isInLog(allIds);
-        List<BinaryLogEntry> entries = dbc.getFieldNameEntries(filter);
+        LoggingStrategy loggingStrategy = new LoggingStrategy();
+        List<BinaryLogEntry> entries = loggingStrategy.getFieldNameEntries(dbc, filter);
 
         // in the entries we have the only EEC fields, but not SSI
         assertTrue(entries.size() >= 8);    // EEC have 8 fields + 1 gap

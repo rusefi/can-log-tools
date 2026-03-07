@@ -3,7 +3,6 @@ package com.rusefi.can.reader.impl;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.can.reader.dbc.DbcPacket;
-import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import org.junit.Test;
@@ -49,7 +48,7 @@ public class GetValueFromTrcTest {
 
     @Test
     public void test() throws IOException {
-        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
+        DbcFile dbc = new DbcFile();
         {
             BufferedReader reader = new BufferedReader(new StringReader(VAG_MOTOR_1));
             DbcFileReader.read(dbc, reader);

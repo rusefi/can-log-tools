@@ -18,7 +18,8 @@ public class TrcToMlqSandbox {
     private static final String trcFileName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\VAG\\2006-Passat-B6\\passat-b6-stock-ecu-ecu-ptcan-parked-revving.trc";
 
     public static void main(String[] args) throws IOException {
-        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
+        DbcFile dbc = new DbcFile();
+        LoggingStrategy loggingStrategy = new LoggingStrategy();
         {
             BufferedReader reader = new BufferedReader(new StringReader(VAG_MOTOR_1));
             DbcFileReader.read(dbc, reader);
@@ -27,7 +28,7 @@ public class TrcToMlqSandbox {
         List<CANPacket> packets = new PcanTrcReader1_1().readFile(trcFileName);
         System.out.println(packets.size() + " packets");
 
-        LoggingStrategy.writeLogByDbc(dbc, packets, "gauges.mlg");
+        loggingStrategy.writeLogByDbc(dbc, packets, "gauges.mlg");
     }
 
 }

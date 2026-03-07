@@ -2,7 +2,6 @@ package com.rusefi.can.reader.dbc;
 
 import com.rusefi.can.Launcher;
 import com.rusefi.can.dbc.DbcField;
-import com.rusefi.mlv.LoggingStrategy;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -119,7 +118,7 @@ public class DbcFileReader {
     }
 
     public static DbcFile readFromFile(String fileName) throws IOException {
-        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
+        DbcFile dbc = new DbcFile();
         dbc.setFileName(fileName);
         if (fileName == null)
             return dbc;

@@ -1,8 +1,6 @@
 package com.rusefi.can.reader.dbc;
 
 import com.rusefi.can.dbc.FileNameProvider;
-import com.rusefi.mlv.LoggingStrategy;
-import com.rusefi.sensor_logs.BinaryLogEntry;
 
 import java.util.*;
 import java.util.function.Function;
@@ -22,15 +20,6 @@ public class DbcFile implements FileNameProvider {
 
     public static final boolean debugEnabled = false;
 
-
-    private List<BinaryLogEntry> list;
-
-    boolean logOnlyTranslatedFields;
-
-    public DbcFile(boolean logOnlyTranslatedFields) {
-        this.logOnlyTranslatedFields = logOnlyTranslatedFields;
-    }
-
     public int size() {
         return packets.size();
     }
@@ -39,17 +28,10 @@ public class DbcFile implements FileNameProvider {
         packets.put(packet.getId(), packet);
     }
 
-
     public DbcPacket findPacket(int canId) {
         return packets.get(com.rusefi.can.dbc.J1939Logic.trimSid(canId));
     }
 
-    public List<BinaryLogEntry> getFieldNameEntries(LoggingStrategy.LoggingFilter filter) {
-        if (list == null) {
-            list = LoggingStrategy.getFieldNameEntries(this, logOnlyTranslatedFields, filter);
-        }
-        return list;
-    }
 
     public DbcPacket getPacketByIndexSlow(int index) {
         return new ArrayList<>(packets.values()).get(index);

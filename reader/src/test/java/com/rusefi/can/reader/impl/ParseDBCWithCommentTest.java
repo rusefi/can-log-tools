@@ -2,7 +2,6 @@ package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.dbc.util.GapFactory;
 import com.rusefi.can.reader.dbc.DbcFileReader;
-import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;
@@ -56,7 +55,7 @@ public class ParseDBCWithCommentTest {
     public void parse() throws IOException {
         BufferedReader reader = new BufferedReader(new StringReader(RPM_DBC));
 
-        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
+        DbcFile dbc = new DbcFile();
         DbcFileReader.read(dbc, reader);
 
         assertEquals(1, dbc.size());
@@ -72,7 +71,7 @@ public class ParseDBCWithCommentTest {
                 "   SG_ PSBPI_PTSnBrkPdlPs : 15|8@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n" +
                 "   SG_ AccPos : 23|8@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n"));
 
-        DbcFile dbc = new DbcFile(false);
+        DbcFile dbc = new DbcFile();
         DbcFileReader.read(dbc, reader);
         assertEquals(dbc.size(), 1);
         DbcPacket p190 = dbc.findPacket(190);
@@ -90,7 +89,7 @@ public class ParseDBCWithCommentTest {
         BufferedReader reader = new BufferedReader(new StringReader("BO_ 190 PTEI_BrakeApplyStatus_190_0BE: 6 ECM\n" +
                 "   SG_ AccPos : 23|1@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n"));
 
-        DbcFile dbc = new DbcFile(false);
+        DbcFile dbc = new DbcFile();
         DbcFileReader.read(dbc, reader);
         assertEquals(dbc.size(), 1);
 
@@ -112,7 +111,7 @@ public class ParseDBCWithCommentTest {
         BufferedReader reader = new BufferedReader(new StringReader("    BO_ 398 PTEI_EngineTorqueStatus_398_18E: 8 Vector__XXX\n" +
                 "    SG_ CrksftNTrnsRegCmdTq : 51|12@0+ (0.5,-848) [-848|1199.5] \"Nm\"  TCM_HS\n"));
 
-        DbcFile dbc = new DbcFile(false);
+        DbcFile dbc = new DbcFile();
         DbcFileReader.read(dbc, reader);
         assertEquals(dbc.size(), 1);
     }

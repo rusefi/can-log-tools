@@ -92,7 +92,7 @@ public class ParseDBCTest {
 
     public static DbcFile readDbc(String text) throws IOException {
         BufferedReader reader = new BufferedReader(new StringReader(text));
-        DbcFile dbc = new DbcFile(false);
+        DbcFile dbc = new DbcFile();
         DbcFileReader.read(dbc, reader);
         return dbc;
     }
