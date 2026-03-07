@@ -55,21 +55,31 @@ public class ValidateDbc {
             String decSuffixStr = matcher.group(1);
             String hexSuffixStr = matcher.group(2);
 
-                long decSuffixVal = Long.parseLong(decSuffixStr);
-                long hexSuffixVal = Long.parseLong(hexSuffixStr, 16);
+            long decSuffixVal = Long.parseLong(decSuffixStr);
+            long hexSuffixVal = Long.parseLong(hexSuffixStr, 16);
 
-                // 1. Validate decimal equals hex
-                if (decSuffixVal != hexSuffixVal) {
-                    errors.add("Value mismatch: " + msgName + " (dec suffix " + decSuffixVal + " != hex suffix " + hexSuffixVal + ")");
-                }
+            // 1. Validate decimal equals hex
+            if (decSuffixVal != hexSuffixVal) {
+                errors.add("Value mismatch: " + msgName + " (dec suffix " + decSuffixVal + " != hex suffix " + hexSuffixVal + ")");
+            }
 
-                // 2. Validate decimal suffix matches message ID
-                if (decSuffixVal != msgIdDec) {
-                    errors.add("ID mismatch: " + msgName + " (suffix " + decSuffixVal + " != ID " + msgIdDec + ")");
-                }
+            // 2. Validate decimal suffix matches message ID
+            if (decSuffixVal != msgIdDec) {
+                errors.add("ID mismatch: " + msgName + " (suffix " + decSuffixVal + " != ID " + msgIdDec + ")");
+            }
 
         }
         return errors;
+    }
+
+    public static DbcFile readFromFileWithValidation(String fileName) throws IOException {
+        DbcFile dbc = DbcFile.readFromFile(fileName);
+        List<String> errors = checkDbc(dbc);
+
+        if (!errors.isEmpty()) {
+            throw new IllegalStateException(errors.toString());
+        }
+        return dbc;
     }
 
     public static void main(String[] args) throws IOException {

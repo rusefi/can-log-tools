@@ -5,6 +5,7 @@ import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;
+import com.rusefi.can.reader.dbc.ValidateDbc;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -25,10 +26,10 @@ public class MatchFinder {
         String dbcPath2 = args[2];
         String trcPath2 = args[3];
 
-        DbcFile dbc1 = DbcFile.readFromFile(dbcPath1);
+        DbcFile dbc1 = ValidateDbc.readFromFileWithValidation(dbcPath1);
         List<CANPacket> packets1 = CANLineReader.getReader().readFile(trcPath1);
 
-        DbcFile dbc2 = DbcFile.readFromFile(dbcPath2);
+        DbcFile dbc2 = ValidateDbc.readFromFileWithValidation(dbcPath2);
         List<CANPacket> packets2 = CANLineReader.getReader().readFile(trcPath2);
 
         if (packets1.isEmpty() || packets2.isEmpty()) {
