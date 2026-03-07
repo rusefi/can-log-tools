@@ -1,5 +1,7 @@
 package com.rusefi.can.analysis;
 
+import com.rusefi.can.core.ByteId;
+import com.rusefi.can.analysis.counter_scanner.CounterScanner;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -11,7 +13,7 @@ public class CanMetaDataContext {
     final Set<Integer> withChecksum = new HashSet<>();
     final Map<Integer, Map<Integer, Integer>> countersMap;
 
-    private final Set<ByteRateOfChange.ByteId> counterBytes = new HashSet<>();
+    private final Set<ByteId> counterBytes = new HashSet<>();
 
     private CanMetaDataContext(List<Integer> withChecksum, Map<Integer, Map<Integer, Integer>> countersMap) {
         this.countersMap = countersMap;
@@ -27,7 +29,7 @@ public class CanMetaDataContext {
 
                 if (size > 4) {
                     int byteIndex = bitIndex / 8;
-                    counterBytes.add(ByteRateOfChange.ByteId.createByte(sid, byteIndex));
+                    counterBytes.add(ByteId.createByte(sid, byteIndex));
                 }
             }
         }
@@ -47,7 +49,7 @@ public class CanMetaDataContext {
         return new CanMetaDataContext(withChecksum, countersMap);
     }
 
-    public boolean isCounter(ByteRateOfChange.ByteId id) {
+    public boolean isCounter(ByteId id) {
         return counterBytes.contains(id);
     }
 }

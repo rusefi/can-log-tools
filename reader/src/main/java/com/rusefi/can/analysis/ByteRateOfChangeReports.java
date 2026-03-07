@@ -3,6 +3,8 @@ package com.rusefi.can.analysis;
 import com.rusefi.can.AlwaysSameScanner;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.Launcher;
+import com.rusefi.can.core.ByteId;
+import com.rusefi.can.analysis.counter_scanner.CounterScanner;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
@@ -59,13 +61,13 @@ public class ByteRateOfChangeReports {
 
         for (DbcField dbcField : allKeys) {
             {
-                ByteRateOfChange.ByteId asByte = ByteRateOfChange.ByteId.convert(dbcField);
+                ByteId asByte = ByteId.convert(dbcField);
                 if (asByte != null) {
                     if (context.isCounter(asByte)) {
                         // skipping byte with a known counter
                         continue;
                     }
-                    if (asByte.getByteIndex() == 7 && context.withChecksum.contains(asByte.sid)) {
+                    if (asByte.getByteIndex() == 7 && context.withChecksum.contains(asByte.getSid())) {
                         // skipping known checksum byte
                         continue;
                     }

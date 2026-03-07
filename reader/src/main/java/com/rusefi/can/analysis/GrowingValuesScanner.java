@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.core.ByteId;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.DbcPacket;
@@ -20,34 +21,34 @@ public class GrowingValuesScanner {
     }
 
     private static void runScanner(DbcFile dbc, List<CANPacket> packets, PrintWriter pw, int delta) {
-        Map<ByteRateOfChange.ByteId, ByteState> states = runScanner(packets, delta);
+        Map<ByteId, ByteState> states = runScanner(packets, delta);
 
         for (ByteState state : states.values()) {
             if (state.isIncrementByte()) {
 
-                int sid = state.byteId.sid;
+                int sid = state.byteId.getSid();
                 DbcPacket packet = dbc.getPacket(sid);
                 String key = packet == null ? Integer.toString(sid) : packet.getName();
                 if (packet != null) {
-                    DbcField field = packet.getFieldAtByte(state.byteId.byteIndex);
+                    DbcField field = packet.getFieldAtByte(state.byteId.getByteIndex());
                     if (field != null)
                         key += " " + field.getName();
                 }
-                pw.println(key + " only increments at " + state.byteId.byteIndex + " last value " + state.value);
+                pw.println(key + " only increments at " + state.byteId.getByteIndex() + " last value " + state.value);
             }
         }
 
     }
 
-    public static Map<ByteRateOfChange.ByteId, ByteState> runScanner(List<CANPacket> packets, int delta) {
-        Map<ByteRateOfChange.ByteId, ByteState> states = new TreeMap<>();
+    public static Map<ByteId, ByteState> runScanner(List<CANPacket> packets, int delta) {
+        Map<ByteId, ByteState> states = new TreeMap<>();
 
 
         for (CANPacket packet : packets) {
             for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
                 byte byteValue = packet.getData()[byteIndex];
 
-                ByteRateOfChange.ByteId byteId = ByteRateOfChange.ByteId.createByte(packet.getId(), byteIndex);
+                ByteId byteId = ByteId.createByte(packet.getId(), byteIndex);
                 if (!states.containsKey(byteId)) {
                     states.put(byteId, new ByteState(byteId, byteValue));
                     continue;
@@ -73,12 +74,12 @@ public class GrowingValuesScanner {
     }
 
     public static class ByteState {
-        private final ByteRateOfChange.ByteId byteId;
+        private final ByteId byteId;
         private int value;
         public boolean withIncrement;
         public boolean badChange;
 
-        public ByteState(ByteRateOfChange.ByteId byteId, int value) {
+        public ByteState(ByteId byteId, int value) {
             this.byteId = byteId;
             this.value = value;
         }

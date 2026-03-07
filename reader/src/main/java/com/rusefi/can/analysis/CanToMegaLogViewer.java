@@ -4,6 +4,7 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.CANPacketUtil;
 import com.rusefi.can.DualSid;
 import com.rusefi.can.Launcher;
+import com.rusefi.can.core.ByteId;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.mlv.LoggingContext;
@@ -34,8 +35,8 @@ public class CanToMegaLogViewer {
     private static void writeByIds(String reportDestinationFolder, List<CANPacket> canPackets, String simpleFileName) {
         List<BinaryLogEntry> entries = new ArrayList<>();
 
-        for (ByteRateOfChange.ByteId key : getAllByteIds(canPackets)) {
-            entries.add(BinaryLogEntry.createFloatLogEntry(key.getLogKey(), Integer.toBinaryString(key.sid)));
+        for (ByteId key : getAllByteIds(canPackets)) {
+            entries.add(BinaryLogEntry.createFloatLogEntry(key.getLogKey(), Integer.toBinaryString(key.getSid())));
         }
 
         for (Integer sid : CANPacketUtil.getAllIds(canPackets)) {
@@ -61,7 +62,7 @@ public class CanToMegaLogViewer {
 
                 int sid = packetContent.getId();
                 {
-                    String name = ByteRateOfChange.ByteId.createByte(sid, i).getLogKey();
+                    String name = ByteId.createByte(sid, i).getLogKey();
                     snapshot.put(name, value);
                 }
                 {
@@ -82,12 +83,12 @@ public class CanToMegaLogViewer {
         });
     }
 
-    private static Set<ByteRateOfChange.ByteId> getAllByteIds(List<CANPacket> canPackets) {
-        Set<ByteRateOfChange.ByteId> byteIds = new HashSet<>();
+    private static Set<ByteId> getAllByteIds(List<CANPacket> canPackets) {
+        Set<ByteId> byteIds = new HashSet<>();
 
         for (CANPacket packet : canPackets) {
             for (int byteIndex = 0; byteIndex < packet.getData().length; byteIndex++) {
-                ByteRateOfChange.ByteId key = ByteRateOfChange.ByteId.createByte(packet.getId(), byteIndex);
+                ByteId key = ByteId.createByte(packet.getId(), byteIndex);
                 byteIds.add(key);
             }
         }

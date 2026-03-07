@@ -1,4 +1,4 @@
-package com.rusefi.can.analysis;
+package com.rusefi.can.analysis.counter_scanner;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CounterAggregator {
-    static List<CounterWithWidth> scan(LinkedHashMap<CounterScanner.BitStateKey, Integer> counters) {
+    public static List<CounterWithWidth> scan(LinkedHashMap<CounterScanner.BitStateKey, Integer> counters) {
 
         ScanState state = new ScanState();
 
@@ -54,30 +54,4 @@ public class CounterAggregator {
         }
     }
 
-    static class CounterWithWidth {
-
-        public final CounterScanner.BitStateKey start;
-        private final int totalNumberOfBits;
-
-        public CounterWithWidth(CounterScanner.BitStateKey start, int totalNumberOfBits) {
-            this.start = start;
-            this.totalNumberOfBits = totalNumberOfBits;
-        }
-
-        public CounterScanner.BitStateKey getStart() {
-            return start;
-        }
-
-        public int getTotalNumberOfBits() {
-            return totalNumberOfBits;
-        }
-
-        @Override
-        public String toString() {
-            return "Counter{" +
-                    "start at " + start +
-                    ", totalNumberOfBits " + totalNumberOfBits +
-                    '}';
-        }
-    }
 }

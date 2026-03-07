@@ -1,6 +1,7 @@
-package com.rusefi.can.analysis;
+package com.rusefi.can.analysis.counter_scanner;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.core.ByteId;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.DbcPacket;
 import org.yaml.snakeyaml.Yaml;
@@ -55,14 +56,14 @@ public class CounterScanner {
         }
 
         pw.println("Scanning...");
-        List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
+        List<CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
 
         Yaml yaml = new Yaml();
 
         Map</*sid*/Integer, Map<Integer, Integer>> map = new TreeMap<>();
 
         pw.println("Here are the founding:");
-        for (CounterAggregator.CounterWithWidth counterWithWidth : countersWithWidth) {
+        for (CounterWithWidth counterWithWidth : countersWithWidth) {
             pw.println("Found " + counterWithWidth);
 
             Map<Integer, Integer> lengthByStartIndex = map.computeIfAbsent(counterWithWidth.getStart().getSid(), integer -> new HashMap<>());
@@ -83,25 +84,25 @@ public class CounterScanner {
         yaml.dump(report, new FileWriter(yamlCountersReportFileName));
     }
 
-    static class BitStateKey implements Comparable {
-        private final ByteRateOfChange.ByteId byteId;
+    public static class BitStateKey implements Comparable {
+        private final ByteId byteId;
         private final int bitIndex;
 
         public BitStateKey(int sid, int byteIndex, int bitIndex) {
-            this.byteId = ByteRateOfChange.ByteId.createByte(sid, byteIndex);
+            this.byteId = ByteId.createByte(sid, byteIndex);
             this.bitIndex = bitIndex;
         }
 
         public int getTotalBitIndex() {
-            return byteId.byteIndex * 8 + bitIndex;
+            return byteId.getByteIndex() * 8 + bitIndex;
         }
 
         public int getSid() {
-            return byteId.sid;
+            return byteId.getSid();
         }
 
         public int getByteIndex() {
-            return byteId.byteIndex;
+            return byteId.getByteIndex();
         }
 
         public int getBitIndex() {
@@ -140,15 +141,15 @@ public class CounterScanner {
         }
     }
 
-    static class BitState {
+    public static class BitState {
         int index;
-        int cycleLength;
+        public int cycleLength;
 
         public boolean couldBeCounter() {
             return state == StateMachine.HAPPY_COUNTER;
         }
 
-        enum StateMachine {
+        public enum StateMachine {
             FIRST_VALUE,
             LOOKING_FOR_FIRST_SWITCHOVER,
             FOUND_FIRST_SWITCHOVER,
@@ -156,7 +157,7 @@ public class CounterScanner {
             NOT_GOOD
         }
 
-        StateMachine state = StateMachine.FIRST_VALUE;
+        public StateMachine state = StateMachine.FIRST_VALUE;
 
         boolean previousBitValue;
 

@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.core.ByteId;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class GrowingValuesScannerTest {
     public void test() {
         int id = 13;
 
-        Map<ByteRateOfChange.ByteId, GrowingValuesScanner.ByteState> result = GrowingValuesScanner.runScanner(Arrays.asList(
+        Map<ByteId, GrowingValuesScanner.ByteState> result = GrowingValuesScanner.runScanner(Arrays.asList(
                 new CANPacket(0, id, new byte[]{3,1,0}),
                 new CANPacket(0, id, new byte[]{4,1,0}),
                 new CANPacket(0, id, new byte[]{3,2,0})
@@ -33,7 +34,7 @@ public class GrowingValuesScannerTest {
     public void testDelta() {
         int id = 13;
 
-        Map<ByteRateOfChange.ByteId, GrowingValuesScanner.ByteState> result = GrowingValuesScanner.runScanner(Arrays.asList(
+        Map<ByteId, GrowingValuesScanner.ByteState> result = GrowingValuesScanner.runScanner(Arrays.asList(
                 new CANPacket(0, id, new byte[]{3, (byte) 250,0}),
                 new CANPacket(0, id, new byte[]{4,3,0}),
                 new CANPacket(0, id, new byte[]{3,12,0})

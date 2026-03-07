@@ -1,5 +1,8 @@
 package com.rusefi.can.analysis;
 
+import com.rusefi.can.analysis.counter_scanner.CounterAggregator;
+import com.rusefi.can.analysis.counter_scanner.CounterScanner;
+import com.rusefi.can.analysis.counter_scanner.CounterWithWidth;
 import org.junit.Test;
 
 import java.util.LinkedHashMap;
@@ -64,7 +67,7 @@ public class CounterScannerTest {
 
         counters.put(new CounterScanner.BitStateKey(0, 7, 6), 1);
 
-        List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
+        List<CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
 
         assertEquals(1, countersWithWidth.size());
         assertEquals(7, countersWithWidth.get(0).start.getByteIndex());
@@ -88,7 +91,7 @@ public class CounterScannerTest {
         counters.put(new CounterScanner.BitStateKey(0, 5, 6), 4);
 
 
-        List<CounterAggregator.CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
+        List<CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
 
         assertEquals(2, countersWithWidth.size());
 
