@@ -3,7 +3,6 @@ package com.rusefi.can.reader.dbc;
 import com.rusefi.can.CANPacket;
 import org.junit.Test;
 
-import static com.rusefi.can.reader.dbc.DbcFile.compatibilityWithBrokenRusEfiLogic;
 import static org.junit.Assert.*;
 
 public class DbcFieldTest {
@@ -12,22 +11,12 @@ public class DbcFieldTest {
         {
             // todo: sorry I do not trust this test :(
             // it looks life coversByte() is completely broken for big endian signals
-            compatibilityWithBrokenRusEfiLogic = false;
             DbcField field = create(true, false);
             assertTrue(field.coversByte(0));
             assertFalse(field.coversByte(1));
             assertFalse(field.coversByte(2));
             assertFalse(field.coversByte(3));
         }
-        {
-            compatibilityWithBrokenRusEfiLogic = true;
-            DbcField field = create(true, false);
-            assertFalse(field.coversByte(0));
-            assertTrue(field.coversByte(1));
-            assertFalse(field.coversByte(2));
-            assertFalse(field.coversByte(3));
-        }
-        compatibilityWithBrokenRusEfiLogic = false;
     }
 
     private static DbcField create(boolean isBigEndian, boolean isSigned) {

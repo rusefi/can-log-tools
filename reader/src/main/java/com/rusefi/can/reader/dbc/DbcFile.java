@@ -23,11 +23,7 @@ public class DbcFile {
     }
 
     public static final boolean debugEnabled = false;
-    /**
-     * problem: looks like some DBC files which were created by AndreyB manually were invalid
-     * this flag is technical debt of conversion from bad DBC into legit DBC
-     */
-    public static boolean compatibilityWithBrokenRusEfiLogic;
+
 
     private List<BinaryLogEntry> list;
 

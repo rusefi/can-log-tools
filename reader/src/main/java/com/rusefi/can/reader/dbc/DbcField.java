@@ -42,7 +42,7 @@ public class DbcField implements Comparable<DbcField> {
     }
 
     public static int crazyMotorolaMath(int b, int length, boolean isBigEndian) {
-        if (DbcFile.compatibilityWithBrokenRusEfiLogic || !isBigEndian)
+        if (!isBigEndian)
             return b;
 
         // https://github.com/ebroecker/canmatrix/wiki/signal-Byteorder
@@ -204,14 +204,10 @@ public class DbcField implements Comparable<DbcField> {
         int startBit = byteIndex * 8;
 
         if (isBigEndian) {
-            if (!DbcFile.compatibilityWithBrokenRusEfiLogic) {
+
                 startBit = DbcField.crazyMotorolaMath(startBit, length, true);
 
-            } else {
-                if (/* byte endianess less important for one byte fields */ length > 8) {
-                    startBit += 8;
-                }
-            }
+
         }
 
         if (startOffset > startBit)
