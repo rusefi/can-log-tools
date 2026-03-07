@@ -1,7 +1,7 @@
 package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.dbc.DbcField;
-import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.can.dbc.DbcPacket;
 import org.junit.Test;

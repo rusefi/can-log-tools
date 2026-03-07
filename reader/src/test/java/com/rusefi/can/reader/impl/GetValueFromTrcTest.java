@@ -4,7 +4,7 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.dbc.DbcField;
-import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.dbc.DbcFile;
 import org.junit.Test;
 
 import java.io.BufferedReader;

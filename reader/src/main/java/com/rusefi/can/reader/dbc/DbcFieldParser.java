@@ -1,6 +1,7 @@
 package com.rusefi.can.reader.dbc;
 
 import com.rusefi.can.dbc.DbcField;
+import com.rusefi.can.dbc.DbcFile;
 
 public class DbcFieldParser {
     public static DbcField parseField(String line, String parentName, int packetId) {

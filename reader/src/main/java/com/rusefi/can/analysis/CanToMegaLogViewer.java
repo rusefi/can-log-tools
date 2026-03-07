@@ -4,7 +4,7 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.CANPacketUtil;
 import com.rusefi.can.DualSid;
 import com.rusefi.can.Launcher;
-import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.mlv.LoggingContext;
 import com.rusefi.mlv.LoggingStrategy;

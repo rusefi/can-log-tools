@@ -1,6 +1,4 @@
-package com.rusefi.can.reader.dbc;
-
-import com.rusefi.can.dbc.FileNameProvider;
+package com.rusefi.can.dbc;
 
 import java.util.*;
 import java.util.function.Function;
