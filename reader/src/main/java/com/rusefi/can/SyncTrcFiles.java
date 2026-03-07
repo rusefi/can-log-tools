@@ -67,9 +67,9 @@ public class SyncTrcFiles {
         System.out.println("Overlap Start: " + new Date(overlapStart));
         System.out.println("Overlap End: " + new Date(overlapEnd));
 
-        File synchedDir = new File(PATHNAME);
-        if (!synchedDir.exists()) {
-            synchedDir.mkdir();
+        File syncedDir = new File(PATHNAME);
+        if (!syncedDir.exists()) {
+            syncedDir.mkdir();
         }
 
         for (int i = 0; i < n; i++) {

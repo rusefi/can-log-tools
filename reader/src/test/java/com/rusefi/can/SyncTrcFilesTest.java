@@ -38,19 +38,19 @@ public class SyncTrcFilesTest {
             Files.write(file1, content1.getBytes());
             Files.write(file2, content2.getBytes());
 
-            // SyncTrcFiles writes to a "synched" directory in the current working directory
+            // SyncTrcFiles writes to a "synced" directory in the current working directory
             // This is a limitation of the current implementation of SyncTrcFiles.
-            // For the test, we'll just run it and then check the "synched" directory.
+            // For the test, we'll just run it and then check the "synced" directory.
             SyncTrcFiles.sync(file1.toString(), file2.toString());
 
-            File synched1 = new File("synched/file1.trc");
-            File synched2 = new File("synched/file2.trc");
+            File synced1 = new File("synced/file1.trc");
+            File synced2 = new File("synced/file2.trc");
 
-            assertTrue("File 1 should be created", synched1.exists());
-            assertTrue("File 2 should be created", synched2.exists());
+            assertTrue("File 1 should be created", synced1.exists());
+            assertTrue("File 2 should be created", synced2.exists());
 
-            List<String> lines1 = Files.readAllLines(synched1.toPath());
-            List<String> lines2 = Files.readAllLines(synched2.toPath());
+            List<String> lines1 = Files.readAllLines(synced1.toPath());
+            List<String> lines2 = Files.readAllLines(synced2.toPath());
 
             // Check overlap: 15ms to 100ms
             // file1: 20ms, 100ms should remain (10ms is dropped)
@@ -65,7 +65,7 @@ public class SyncTrcFilesTest {
 
         } finally {
             recursiveDelete(tempDir.toFile());
-            recursiveDelete(new File("synched"));
+            recursiveDelete(new File("synced"));
         }
     }
 
@@ -103,13 +103,13 @@ public class SyncTrcFilesTest {
             // f2: 60 -> 1 packet
             // f3: 30, 60 -> 2 packets
 
-            assertEquals("f1.trc should have 2 packets (60ms, 100ms)", 2, countDataPackets(new File("synched/f1.trc")));
-            assertEquals("f2.trc should have 1 packet (60ms)", 1, countDataPackets(new File("synched/f2.trc")));
-            assertEquals("f3.trc should have 2 packets (30ms, 60ms)", 2, countDataPackets(new File("synched/f3.trc")));
+            assertEquals("f1.trc should have 2 packets (60ms, 100ms)", 2, countDataPackets(new File("synced/f1.trc")));
+            assertEquals("f2.trc should have 1 packet (60ms)", 1, countDataPackets(new File("synced/f2.trc")));
+            assertEquals("f3.trc should have 2 packets (30ms, 60ms)", 2, countDataPackets(new File("synced/f3.trc")));
 
         } finally {
             recursiveDelete(tempDir.toFile());
-            recursiveDelete(new File("synched"));
+            recursiveDelete(new File("synced"));
         }
     }
 
@@ -128,17 +128,17 @@ public class SyncTrcFilesTest {
 
             SyncTrcFiles.sync(file1.toString(), file2.toString());
 
-            File synchedDir = new File("synched");
+            File syncedDir = new File("synced");
             // If no overlap, sync returns early and might not create files or might create empty ones depending on implementation.
             // Current implementation returns early after printing "No overlapping time period found."
             // It doesn't even enter the loop to process files.
             
-            File synched1 = new File("synched/f1.trc");
-            assertTrue("Synched file should not exist if no overlap", !synched1.exists());
+            File synced1 = new File("synced/f1.trc");
+            assertTrue("synced file should not exist if no overlap", !synced1.exists());
 
         } finally {
             recursiveDelete(tempDir.toFile());
-            recursiveDelete(new File("synched"));
+            recursiveDelete(new File("synced"));
         }
     }
 
