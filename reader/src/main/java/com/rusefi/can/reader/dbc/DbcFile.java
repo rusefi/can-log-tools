@@ -139,10 +139,7 @@ public class DbcFile {
             int sid = currentPacket.getPacketId();
             DbcPacket existingPacket = packets.get(sid);
             if (existingPacket != null) {
-                //throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
-                currentPacket.markConsumed();
-                System.err.println("Packets conflict: " + existingPacket.getName() + " and " + currentPacket.getPacketName() +
-                    " have the same ID = " + sid);
+                throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
             }
             List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
             DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), currentPacket.getSource(), signals, this);
@@ -173,6 +170,10 @@ public class DbcFile {
     }
 
     public DbcPacket getPacket(int sid) {
+        return getOrCreatePacket(sid);
+    }
+
+    public DbcPacket getOrCreatePacket(int sid) {
         int trimmedSid = trimSid(sid);
         return packets.computeIfAbsent(trimmedSid, new Function<Integer, DbcPacket>() {
             @Override
