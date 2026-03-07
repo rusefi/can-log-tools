@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Write a separate file for each unique packet ID
@@ -19,15 +20,14 @@ public class PerSidDump {
     public static void handle(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
         Objects.requireNonNull(dbc);
 
-        generateBySourceReport(dbc, reportDestinationFolder, simpleFileName);
+        generateBySourceReport(dbc, reportDestinationFolder, simpleFileName, packets);
 
         String filteredDestinationFolder = reportDestinationFolder + File.separator + "filtered";
         new File(filteredDestinationFolder).mkdirs();
 
-        TreeSet<Integer> sids = new TreeSet<>();
-        // todo: one day I will let streams into my heart
-        for (CANPacket packet : packets)
-            sids.add(packet.getId());
+        Set<Integer> sids = packets.stream()
+                .map(CANPacket::getId)
+                .collect(Collectors.toCollection(() -> new TreeSet<>()));
 
         // O(n*M) is not so bad
         for (int sid : sids) {
@@ -110,7 +110,7 @@ public class PerSidDump {
         }
     }
 
-    private static void generateBySourceReport(DbcFile dbc, String reportDestinationFolder, String simpleFileName) throws IOException {
+    private static void generateBySourceReport(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> canPackets) throws IOException {
         String outputFileName = reportDestinationFolder + File.separator + simpleFileName + "_by_source.txt";
         PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
 
@@ -124,10 +124,17 @@ public class PerSidDump {
             bySource.computeIfAbsent(source, k -> new ArrayList<>()).add(packet);
         }
 
+        Map<Integer, Integer> counts = new HashMap<>();
+        for (CANPacket packet : canPackets) {
+            counts.put(packet.getId(), counts.getOrDefault(packet.getId(), 0) + 1);
+        }
+
         for (Map.Entry<String, List<DbcPacket>> entry : bySource.entrySet()) {
             pw.println("Source: " + entry.getKey());
+
             for (DbcPacket packet : entry.getValue()) {
-                pw.println("  Frame: " + DualSid.dualSid(packet.getId(), "_") + " " + packet.getName());
+                int count = counts.getOrDefault(packet.getId(), 0);
+                pw.println("  Frame: " + DualSid.dualSid(packet.getId(), "_") + " " + packet.getName() + ": " + count);
             }
             pw.println();
         }

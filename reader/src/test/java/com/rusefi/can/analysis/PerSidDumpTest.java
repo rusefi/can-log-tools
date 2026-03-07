@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +31,11 @@ public class PerSidDumpTest {
             ).getBytes());
 
             DbcFile dbc = DbcFile.readFromFile(dbcFile.getAbsolutePath());
-            List<CANPacket> packets = Collections.emptyList();
+            List<CANPacket> packets = Arrays.asList(
+                    new CANPacket(10, 100, new byte[]{1, 2}),
+                    new CANPacket(11, 100, new byte[]{3, 4}),
+                    new CANPacket(12, 200, new byte[]{5, 6})
+            );
 
             PerSidDump.handle(dbc, tempDir.toString(), "test_report", packets);
 
@@ -40,9 +45,9 @@ public class PerSidDumpTest {
             String content = new String(Files.readAllBytes(reportFile.toPath()));
             assertTrue("Should contain SOURCE1", content.contains("Source: SOURCE1"));
             assertTrue("Should contain SOURCE2", content.contains("Source: SOURCE2"));
-            assertTrue("Should contain MSG1 under SOURCE1", content.contains("Frame: 100_0x64 MSG1"));
-            assertTrue("Should contain MSG2 under SOURCE2", content.contains("Frame: 200_0xc8 MSG2"));
-            assertTrue("Should contain MSG3 under SOURCE1", content.contains("Frame: 300_0x12c MSG3"));
+            assertTrue("Should contain MSG1 under SOURCE1 with count 2", content.contains("Frame: 100_0x64 MSG1: 2"));
+            assertTrue("Should contain MSG2 under SOURCE2 with count 1", content.contains("Frame: 200_0xc8 MSG2: 1"));
+            assertTrue("Should contain MSG3 under SOURCE1 with count 0", content.contains("Frame: 300_0x12c MSG3: 0"));
 
         } finally {
             recursiveDelete(tempDir.toFile());
