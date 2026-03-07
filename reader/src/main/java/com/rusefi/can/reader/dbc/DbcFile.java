@@ -13,6 +13,15 @@ import java.util.function.Supplier;
 
 public class DbcFile {
     private final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
+    private String fileName;
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public static final boolean debugEnabled = false;
     /**
@@ -35,6 +44,7 @@ public class DbcFile {
 
     public static DbcFile readFromFile(String fileName) throws IOException {
         DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
+        dbc.setFileName(fileName);
         if (fileName == null)
             return dbc;
         System.out.println(new Date() + " Reading DBC file from " + fileName + "..."); {
@@ -139,7 +149,9 @@ public class DbcFile {
                     " have the same ID = " + sid);
             }
             List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
-            packets.put(sid, new DbcPacket(sid, currentPacket.getPacketName(), signals));
+            DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), signals);
+            packet.setParent(this);
+            packets.put(sid, packet);
             currentPacket.markConsumed();
         }
     }
@@ -172,7 +184,9 @@ public class DbcFile {
             public DbcPacket apply(Integer integer) {
                 String packetName = Integer.toHexString(sid) + "_" + sid;
                 String packetPrefix = "_unknown_" + sid;
-                return new DbcPacket(sid, packetName, new GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid));
+                DbcPacket packet = new DbcPacket(sid, packetName, new GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid));
+                packet.setParent(DbcFile.this);
+                return packet;
             }
         });
     }

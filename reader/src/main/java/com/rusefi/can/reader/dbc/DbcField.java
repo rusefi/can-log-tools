@@ -17,6 +17,16 @@ public class DbcField implements Comparable<DbcField> {
     private boolean isNiceName;
     private final boolean isSigned;
 
+    private DbcPacket parentPacket;
+
+    public void setParentPacket(DbcPacket parentPacket) {
+        this.parentPacket = parentPacket;
+    }
+
+    public DbcPacket getParentPacket() {
+        return parentPacket;
+    }
+
     public DbcField(int packetId, String name, int startOffset, int length, double mult, double offset, String category, boolean isBigEndian, boolean isSigned) {
         this.packetId = packetId;
         this.name = name;

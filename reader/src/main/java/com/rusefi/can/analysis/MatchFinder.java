@@ -167,9 +167,22 @@ public class MatchFinder {
                                        packets2ById.get(match.f2.getSid()), minTime2, duration2,
                                        outputDir + File.separator + imagesDir, imgName);
 
+                String name1 = match.f1.getName();
+                String name2 = match.f2.getName();
+                String color2 = name1.equals(name2) ? "black" : "red";
+
+                String dbc1 = new File(match.f1.getParentPacket().getParent().getFileName()).getName();
+                String dbc2 = new File(match.f2.getParentPacket().getParent().getFileName()).getName();
+
                 pw.println("<tr>");
-                pw.println("<td>" + match.f2.getName() + " (0x" + Integer.toHexString(match.f2.getSid()) + ")</td>");
-                pw.println("<td>" + match.f1.getName() + " (0x" + Integer.toHexString(match.f1.getSid()) + ")</td>");
+                pw.println("<td><font color='" + color2 + "'>" + name2 + "</font><br/>" + dbc2 + "<br/>" +
+                        getString(match.f2)
+
+
+                        + "</td>");
+                pw.println("<td>" + name1 + "<br/>" + dbc1 + "<br/>" +
+                                getString(match.f1) +
+                        "</td>");
                 pw.println("<td>" + String.format("%.4f", match.distance) + "</td>");
                 pw.println("<td><img src='" + imagesDir + "/" + imgName + "' width='800'></td>");
                 pw.println("</tr>");
@@ -178,6 +191,11 @@ public class MatchFinder {
             pw.println("</table>");
             pw.println("</body></html>");
         }
+    }
+
+    private static String getString(DbcField field) {
+        return "sid " + field.getSid() +
+                " 0x" + Integer.toHexString(field.getSid());
     }
 
     private static void renderComparison(Match match, List<CANPacket> p1, double minTime1, double duration1,

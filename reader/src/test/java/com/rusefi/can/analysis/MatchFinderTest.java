@@ -108,6 +108,11 @@ public class MatchFinderTest {
             // The best match for Changing2 should be Changing1
             assertTrue("Changing2 should be matched with Changing1", htmlContent.contains("Changing1"));
 
+            // Verification for new features: DBC filename and red color for different names
+            assertTrue("Should contain DBC1 filename", htmlContent.contains("test1.dbc"));
+            assertTrue("Should contain DBC2 filename", htmlContent.contains("test2.dbc"));
+            assertTrue("Should contain red color because Changing2 != Changing1", htmlContent.contains("color='red'"));
+
         } finally {
             recursiveDelete(tempDir.toFile());
             recursiveDelete(new File("match_report"));
