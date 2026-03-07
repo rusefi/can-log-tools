@@ -1,4 +1,4 @@
-package com.rusefi.can.analysis;
+package com.rusefi.can.analysis.checksum;
 
 import com.rusefi.can.CANPacket;
 import org.yaml.snakeyaml.Yaml;

@@ -1,4 +1,4 @@
-package com.rusefi.can.analysis;
+package com.rusefi.can.analysis.checksum;
 
 public class J1850_SAE_crc8_Calculator {
     byte crc8(byte[] data, int length) {

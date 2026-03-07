@@ -1,5 +1,6 @@
 package com.rusefi.can.analysis;
 
+import com.rusefi.can.analysis.checksum.ChecksumScanner;
 import com.rusefi.can.core.ByteId;
 import com.rusefi.can.analysis.counter_scanner.CounterScanner;
 import org.yaml.snakeyaml.Yaml;
