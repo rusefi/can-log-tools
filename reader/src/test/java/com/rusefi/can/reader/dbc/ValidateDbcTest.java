@@ -1,12 +1,47 @@
 package com.rusefi.can.reader.dbc;
 
+import com.rusefi.can.dbc.DbcField;
+import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.tool.ValidateDbc;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.*;
 
 public class ValidateDbcTest {
+    @Test
+    public void testOverlap() {
+        DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
+        DbcField field2 = new DbcField(100, "F2", 7, 8, 1, 0, "", false, false);
+
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", Arrays.asList(field1, field2), null);
+        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        assertFalse("Should have errors", errors.isEmpty());
+        assertTrue(errors.get(0).contains("Overlap"));
+        assertTrue(errors.get(0).contains("uses bit 7"));
+    }
+
+    @Test
+    public void testNoOverlap() {
+        DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
+        DbcField field2 = new DbcField(100, "F2", 8, 8, 1, 0, "", false, false);
+
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", Arrays.asList(field1, field2), null);
+        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        assertTrue("Should not have errors", errors.isEmpty());
+    }
+
+    @Test
+    public void testGapIgnored() {
+        DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
+        DbcField field2 = new DbcField(100, "some_gap_8", 0, 8, 1, 0, "", false, false);
+
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", Arrays.asList(field1, field2), null);
+        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        assertTrue("Should not have errors because gap is ignored", errors.isEmpty());
+    }
+
     @Test
     public void testValidDbc() {
         List<String> errors = ValidateDbc.checkPacket(1043, "MSG_1043_413");

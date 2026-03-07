@@ -1,10 +1,13 @@
 package com.rusefi.can.tool;
 
+import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
+import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.dbc.reader.DbcFileReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,10 +19,33 @@ public class ValidateDbc {
     public static List<String> checkDbc(DbcFile dbc) {
         List<String> errors = new ArrayList<>();
 
-        for (com.rusefi.can.dbc.DbcPacket packet : dbc.values()) {
+        for (DbcPacket packet : dbc.values()) {
             errors.addAll(checkPacket(packet.getId(), packet.getName()));
+            errors.addAll(checkFieldsOverlap(packet));
         }
 
+        return errors;
+    }
+
+    public static List<String> checkFieldsOverlap(DbcPacket packet) {
+        List<String> errors = new ArrayList<>();
+        BitSet usedBits = new BitSet();
+
+        for (DbcField field : packet.getFields()) {
+            if (field.getName().contains("_gap_")) {
+                continue;
+            }
+            int startBit = field.getStartOffset();
+            int length = field.getLength();
+
+            for (int i = 0; i < length; i++) {
+                int bitIndex = startBit + i;
+                if (usedBits.get(bitIndex)) {
+                    errors.add("Overlap in " + packet.getName() + " (ID " + packet.getId() + "): Field " + field.getName() + " uses bit " + bitIndex + " which is already used.");
+                }
+                usedBits.set(bitIndex);
+            }
+        }
         return errors;
     }
 
@@ -98,11 +124,11 @@ public class ValidateDbc {
 
         List<String> errors = checkDbc(dbc);
         for (String err : errors) {
-            System.out.println(err);
+            System.err.println(err);
         }
 
         if (errors.isEmpty()) {
-            System.out.println("No errors found in BO_ suffixes for " + fileName);
+            System.out.println("No errors found in " + fileName);
         } else {
             System.exit(1);
         }
