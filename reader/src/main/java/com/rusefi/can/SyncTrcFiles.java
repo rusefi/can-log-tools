@@ -15,39 +15,44 @@ public class SyncTrcFiles {
 
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length < 2) {
-            System.out.println("Usage: SyncTrcFiles <file1> <file2>");
+            System.out.println("Usage: SyncTrcFiles <file1> <file2> [file3]");
             return;
         }
 
-        String file1 = args[0];
-        String file2 = args[1];
-
-        sync(file1, file2);
+        sync(args);
     }
 
-    public static void sync(String path1, String path2) throws IOException, ParseException {
-        long start1 = readStartTime(path1);
-        long start2 = readStartTime(path2);
+    public static void sync(String... paths) throws IOException, ParseException {
+        int n = paths.length;
+        long[] fileStartTimes = new long[n];
+        List<CANPacket>[] allPackets = new List[n];
 
-        System.out.println("File 1 Start Time: " + new Date(start1) + " (" + start1 + " ms)");
-        System.out.println("File 2 Start Time: " + new Date(start2) + " (" + start2 + " ms)");
-
-        List<CANPacket> packets1 = AutoFormatReader.INSTANCE.readFile(path1);
-        List<CANPacket> packets2 = AutoFormatReader.INSTANCE.readFile(path2);
-
-        if (packets1.isEmpty() || packets2.isEmpty()) {
-            System.out.println("One of the files is empty.");
-            return;
+        for (int i = 0; i < n; i++) {
+            fileStartTimes[i] = readStartTime(paths[i]);
+            System.out.println("File " + (i + 1) + " Start Time: " + new Date(fileStartTimes[i]) + " (" + fileStartTimes[i] + " ms)");
+            allPackets[i] = AutoFormatReader.INSTANCE.readFile(paths[i]);
         }
 
-        long absStart1 = start1 + (long) packets1.get(0).getTimeStampMs();
-        long absEnd1 = start1 + (long) packets1.get(packets1.size() - 1).getTimeStampMs();
+        for (int i = 0; i < n; i++) {
+            if (allPackets[i].isEmpty()) {
+                System.out.println("File " + (i + 1) + " is empty.");
+                return;
+            }
+        }
 
-        long absStart2 = start2 + (long) packets2.get(0).getTimeStampMs();
-        long absEnd2 = start2 + (long) packets2.get(packets2.size() - 1).getTimeStampMs();
+        long overlapStart = Long.MIN_VALUE;
+        long overlapEnd = Long.MAX_VALUE;
 
-        long overlapStart = Math.max(absStart1, absStart2);
-        long overlapEnd = Math.min(absEnd1, absEnd2);
+        long[] absStarts = new long[n];
+        long[] absEnds = new long[n];
+
+        for (int i = 0; i < n; i++) {
+            absStarts[i] = fileStartTimes[i] + (long) allPackets[i].get(0).getTimeStampMs();
+            absEnds[i] = fileStartTimes[i] + (long) allPackets[i].get(allPackets[i].size() - 1).getTimeStampMs();
+
+            overlapStart = Math.max(overlapStart, absStarts[i]);
+            overlapEnd = Math.min(overlapEnd, absEnds[i]);
+        }
 
         if (overlapStart >= overlapEnd) {
             System.out.println("No overlapping time period found.");
@@ -62,11 +67,13 @@ public class SyncTrcFiles {
             synchedDir.mkdir();
         }
 
-        processFile(path1, "synched/" + new File(path1).getName(), start1, overlapStart, overlapEnd);
-        processFile(path2, "synched/" + new File(path2).getName(), start2, overlapStart, overlapEnd);
+        for (int i = 0; i < n; i++) {
+            processFile(paths[i], "synched/" + new File(paths[i]).getName(), fileStartTimes[i], overlapStart, overlapEnd);
+        }
 
-        printDroppedRanges("File 1", absStart1, absEnd1, overlapStart, overlapEnd);
-        printDroppedRanges("File 2", absStart2, absEnd2, overlapStart, overlapEnd);
+        for (int i = 0; i < n; i++) {
+            printDroppedRanges("File " + (i + 1), absStarts[i], absEnds[i], overlapStart, overlapEnd);
+        }
     }
 
     private static void printDroppedRanges(String label, long absStart, long absEnd, long overlapStart, long overlapEnd) {
