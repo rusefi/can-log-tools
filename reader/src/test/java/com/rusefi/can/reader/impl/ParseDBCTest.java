@@ -113,6 +113,22 @@ public class ParseDBCTest {
         DbcField rpm = motorPacket.find("RPM");
         assertEquals(0.25, rpm.getMult());
         assertEquals("Motor_1", rpm.getCategory());
+        assertEquals("XXX", motorPacket.getSource());
+    }
+
+    @Test
+    public void testSource() throws IOException {
+        String dbcText = "BO_ 1394 ZAS_1: 2 XXX\n" +
+                " SG_ Field : 0|8@1+ (1,0) [0|0] \"\" XXX";
+        DbcFile dbc = readDbc(dbcText);
+        DbcPacket packet = dbc.findPacket(1394);
+        assertEquals("XXX", packet.getSource());
+
+        String dbcText2 = "BO_ 100 P: 8 ECM_HS\n" +
+                " SG_ OAT : 63|8@0+ (1,0) [0|8] \"deg C\"  VICS";
+        DbcFile dbc2 = readDbc(dbcText2);
+        DbcPacket packet2 = dbc2.findPacket(100);
+        assertEquals("ECM_HS", packet2.getSource());
     }
 
     @Test

@@ -13,12 +13,14 @@ import java.util.Set;
 public class DbcPacket {
     private final int id;
     private final String name;
+    private final String source;
     private final List<DbcField> fields = new ArrayList<>();
     private final DbcFile parent;
 
-    public DbcPacket(int id, String name, List<DbcField> signals, DbcFile parent) {
+    public DbcPacket(int id, String name, String source, List<DbcField> signals, DbcFile parent) {
         this.id = id;
         this.name = name;
+        this.source = source;
         this.parent = parent;
         fields.addAll(signals);
         for (DbcField field : signals) {
@@ -38,6 +40,10 @@ public class DbcPacket {
         return name;
     }
 
+    public String getSource() {
+        return source;
+    }
+
     public List<DbcField> getFields() {
         return fields;
     }
@@ -47,6 +53,7 @@ public class DbcPacket {
         return "DbcPacket{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", source='" + source + '\'' +
                 '}';
     }
 

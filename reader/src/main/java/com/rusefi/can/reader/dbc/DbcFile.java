@@ -121,7 +121,8 @@ public class DbcFile {
         long decId = Long.parseLong(tokens[1]) & 0x1FFFFFFF;    // strip ExtID flag if any
         int trimmedId = trimSid((int) decId);
         String packetName = tokens[2];
-        currentPacket = new DbcPacketBuilder(trimmedId, packetName);
+        String source = tokens.length > 4 ? tokens[4] : "";
+        currentPacket = new DbcPacketBuilder(trimmedId, packetName, source);
         return currentPacket;
     }
 
@@ -148,7 +149,7 @@ public class DbcFile {
                     " have the same ID = " + sid);
             }
             List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
-            DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), signals, this);
+            DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), currentPacket.getSource(), signals, this);
             packets.put(sid, packet);
             currentPacket.markConsumed();
         }
@@ -182,7 +183,7 @@ public class DbcFile {
             public DbcPacket apply(Integer integer) {
                 String packetName = Integer.toHexString(sid) + "_" + sid;
                 String packetPrefix = "_unknown_" + sid;
-                DbcPacket packet = new DbcPacket(sid, packetName, new GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid), DbcFile.this);
+                DbcPacket packet = new DbcPacket(sid, packetName, "unknown", new GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid), DbcFile.this);
                 return packet;
             }
         });

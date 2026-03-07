@@ -7,12 +7,14 @@ import java.util.List;
 public class DbcPacketBuilder {
     private final int packetId;
     private final String packetName;
+    private final String source;
     private final List<DbcField> signals = new ArrayList<>();
     private boolean isConsumed;
 
-    public DbcPacketBuilder(int packetId, String packetName) {
+    public DbcPacketBuilder(int packetId, String packetName, String source) {
         this.packetId = packetId;
         this.packetName = packetName;
+        this.source = source;
     }
 
     public int getPacketId() {
@@ -21,6 +23,10 @@ public class DbcPacketBuilder {
 
     public String getPacketName() {
         return packetName;
+    }
+
+    public String getSource() {
+        return source;
     }
 
     public void add(DbcField field) {
