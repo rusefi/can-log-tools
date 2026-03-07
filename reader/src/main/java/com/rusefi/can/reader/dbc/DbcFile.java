@@ -4,9 +4,6 @@ import com.rusefi.can.dbc.FileNameProvider;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
@@ -36,22 +33,6 @@ public class DbcFile implements FileNameProvider {
 
     public int size() {
         return packets.size();
-    }
-
-    public static DbcFile readFromFile(String fileName) throws IOException {
-        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
-        dbc.setFileName(fileName);
-        if (fileName == null)
-            return dbc;
-        System.out.println(new Date() + " Reading DBC file from " + fileName + "..."); {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            dbc.read(reader);
-        }
-        return dbc;
-    }
-
-    public void read(BufferedReader reader) throws IOException {
-        DbcFileReader.read(this, reader);
     }
 
     public void addPacket(DbcPacket packet) {

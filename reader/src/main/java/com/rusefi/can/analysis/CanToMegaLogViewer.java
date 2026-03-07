@@ -5,6 +5,7 @@ import com.rusefi.can.CANPacketUtil;
 import com.rusefi.can.DualSid;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.mlv.LoggingContext;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;
@@ -21,7 +22,7 @@ public class CanToMegaLogViewer {
     public static void createMegaLogViewer(String reportDestinationFolder, List<CANPacket> canPackets, String simpleFileName) throws IOException {
 
         if (Launcher.dbcFileName != null) {
-            DbcFile dbc = DbcFile.readFromFile(Launcher.dbcFileName);
+            DbcFile dbc = DbcFileReader.readFromFile(Launcher.dbcFileName);
             String outputFileName = reportDestinationFolder + File.separator + simpleFileName + ".by_dbc.mlg";
             LoggingStrategy.writeLogByDbc(dbc, canPackets, outputFileName);
         }

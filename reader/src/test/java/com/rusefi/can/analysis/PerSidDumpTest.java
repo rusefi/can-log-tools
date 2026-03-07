@@ -2,6 +2,7 @@ package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcFileReader;
 import org.junit.Test;
 
 import java.io.File;
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -30,7 +30,7 @@ public class PerSidDumpTest {
                     " SG_ Field3 : 0|8@1+ (1,0) [0|255] \"\" Vector__XXX\n"
             ).getBytes());
 
-            DbcFile dbc = DbcFile.readFromFile(dbcFile.getAbsolutePath());
+            DbcFile dbc = DbcFileReader.readFromFile(dbcFile.getAbsolutePath());
             List<CANPacket> packets = Arrays.asList(
                     new CANPacket(10, 100, new byte[]{1, 2}),
                     new CANPacket(11, 100, new byte[]{3, 4}),

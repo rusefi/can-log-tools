@@ -2,6 +2,7 @@ package com.rusefi.can;
 
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.CANLineReader;
+import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.util.FolderUtil;
 
@@ -12,7 +13,7 @@ import java.util.List;
 public class ConvertTrcToMegaLogViewerWithDBC {
 
     public static void doJob(String dbcFileName, String inputFolderName, String outputFolder) throws IOException {
-        DbcFile dbc = DbcFile.readFromFile(dbcFileName);
+        DbcFile dbc = DbcFileReader.readFromFile(dbcFileName);
 
         System.out.println("inputFolderName " + inputFolderName);
         System.out.println("outputFolder " + outputFolder);

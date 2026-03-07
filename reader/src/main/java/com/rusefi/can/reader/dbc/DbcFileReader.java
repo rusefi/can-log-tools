@@ -2,13 +2,12 @@ package com.rusefi.can.reader.dbc;
 
 import com.rusefi.can.Launcher;
 import com.rusefi.can.dbc.DbcField;
+import com.rusefi.mlv.LoggingStrategy;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.List;
+import java.util.*;
 
 public class DbcFileReader {
     public static void read(DbcFile dbc, BufferedReader reader) throws IOException {
@@ -117,5 +116,17 @@ public class DbcFileReader {
         line = line.replaceAll("[|+@(,)\\[\\]]", " ");
         line = line.replaceAll(" +", " ");
         return line;
+    }
+
+    public static DbcFile readFromFile(String fileName) throws IOException {
+        DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
+        dbc.setFileName(fileName);
+        if (fileName == null)
+            return dbc;
+        System.out.println(new Date() + " Reading DBC file from " + fileName + "..."); {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            read(dbc, reader);
+        }
+        return dbc;
     }
 }

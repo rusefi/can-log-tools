@@ -2,6 +2,7 @@ package com.rusefi.can;
 
 import com.rusefi.can.reader.ReaderType;
 import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.mlv.LoggingStrategy;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class TrcToMlq {
             String dbcFileName = args[0];
             String inputFileName = args[1];
 
-            DbcFile dbc = DbcFile.readFromFile(dbcFileName);
+            DbcFile dbc = DbcFileReader.readFromFile(dbcFileName);
 
             List<CANPacket> packets = getReader().readFile(inputFileName);
 

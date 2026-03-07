@@ -4,6 +4,7 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.can.reader.dbc.DbcPacket;
 
 import javax.imageio.ImageIO;
@@ -34,7 +35,7 @@ public class DbcImageTool {
         String dbcPath = args[0];
         String tracePath = args[1];
 
-        DbcFile dbc = DbcFile.readFromFile(dbcPath);
+        DbcFile dbc = DbcFileReader.readFromFile(dbcPath);
         List<CANPacket> packets = CANLineReader.getReader().readFile(tracePath);
 
         if (packets.isEmpty()) {

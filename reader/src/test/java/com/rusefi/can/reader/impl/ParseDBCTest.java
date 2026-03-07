@@ -2,6 +2,7 @@ package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.can.reader.dbc.DbcPacket;
 import org.junit.Test;
 
@@ -92,7 +93,7 @@ public class ParseDBCTest {
     public static DbcFile readDbc(String text) throws IOException {
         BufferedReader reader = new BufferedReader(new StringReader(text));
         DbcFile dbc = new DbcFile(false);
-        dbc.read(reader);
+        DbcFileReader.read(dbc, reader);
         return dbc;
     }
 

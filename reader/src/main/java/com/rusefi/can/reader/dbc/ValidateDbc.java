@@ -75,7 +75,7 @@ public class ValidateDbc {
     }
 
     public static DbcFile readFromFileWithValidation(String fileName) throws IOException {
-        DbcFile dbc = DbcFile.readFromFile(fileName);
+        DbcFile dbc = DbcFileReader.readFromFile(fileName);
         List<String> errors = checkDbc(dbc);
 
         if (!errors.isEmpty()) {
@@ -91,7 +91,7 @@ public class ValidateDbc {
         }
 
         String fileName = args[0];
-        DbcFile dbc = DbcFile.readFromFile(fileName);
+        DbcFile dbc = DbcFileReader.readFromFile(fileName);
 
         List<String> errors = checkDbc(dbc);
         for (String err : errors) {

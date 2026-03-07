@@ -1,6 +1,7 @@
 package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.can.reader.dbc.DbcFile;
 
@@ -20,7 +21,7 @@ public class TrcToMlqSandbox {
         DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
         {
             BufferedReader reader = new BufferedReader(new StringReader(VAG_MOTOR_1));
-            dbc.read(reader);
+            DbcFileReader.read(dbc, reader);
         }
 
         List<CANPacket> packets = new PcanTrcReader1_1().readFile(trcFileName);

@@ -1,6 +1,7 @@
 package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.dbc.util.GapFactory;
+import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
@@ -56,7 +57,7 @@ public class ParseDBCWithCommentTest {
         BufferedReader reader = new BufferedReader(new StringReader(RPM_DBC));
 
         DbcFile dbc = new DbcFile(LoggingStrategy.LOG_ONLY_TRANSLATED_FIELDS);
-        dbc.read(reader);
+        DbcFileReader.read(dbc, reader);
 
         assertEquals(1, dbc.size());
         DbcPacket packet = dbc.findPacket(1408);
@@ -72,7 +73,7 @@ public class ParseDBCWithCommentTest {
                 "   SG_ AccPos : 23|8@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n"));
 
         DbcFile dbc = new DbcFile(false);
-        dbc.read(reader);
+        DbcFileReader.read(dbc, reader);
         assertEquals(dbc.size(), 1);
         DbcPacket p190 = dbc.findPacket(190);
         DbcField signalBrkPdl = p190.getByName("PSBPI_PTSnBrkPdlPs");
@@ -90,7 +91,7 @@ public class ParseDBCWithCommentTest {
                 "   SG_ AccPos : 23|1@0+ (0.392157,0) [0|100] \"%\" Vector__XXX\n"));
 
         DbcFile dbc = new DbcFile(false);
-        dbc.read(reader);
+        DbcFileReader.read(dbc, reader);
         assertEquals(dbc.size(), 1);
 
         DbcPacket p190 = dbc.findPacket(190);
@@ -112,7 +113,7 @@ public class ParseDBCWithCommentTest {
                 "    SG_ CrksftNTrnsRegCmdTq : 51|12@0+ (0.5,-848) [-848|1199.5] \"Nm\"  TCM_HS\n"));
 
         DbcFile dbc = new DbcFile(false);
-        dbc.read(reader);
+        DbcFileReader.read(dbc, reader);
         assertEquals(dbc.size(), 1);
     }
 

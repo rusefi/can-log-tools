@@ -6,6 +6,7 @@ import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
+import com.rusefi.can.reader.dbc.DbcFileReader;
 import com.rusefi.can.reader.dbc.DbcPacket;
 import com.rusefi.util.FolderUtil;
 
@@ -154,7 +155,7 @@ public class ByteRateOfChangeReports {
     public static void scanInputFolder(String inputFolderName, String fileNameSuffix) throws IOException {
         String reportDestinationFolder = createOutputFolder(inputFolderName);
 
-        DbcFile dbc = DbcFile.readFromFile(Launcher.dbcFileName);
+        DbcFile dbc = DbcFileReader.readFromFile(Launcher.dbcFileName);
 
         CanMetaDataContext context = CanMetaDataContext.read(inputFolderName);
 
