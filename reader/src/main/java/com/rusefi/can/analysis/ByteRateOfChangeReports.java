@@ -4,13 +4,18 @@ import com.rusefi.can.AlwaysSameScanner;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.analysis.checksum.ChecksumScanner;
+import com.rusefi.can.analysis.filter.PerSidDump;
+import com.rusefi.can.analysis.filter.ReportBySource;
+import com.rusefi.can.analysis.groving_values.GrowingValuesScanner;
 import com.rusefi.can.core.ByteId;
 import com.rusefi.can.analysis.counter_scanner.CounterScanner;
+import com.rusefi.can.mlv.CanToMegaLogViewer;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.can.dbc.DbcPacket;
+import com.rusefi.can.render.DbcImageTool;
 import com.rusefi.util.FolderUtil;
 
 import java.io.*;
@@ -74,7 +79,7 @@ public class ByteRateOfChangeReports {
                     }
                 }
             }
-            String prefix = "";
+            String prefix;
 
             DbcPacket packet = dbc.getPacket(dbcField.getSid());
             Objects.requireNonNull(packet);
@@ -171,6 +176,7 @@ public class ByteRateOfChangeReports {
             List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
 
             PerSidDump.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
+            ReportBySource.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             // at the moment we overwrite counter detection report after we process each file
             CounterScanner.scanForCounters(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             ChecksumScanner.scanForChecksums(reportDestinationFolder, simpleFileName, logFileContent);

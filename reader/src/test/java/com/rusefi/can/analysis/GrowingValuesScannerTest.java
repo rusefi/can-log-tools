@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.analysis.groving_values.GrowingValuesScanner;
 import com.rusefi.can.core.ByteId;
 import org.junit.Test;
 

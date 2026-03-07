@@ -1,4 +1,4 @@
-package com.rusefi.can.analysis;
+package com.rusefi.can.render;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.CANLineReader;

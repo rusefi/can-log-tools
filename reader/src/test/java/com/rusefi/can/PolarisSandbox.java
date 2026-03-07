@@ -1,6 +1,6 @@
 package com.rusefi.can;
 
-import com.rusefi.can.analysis.PerSidDump;
+import com.rusefi.can.analysis.filter.PerSidDump;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.impl.PcanTrcReader2_0;
 

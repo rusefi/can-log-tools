@@ -1,5 +1,6 @@
 package com.rusefi.can.analysis;
 
+import com.rusefi.can.render.DbcImageTool;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
