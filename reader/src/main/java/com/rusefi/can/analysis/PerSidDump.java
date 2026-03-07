@@ -10,10 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Write a separate file for each unique packet ID
@@ -21,6 +18,9 @@ import java.util.TreeSet;
 public class PerSidDump {
     public static void handle(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
         Objects.requireNonNull(dbc);
+
+        generateBySourceReport(dbc, reportDestinationFolder, simpleFileName);
+
         String filteredDestinationFolder = reportDestinationFolder + File.separator + "filtered";
         new File(filteredDestinationFolder).mkdirs();
 
@@ -108,5 +108,30 @@ public class PerSidDump {
 
             middle.close();
         }
+    }
+
+    private static void generateBySourceReport(DbcFile dbc, String reportDestinationFolder, String simpleFileName) throws IOException {
+        String outputFileName = reportDestinationFolder + File.separator + simpleFileName + "_by_source.txt";
+        PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
+
+        Map<String, List<DbcPacket>> bySource = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+        for (DbcPacket packet : dbc.values()) {
+            String source = packet.getSource();
+            if (source == null || source.isEmpty()) {
+                source = "Unknown";
+            }
+            bySource.computeIfAbsent(source, k -> new ArrayList<>()).add(packet);
+        }
+
+        for (Map.Entry<String, List<DbcPacket>> entry : bySource.entrySet()) {
+            pw.println("Source: " + entry.getKey());
+            for (DbcPacket packet : entry.getValue()) {
+                pw.println("  Frame: " + DualSid.dualSid(packet.getId(), "_") + " " + packet.getName());
+            }
+            pw.println();
+        }
+
+        pw.close();
     }
 }
