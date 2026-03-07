@@ -1,7 +1,6 @@
-package com.rusefi.can.reader.dbc;
+package com.rusefi.can.dbc;
 
 import com.rusefi.can.CANPacket;
-import com.rusefi.can.dbc.FileNameProvider;
 
 /**
  * also known as 'signal'

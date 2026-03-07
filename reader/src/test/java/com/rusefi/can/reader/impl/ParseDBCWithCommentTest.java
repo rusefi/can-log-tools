@@ -2,7 +2,7 @@ package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.reader.dbc.GapFactory;
 import com.rusefi.mlv.LoggingStrategy;
-import com.rusefi.can.reader.dbc.DbcField;
+import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;
 import org.junit.Test;

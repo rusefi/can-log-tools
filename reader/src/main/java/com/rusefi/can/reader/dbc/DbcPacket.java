@@ -1,6 +1,7 @@
 package com.rusefi.can.reader.dbc;
 
 import com.rusefi.can.Launcher;
+import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.FileNameProvider;
 
 import java.util.ArrayList;

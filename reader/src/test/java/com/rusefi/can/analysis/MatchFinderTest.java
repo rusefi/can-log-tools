@@ -1,17 +1,11 @@
 package com.rusefi.can.analysis;
 
-import com.rusefi.can.CANPacket;
-import com.rusefi.can.reader.dbc.DbcField;
-import com.rusefi.can.reader.dbc.DbcFile;
-import com.rusefi.can.reader.dbc.DbcPacket;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 

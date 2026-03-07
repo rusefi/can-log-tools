@@ -1,6 +1,7 @@
 package com.rusefi.can.reader.dbc;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.dbc.DbcField;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

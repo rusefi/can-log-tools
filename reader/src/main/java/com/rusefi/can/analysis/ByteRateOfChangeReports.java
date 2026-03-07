@@ -4,7 +4,7 @@ import com.rusefi.can.AlwaysSameScanner;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.CANLineReader;
-import com.rusefi.can.reader.dbc.DbcField;
+import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;
 import com.rusefi.util.FolderUtil;

@@ -1,5 +1,7 @@
 package com.rusefi.can.reader.dbc;
 
+import com.rusefi.can.dbc.DbcField;
+
 public class DbcFieldParser {
     public static DbcField parseField(String line, String parentName, int packetId) {
         line = DbcFileReader.replaceSpecialWithSpaces(line);
