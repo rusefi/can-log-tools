@@ -29,8 +29,12 @@ public class SyncTrcFiles {
 
         for (int i = 0; i < n; i++) {
             fileStartTimes[i] = readStartTime(paths[i]);
-            System.out.println("File " + (i + 1) + " Start Time: " + new Date(fileStartTimes[i]) + " (" + fileStartTimes[i] + " ms)");
             allPackets[i] = AutoFormatReader.INSTANCE.readFile(paths[i]);
+            double durationSeconds = 0;
+            if (!allPackets[i].isEmpty()) {
+                durationSeconds = (allPackets[i].get(allPackets[i].size() - 1).getTimeStampMs() - allPackets[i].get(0).getTimeStampMs()) / 1000.0;
+            }
+            System.out.println("File " + (i + 1) + " Start Time: " + new Date(fileStartTimes[i]) + " (Duration: " + durationSeconds + "s)");
         }
 
         for (int i = 0; i < n; i++) {
@@ -77,14 +81,19 @@ public class SyncTrcFiles {
     }
 
     private static void printDroppedRanges(String label, long absStart, long absEnd, long overlapStart, long overlapEnd) {
+        long totalDuration = absEnd - absStart;
         System.out.println(label + " dropped ranges:");
         if (absStart < overlapStart) {
-            System.out.println("  Before: " + (overlapStart - absStart) + "ms (" + new Date(absStart) + " to " + new Date(overlapStart) + ")");
+            long droppedBefore = overlapStart - absStart;
+            double percentBefore = totalDuration == 0 ? 0 : (100.0 * droppedBefore / totalDuration);
+            System.out.println("  Before: " + droppedBefore + "ms (" + new Date(absStart) + " to " + new Date(overlapStart) + ", " + String.format("%.2f", percentBefore) + "%)");
         } else {
             System.out.println("  Before: None");
         }
         if (absEnd > overlapEnd) {
-            System.out.println("  After: " + (absEnd - overlapEnd) + "ms (" + new Date(overlapEnd) + " to " + new Date(absEnd) + ")");
+            long droppedAfter = absEnd - overlapEnd;
+            double percentAfter = totalDuration == 0 ? 0 : (100.0 * droppedAfter / totalDuration);
+            System.out.println("  After: " + droppedAfter + "ms (" + new Date(overlapEnd) + " to " + new Date(absEnd) + ", " + String.format("%.2f", percentAfter) + "%)");
         } else {
             System.out.println("  After: None");
         }
