@@ -39,10 +39,12 @@ public class ValidateDbc {
                     }
                 }
                 if (dVal == hVal) {
+                    String baseName = msgName.substring(0, revMatcher.start());
+                    String properName = baseName + "_" + dStr + "_" + hStr;
                     if (hasLetters) {
-                        errors.add("REVERSED suffix: " + msgName);
+                        errors.add("REVERSED suffix: " + msgName + " should be " + properName);
                     } else {
-                        errors.add("Wrong order: " + msgName + " (hex before decimal)");
+                        errors.add("Wrong order: " + msgName + " (hex before decimal) should be " + properName);
                     }
                     return errors;
                 }

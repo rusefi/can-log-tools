@@ -32,13 +32,13 @@ public class ValidateDbcTest {
     public void testReversedSuffix() {
         List<String> errors = ValidateDbc.checkPacket(1043, "MSG_19D_413");
         assertEquals(1, errors.size());
-        assertTrue(errors.get(0).contains("REVERSED suffix"));
+        assertTrue(errors.get(0).contains("REVERSED suffix: MSG_19D_413 should be MSG_413_19D"));
     }
 
     @Test
     public void testWrongOrderNoLetters() {
         List<String> errors = ValidateDbc.checkPacket(22, "MSG_16_22"); // 0x16 is 22.
         assertEquals(1, errors.size());
-        assertTrue(errors.get(0).contains("Wrong order"));
+        assertTrue(errors.get(0).contains("Wrong order: MSG_16_22 (hex before decimal) should be MSG_22_16"));
     }
 }
