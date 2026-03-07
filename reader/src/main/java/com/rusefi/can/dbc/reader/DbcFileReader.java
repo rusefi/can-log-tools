@@ -3,6 +3,7 @@ package com.rusefi.can.dbc.reader;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
+import com.rusefi.can.dbc.DbcPacket;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -98,12 +99,9 @@ public class DbcFileReader {
             if (currentPacket.isConsumed())
                 return;
             int sid = currentPacket.getPacketId();
-            com.rusefi.can.dbc.DbcPacket existingPacket = dbc.getPacket(sid);
+            DbcPacket existingPacket = dbc.findPacket(sid);
             if (existingPacket != null) {
-                //throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
-                currentPacket.markConsumed();
-                System.err.println("Packets conflict: " + existingPacket.getName() + " and " + currentPacket.getPacketName() +
-                    " have the same ID = " + sid);
+                throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
             }
             List<DbcField> signals = new com.rusefi.can.dbc.util.GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
             com.rusefi.can.dbc.DbcPacket packet = new com.rusefi.can.dbc.DbcPacket(sid, currentPacket.getPacketName(), currentPacket.getSource(), signals, dbc);
