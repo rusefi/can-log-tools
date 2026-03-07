@@ -2,11 +2,11 @@ package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.CANPacketUtil;
-import com.rusefi.can.Launcher;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.reader.dbc.DbcFile;
 import com.rusefi.can.reader.dbc.DbcPacket;
+import com.rusefi.can.dbc.J1939Logic;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class J1939modeTest {
     @Test
     public void readEEC() throws IOException {
 
-        Launcher.j1939_mode = true;
+        J1939Logic.j1939_mode = true;
         DbcFile dbc = ParseDBCTest.readDbc(dbcEEC);
 
         String logLine = "     5)        10.0  Rx     0CF00400  8  FF FF FF E8 25 FF FF 7D \n";
@@ -63,12 +63,12 @@ public class J1939modeTest {
 
         assertEquals(0x25E8 * 0.125, engSpeed.getValue(canPacket), 0.1);
 
-        Launcher.j1939_mode = false;
+        J1939Logic.j1939_mode = false;
     }
 
     @Test
     public void megaLogFilter() throws IOException {
-        Launcher.j1939_mode = true;
+        J1939Logic.j1939_mode = true;
 
         DbcFile dbc = ParseDBCTest.readDbc(dbcEEC + "\n\n" + dbcSSI);
 
@@ -89,6 +89,6 @@ public class J1939modeTest {
         assertTrue(entries.size() >= 8);    // EEC have 8 fields + 1 gap
         assertTrue(entries.size() < 10);
 
-        Launcher.j1939_mode = false;
+        J1939Logic.j1939_mode = false;
     }
 }

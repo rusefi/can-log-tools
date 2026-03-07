@@ -1,6 +1,5 @@
 package com.rusefi.can.reader.dbc;
 
-import com.rusefi.can.Launcher;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.FileNameProvider;
 
@@ -145,9 +144,9 @@ public class DbcPacket {
     }
 
     public boolean isInLog(Set<Integer> sidList) {
-        if (Launcher.gmlanIgnoreSender || Launcher.j1939_mode) {
+        if (com.rusefi.can.dbc.J1939Logic.gmlanIgnoreSender || com.rusefi.can.dbc.J1939Logic.j1939_mode) {
             for (int sid : sidList) {
-                if (DbcFile.trimSid(sid) == getId())
+                if (com.rusefi.can.dbc.J1939Logic.trimSid(sid) == getId())
                     return true;
             }
             return false;

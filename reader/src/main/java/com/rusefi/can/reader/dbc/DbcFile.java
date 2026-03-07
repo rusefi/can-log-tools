@@ -1,6 +1,5 @@
 package com.rusefi.can.reader.dbc;
 
-import com.rusefi.can.Launcher;
 import com.rusefi.can.dbc.FileNameProvider;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;
@@ -61,7 +60,7 @@ public class DbcFile implements FileNameProvider {
 
 
     public DbcPacket findPacket(int canId) {
-        return packets.get(trimSid(canId));
+        return packets.get(com.rusefi.can.dbc.J1939Logic.trimSid(canId));
     }
 
     public List<BinaryLogEntry> getFieldNameEntries(LoggingStrategy.LoggingFilter filter) {
@@ -76,7 +75,7 @@ public class DbcFile implements FileNameProvider {
     }
 
     public DbcPacket getPacket(int sid) {
-        int trimmedSid = trimSid(sid);
+        int trimmedSid = com.rusefi.can.dbc.J1939Logic.trimSid(sid);
         return packets.computeIfAbsent(trimmedSid, new Function<Integer, DbcPacket>() {
             @Override
             public DbcPacket apply(Integer integer) {
@@ -92,20 +91,4 @@ public class DbcFile implements FileNameProvider {
         return packets.values();
     }
 
-    // GMLAN specific: leave the only ArbID, trim priority and sender fields
-    // J1939 specific: trim source and destination (if any)
-    static public int trimSid(int sid) {
-        boolean longId = (sid > 0x7FF);
-        if (Launcher.gmlanIgnoreSender && longId)
-            return (sid & 0x03FF_FE00);
-        else if (Launcher.j1939_mode && longId) {
-            int pduFormat = (sid >> 16) & 0xFF;
-            if (pduFormat < 0xF0) // PDU1 - peer to peer
-                return (sid & 0x03FF_0000);
-            else // PDU2 - broadcast
-                return (sid & 0x03FF_FF00);
-        }
-        else
-            return sid;
-    }
 }

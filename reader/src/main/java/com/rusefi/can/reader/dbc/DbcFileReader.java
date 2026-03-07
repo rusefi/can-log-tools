@@ -77,7 +77,7 @@ public class DbcFileReader {
             return currentPacket;
         }
         long decId = Long.parseLong(tokens[1]) & 0x1FFFFFFF;    // strip ExtID flag if any
-        int trimmedId = DbcFile.trimSid((int) decId);
+        int trimmedId = com.rusefi.can.dbc.J1939Logic.trimSid((int) decId);
         String packetName = tokens[2];
         String source = tokens.length > 4 ? tokens[4] : "";
         currentPacket = new DbcPacketBuilder(trimmedId, packetName, source);

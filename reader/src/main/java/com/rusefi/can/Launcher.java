@@ -1,6 +1,7 @@
 package com.rusefi.can;
 
 import com.rusefi.can.analysis.ByteRateOfChangeReports;
+import com.rusefi.can.dbc.J1939Logic;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,11 +18,9 @@ public class Launcher {
 
     // lower 13 bits in GMLAN IDs is a sender address. DBC may contain the only zeros in this field
     private static final String GMLAN_IGNORE_SENDER = "-gmlan-ignore-sender";
-    public static boolean gmlanIgnoreSender = false;
 
     // J1939: lower 8 bits are sender, higher 3 bits - Priority. DBC contains weird 'FE' in these fields
     private static final String J1939_MODE = "-j1939-mode";
-    public static boolean j1939_mode = false;
 
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
@@ -55,10 +54,10 @@ public class Launcher {
                     dbcFileName = args[i];
                     break;
                 case GMLAN_IGNORE_SENDER:
-                    gmlanIgnoreSender = true;
+                    J1939Logic.gmlanIgnoreSender = true;
                     break;
                 case J1939_MODE:
-                    j1939_mode = true;
+                    J1939Logic.j1939_mode = true;
                     break;
                 default:
                     throw new IllegalStateException("Unexpected argument " + args[i]);
