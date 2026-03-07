@@ -65,6 +65,55 @@ public class MatchFinderTest {
         }
     }
 
+    @Test
+    public void testExcludeConstantValues() throws IOException {
+        Path tempDir = Files.createTempDirectory("match_finder_const_test");
+        try {
+            File dbc1 = tempDir.resolve("test1.dbc").toFile();
+            File trc1 = tempDir.resolve("test1.trc").toFile();
+            File dbc2 = tempDir.resolve("test2.dbc").toFile();
+            File trc2 = tempDir.resolve("test2.trc").toFile();
+
+            // Trace 1: one changing field, one constant field
+            Files.write(dbc1.toPath(), ("BO_ 100 TEST1: 8 Vector__XXX\n" +
+                    " SG_ Changing1 : 0|8@1+ (1,0) [0|255] \"\" Vector__XXX\n" +
+                    " SG_ Constant1 : 8|8@1+ (1,0) [0|255] \"\" Vector__XXX").getBytes());
+            Files.write(trc1.toPath(), (";$FILEVERSION=2.0\n" +
+                    ";   Start time: 2/26/2026 17:00:00.000.0\n" +
+                    "      1      10.000 RX  0064 - 8  0A 2A 00 00 00 00 00 00\n" +
+                    "      2      20.000 RX  0064 - 8  14 2A 00 00 00 00 00 00\n" +
+                    "      3      30.000 RX  0064 - 8  1E 2A 00 00 00 00 00 00\n").getBytes());
+
+            // Trace 2: one changing field, one constant field
+            Files.write(dbc2.toPath(), ("BO_ 200 TEST2: 8 Vector__XXX\n" +
+                    " SG_ Changing2 : 0|8@1+ (1,0) [0|255] \"\" Vector__XXX\n" +
+                    " SG_ Constant2 : 8|8@1+ (1,0) [0|255] \"\" Vector__XXX").getBytes());
+            Files.write(trc2.toPath(), (";$FILEVERSION=2.0\n" +
+                    ";   Start time: 2/26/2026 17:00:00.000.0\n" +
+                    "      1      10.000 RX  00C8 - 8  0A 2A 00 00 00 00 00 00\n" +
+                    "      2      20.000 RX  00C8 - 8  14 2A 00 00 00 00 00 00\n" +
+                    "      3      30.000 RX  00C8 - 8  1E 2A 00 00 00 00 00 00\n").getBytes());
+
+            MatchFinder.main(new String[]{dbc1.getAbsolutePath(), trc1.getAbsolutePath(), dbc2.getAbsolutePath(), trc2.getAbsolutePath()});
+
+            File report = new File("match_report/index.html");
+            assertTrue("Report should exist", report.exists());
+            String htmlContent = new String(Files.readAllBytes(report.toPath()));
+            
+            // Should contain "Changing2" as it's the field from trace 2 being matched
+            assertTrue("Should contain Changing2", htmlContent.contains("Changing2"));
+            // Should NOT contain "Constant2" as it's constant
+            assertTrue("Should NOT contain Constant2", !htmlContent.contains("Constant2"));
+            
+            // The best match for Changing2 should be Changing1
+            assertTrue("Changing2 should be matched with Changing1", htmlContent.contains("Changing1"));
+
+        } finally {
+            recursiveDelete(tempDir.toFile());
+            recursiveDelete(new File("match_report"));
+        }
+    }
+
     private void recursiveDelete(File file) {
         File[] contents = file.listFiles();
         if (contents != null) {

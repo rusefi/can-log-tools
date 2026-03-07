@@ -127,8 +127,8 @@ public class MatchFinder {
         double std = Math.sqrt(Math.max(0, sumSq / count - mean * mean));
 
         if (std < 1e-6) {
-            // Constant value
-            for (int i = 0; i < SAMPLES; i++) values[i] = 0;
+            // Constant value - do not include in report
+            return null;
         } else {
             for (int i = 0; i < SAMPLES; i++) {
                 values[i] = (values[i] - mean) / std;
