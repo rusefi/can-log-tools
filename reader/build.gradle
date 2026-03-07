@@ -1,6 +1,6 @@
 
 dependencies {
-    api project(':model')
+    api project(':parser')
     implementation libs.jcommander
     implementation libs.snakeyaml
     testImplementation libs.junit

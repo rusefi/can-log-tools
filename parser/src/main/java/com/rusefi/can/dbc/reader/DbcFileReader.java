@@ -1,6 +1,5 @@
 package com.rusefi.can.dbc.reader;
 
-import com.rusefi.can.Launcher;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.DbcPacket;
@@ -11,6 +10,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class DbcFileReader {
+    public static boolean allowDuplicateNames = false;
+
     public static void read(DbcFile dbc, BufferedReader reader) throws IOException {
         DbcPacketBuilder currentPacket = null;
         String line;
@@ -55,7 +56,7 @@ public class DbcFileReader {
                 if (DbcFile.debugEnabled)
                     System.out.println("Found " + field);
                 if (field != null) {
-                    if (!fieldNames.add(field.getName()) && !Launcher.allowDuplicateNames)
+                    if (!fieldNames.add(field.getName()) && !allowDuplicateNames)
                         throw new IllegalArgumentException("Let's use unique field names: " + field.getName());
                     currentPacket.add(field);
                 }

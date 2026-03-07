@@ -2,6 +2,7 @@ package com.rusefi.can;
 
 import com.rusefi.can.analysis.ByteRateOfChangeReports;
 import com.rusefi.can.dbc.J1939Logic;
+import com.rusefi.can.dbc.reader.DbcFileReader;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,7 +15,6 @@ public class Launcher {
     public static final String DBC_FILENAME_PROPERTY = "-dbc";
     public static String dbcFileName;
     private static final String DBC_DUP_FIELD_NAMES = "-allow-dup-names";
-    public static boolean allowDuplicateNames = false;
 
     // lower 13 bits in GMLAN IDs is a sender address. DBC may contain the only zeros in this field
     private static final String GMLAN_IGNORE_SENDER = "-gmlan-ignore-sender";
@@ -39,7 +39,7 @@ public class Launcher {
         for (int i = 1; i < args.length; i++) {
             switch (args[i]) {
                 case DBC_DUP_FIELD_NAMES:
-                    allowDuplicateNames = true;
+                    DbcFileReader.allowDuplicateNames = true;
                     break;
                 case FILENAME_SUFFIX_PROPERTY:
                     i += 1;
