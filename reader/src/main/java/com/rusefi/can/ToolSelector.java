@@ -17,6 +17,7 @@ public class ToolSelector {
         TOOLS.put("SyncTrcFiles", SyncTrcFiles.class);
         TOOLS.put("SyncFolder", SyncFolder.class);
         TOOLS.put("MatchFinder", MatchFinder.class);
+        TOOLS.put("ValidateDbc", com.rusefi.can.reader.dbc.ValidateDbc.class);
 
         if (args.length == 0 || !TOOLS.containsKey(args[0])) {
             System.err.println("First argument should be tool name, one of: " + TOOLS.keySet());
