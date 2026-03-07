@@ -172,8 +172,8 @@ public class MatchFinder {
                 String name2 = match.f2.getName();
                 String color2 = name1.equals(name2) ? "black" : "red";
 
-                String dbc1 = new File(match.f1.getParentPacket().getParent().getFileName()).getName();
-                String dbc2 = new File(match.f2.getParentPacket().getParent().getFileName()).getName();
+                String dbc1 = new File(match.f1.getParentPacket().getFileName()).getName();
+                String dbc2 = new File(match.f2.getParentPacket().getFileName()).getName();
 
                 pw.println("<tr>");
                 pw.println("<td><font color='" + color2 + "'>" + name2 + "</font><br/>" + dbc2 + "<br/>" +

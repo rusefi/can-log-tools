@@ -1,6 +1,7 @@
 package com.rusefi.can.reader.dbc;
 
 import com.rusefi.can.Launcher;
+import com.rusefi.can.dbc.FileNameProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,20 +16,20 @@ public class DbcPacket {
     private final String name;
     private final String source;
     private final List<DbcField> fields = new ArrayList<>();
-    private final DbcFile parent;
+    private final FileNameProvider parent;
 
-    public DbcPacket(int id, String name, String source, List<DbcField> signals, DbcFile parent) {
+    public DbcPacket(int id, String name, String source, List<DbcField> signals, FileNameProvider parent) {
         this.id = id;
         this.name = name;
         this.source = source;
         this.parent = parent;
         fields.addAll(signals);
         for (DbcField field : signals) {
-            field.setParentPacket(this);
+            field.setParentPacket(getParent());
         }
     }
 
-    public DbcFile getParent() {
+    public FileNameProvider getParent() {
         return parent;
     }
 
