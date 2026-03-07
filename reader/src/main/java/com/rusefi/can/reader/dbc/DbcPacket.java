@@ -4,7 +4,6 @@ import com.rusefi.can.Launcher;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -15,11 +14,12 @@ public class DbcPacket {
     private final int id;
     private final String name;
     private final List<DbcField> fields = new ArrayList<>();
-    private DbcFile parent;
+    private final DbcFile parent;
 
-    public DbcPacket(int id, String name, List<DbcField> signals) {
+    public DbcPacket(int id, String name, List<DbcField> signals, DbcFile parent) {
         this.id = id;
         this.name = name;
+        this.parent = parent;
         fields.addAll(signals);
         for (DbcField field : signals) {
             field.setParentPacket(this);
@@ -28,10 +28,6 @@ public class DbcPacket {
 
     public DbcFile getParent() {
         return parent;
-    }
-
-    public void setParent(DbcFile parent) {
-        this.parent = parent;
     }
 
     public int getId() {

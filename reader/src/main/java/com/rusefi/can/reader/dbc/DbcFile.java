@@ -9,7 +9,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class DbcFile {
     private final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
@@ -149,8 +148,7 @@ public class DbcFile {
                     " have the same ID = " + sid);
             }
             List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
-            DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), signals);
-            packet.setParent(this);
+            DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), signals, this);
             packets.put(sid, packet);
             currentPacket.markConsumed();
         }
@@ -184,8 +182,7 @@ public class DbcFile {
             public DbcPacket apply(Integer integer) {
                 String packetName = Integer.toHexString(sid) + "_" + sid;
                 String packetPrefix = "_unknown_" + sid;
-                DbcPacket packet = new DbcPacket(sid, packetName, new GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid));
-                packet.setParent(DbcFile.this);
+                DbcPacket packet = new DbcPacket(sid, packetName, new GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid), DbcFile.this);
                 return packet;
             }
         });
