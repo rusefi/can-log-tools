@@ -17,16 +17,12 @@ public class GapFactory {
     public GapFactory(List<DbcField> signals, String packetName) {
         this.packetName = packetName;
         this.signals.addAll(signals);
+        java.util.BitSet usedBits = new java.util.BitSet(isUsed.length);
         for (DbcField dbcField : signals) {
-            for (int bitIndex = dbcField.getHumanStartIndex(); bitIndex < dbcField.getHumanStartIndex() + dbcField.getLength(); bitIndex++) {
-                try {
-                    isUsed[bitIndex] = true;
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    //throw new IllegalStateException("While " + packetName + " " + dbcField, e);
-                    System.err.println("Too long indexes in " + packetName + " " + dbcField);
-                    break;
-                }
-            }
+            dbcField.setBit(usedBits, dbcField.getStartOffset(), dbcField.getLength(), dbcField.isBigEndian());
+        }
+        for (int i = 0; i < isUsed.length; i++) {
+            isUsed[i] = usedBits.get(i);
         }
     }
 

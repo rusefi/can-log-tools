@@ -35,11 +35,10 @@ public class ValidateDbc {
             if (field.getName().contains("_gap_")) {
                 continue;
             }
-            int startBit = field.getStartOffset();
-            int length = field.getLength();
+            BitSet thisFieldBits = new BitSet();
+            field.setBit(thisFieldBits, field.getStartOffset(), field.getLength(), field.isBigEndian());
 
-            for (int i = 0; i < length; i++) {
-                int bitIndex = startBit + i;
+            for (int bitIndex = thisFieldBits.nextSetBit(0); bitIndex >= 0; bitIndex = thisFieldBits.nextSetBit(bitIndex + 1)) {
                 if (usedBits.get(bitIndex)) {
                     errors.add("Overlap in " + packet.getName() + " (ID " + packet.getId() + "): Field " + field.getName() + " uses bit " + bitIndex + " which is already used.");
                 }

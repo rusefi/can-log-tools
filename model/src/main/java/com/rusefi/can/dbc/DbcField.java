@@ -158,6 +158,32 @@ public class DbcField implements Comparable<DbcField> {
         return getBitRange(packet.getData(), startOffset, length, isBigEndian);
     }
 
+    public static void setBit(java.util.BitSet usedBits, int bitIndex, int bitWidth, boolean isBigEndian) {
+        if (bitIndex < 0)
+            throw new IllegalArgumentException("Huh? " + bitIndex + " " + bitWidth);
+
+        int byteIndex = getByteIndex(bitIndex);
+        int shift = getShift(byteIndex, bitIndex);
+        if (shift + bitWidth <= 8) {
+            for (int i = 0; i < bitWidth; i++) {
+                usedBits.set(bitIndex + i);
+            }
+        } else {
+            // first byte
+            int bitsInFirstByte = 8 - shift;
+            for (int i = 0; i < bitsInFirstByte; i++) {
+                usedBits.set(bitIndex + i);
+            }
+            // second byte
+            int otherByteIndex = (isBigEndian ? -1 : +1) + byteIndex;
+            int bitsInSecondByte = bitWidth - bitsInFirstByte;
+            int secondByteStartBit = otherByteIndex * 8;
+            for (int i = 0; i < bitsInSecondByte; i++) {
+                usedBits.set(secondByteStartBit + i);
+            }
+        }
+    }
+
     public void rename(String niceName) {
         name = niceName;
         isNiceName = true;

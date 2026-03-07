@@ -77,4 +77,46 @@ public class ValidateDbcTest {
         assertEquals(1, errors.size());
         assertTrue(errors.get(0).contains("Wrong order: MSG_16_22 (hex before decimal) should be MSG_22_16"));
     }
+
+    @Test
+    public void testBigEndian() {
+        // SG_ PrplsnTrqRelCap : 63|8@0+ (0.5,0) [0|127.5] "%" TCM_HS
+        DbcField field1 = new DbcField(1417, "PrplsnTrqRelCap", 63, 8, 0.5, 0, "", true, false);
+        // SG_ ETC_MinTorq : 47|12@0+ (0.5,-848) [-848|1199.5] "Nm" TCM_HS,HCP_HS,BCP_HS
+        DbcField field2 = new DbcField(1417, "ETC_MinTorq", 47, 12, 0.5, -848, "", true, false);
+        // SG_ ETC_MinRunTorq : 27|12@0+ (0.5,-848) [-848|1199.5] "Nm" TCM_HS,HCP_HS,BCP_HS
+        DbcField field3 = new DbcField(1417, "ETC_MinRunTorq", 27, 12, 0.5, -848, "", true, false);
+
+        DbcPacket packet = new DbcPacket(1417, "ETEI_Engine_Torque_Capability_1417_589", "src",
+                Arrays.asList(field1, field2, field3), null);
+
+        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        assertTrue("Should not have errors: " + errors, errors.isEmpty());
+    }
+
+    @Test
+    public void testBigEndianFull() {
+        // SG_ PrplsnTrqRelCap : 63|8@0+ (0.5,0) [0|127.5] "%" TCM_HS
+        DbcField field1 = new DbcField(1417, "PrplsnTrqRelCap", 63, 8, 0.5, 0, "", true, false);
+        // SG_ ETC_MinTorq : 47|12@0+ (0.5,-848) [-848|1199.5] "Nm" TCM_HS,HCP_HS,BCP_HS
+        DbcField field2 = new DbcField(1417, "ETC_MinTorq", 47, 12, 0.5, -848, "", true, false);
+        // SG_ ETC_MinRunTorq : 27|12@0+ (0.5,-848) [-848|1199.5] "Nm" TCM_HS,HCP_HS,BCP_HS
+        DbcField field3 = new DbcField(1417, "ETC_MinRunTorq", 27, 12, 0.5, -848, "", true, false);
+        // SG_ ETC_MaxTorq : 23|12@0+ (0.5,-848) [-848|1199.5] "Nm" TCM_HS,HCP_HS,BCP_HS
+        DbcField field4 = new DbcField(1417, "ETC_MaxTorq", 23, 12, 0.5, -848, "", true, false);
+        // SG_ ETC_RefEngSpd : 15|8@0+ (32,0) [0|8160] "rpm" TCM_HS,HCP_HS,BCP_HS
+        DbcField field5 = new DbcField(1417, "ETC_RefEngSpd", 15, 8, 32, 0, "", true, false);
+        // SG_ ETC_UnsdRsrvd : 2|3@0+ (1,0) [0|7] "" TCM_HS,HCP_HS,BCP_HS
+        DbcField field6 = new DbcField(1417, "ETC_UnsdRsrvd", 2, 3, 1, 0, "", true, false);
+        // SG_ ETC_FrmCntr : 6|4@0+ (1,0) [0|15] "" TCM_HS,HCP_HS,BCP_HS
+        DbcField field7 = new DbcField(1417, "ETC_FrmCntr", 6, 4, 1, 0, "", true, false);
+        // SG_ ETC_EngOpMd : 7|1@0+ (1,0) [0|1] "" TCM_HS,HCP_HS,BCP_HS
+        DbcField field8 = new DbcField(1417, "ETC_EngOpMd", 7, 1, 1, 0, "", true, false);
+
+        DbcPacket packet = new DbcPacket(1417, "ETEI_Engine_Torque_Capability_1417_589", "src",
+                Arrays.asList(field1, field2, field3, field4, field5, field6, field7, field8), null);
+
+        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        assertTrue("Should not have errors: " + errors, errors.isEmpty());
+    }
 }
