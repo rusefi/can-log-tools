@@ -1,4 +1,4 @@
-package com.rusefi.can.reader.dbc;
+package com.rusefi.can.dbc.util;
 
 import com.rusefi.can.dbc.DbcField;
 

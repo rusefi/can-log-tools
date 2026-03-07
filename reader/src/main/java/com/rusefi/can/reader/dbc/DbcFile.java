@@ -81,7 +81,7 @@ public class DbcFile implements FileNameProvider {
             public DbcPacket apply(Integer integer) {
                 String packetName = Integer.toHexString(sid) + "_" + sid;
                 String packetPrefix = "_unknown_" + sid;
-                DbcPacket packet = new DbcPacket(sid, packetName, "unknown", new GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid), DbcFile.this);
+                DbcPacket packet = new DbcPacket(sid, packetName, "unknown", new com.rusefi.can.dbc.util.GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid), DbcFile.this);
                 return packet;
             }
         });

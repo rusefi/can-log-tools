@@ -106,7 +106,7 @@ public class DbcFileReader {
                 System.err.println("Packets conflict: " + existingPacket.getName() + " and " + currentPacket.getPacketName() +
                     " have the same ID = " + sid);
             }
-            List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
+            List<DbcField> signals = new com.rusefi.can.dbc.util.GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
             DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), currentPacket.getSource(), signals, dbc);
             dbc.addPacket(packet);
             currentPacket.markConsumed();
