@@ -1,5 +1,6 @@
 package com.rusefi.can;
 
+import com.rusefi.can.tool.sync.SyncTrcFiles;
 import org.junit.Test;
 
 import java.io.File;

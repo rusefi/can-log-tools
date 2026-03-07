@@ -6,7 +6,7 @@ import com.rusefi.can.DualSid;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.core.ByteId;
 import com.rusefi.can.dbc.DbcFile;
-import com.rusefi.can.reader.dbc.DbcFileReader;
+import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.mlv.LoggingContext;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.sensor_logs.BinaryLogEntry;

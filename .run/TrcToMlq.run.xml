@@ -5,7 +5,7 @@
     <option name="PROGRAM_PARAMETERS" value="opendbc/vw_golf_mk4.dbc ..\rusefi_documentation\OEM-Docs\VAG\2006-Passat-B6 output" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.rusefi.can.*" />
+        <option name="PATTERN" value="com.rusefi.can.tool.sync.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

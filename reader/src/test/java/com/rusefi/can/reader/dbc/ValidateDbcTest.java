@@ -1,7 +1,8 @@
 package com.rusefi.can.reader.dbc;
 
+import com.rusefi.can.tool.ValidateDbc;
 import org.junit.Test;
-import java.util.Arrays;
+
 import java.util.List;
 import static org.junit.Assert.*;
 

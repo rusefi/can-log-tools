@@ -1,5 +1,6 @@
-package com.rusefi.can;
+package com.rusefi.can.tool.sync;
 
+import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.impl.AutoFormatReader;
 
 import java.io.*;

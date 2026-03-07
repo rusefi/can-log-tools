@@ -4,7 +4,7 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
-import com.rusefi.can.reader.dbc.DbcFileReader;
+import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.can.dbc.DbcPacket;
 
 import javax.imageio.ImageIO;

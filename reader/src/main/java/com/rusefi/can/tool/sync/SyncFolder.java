@@ -1,4 +1,4 @@
-package com.rusefi.can;
+package com.rusefi.can.tool.sync;
 
 import java.io.File;
 import java.io.IOException;

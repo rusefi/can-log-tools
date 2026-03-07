@@ -1,6 +1,6 @@
 package com.rusefi.can.reader.impl;
 
-import com.rusefi.can.reader.dbc.DbcFileReader;
+import com.rusefi.can.dbc.reader.DbcFileReader;
 
 import java.io.IOException;
 

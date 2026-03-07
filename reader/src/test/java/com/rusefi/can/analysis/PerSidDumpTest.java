@@ -2,7 +2,7 @@ package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.dbc.DbcFile;
-import com.rusefi.can.reader.dbc.DbcFileReader;
+import com.rusefi.can.dbc.reader.DbcFileReader;
 import org.junit.Test;
 
 import java.io.File;
