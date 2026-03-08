@@ -106,7 +106,7 @@ public class DbcFileReader {
             if (existingPacket != null) {
                 throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
             }
-            List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
+            List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName(), currentPacket.getLength()).withGaps(sid);
             DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), currentPacket.getSource(), currentPacket.getLength(), signals, dbc);
             dbc.addPacket(packet);
             currentPacket.markConsumed();

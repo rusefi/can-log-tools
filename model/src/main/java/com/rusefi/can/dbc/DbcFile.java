@@ -42,7 +42,7 @@ public class DbcFile implements FileNameProvider {
             public com.rusefi.can.dbc.DbcPacket apply(Integer integer) {
                 String packetName = Integer.toHexString(sid) + "_" + sid;
                 String packetPrefix = "_unknown_" + sid;
-                return new DbcPacket(sid, packetName, "unknown", 8, new com.rusefi.can.dbc.util.GapFactory(Collections.emptyList(), packetPrefix).withGaps(sid), DbcFile.this);
+                return new DbcPacket(sid, packetName, "unknown", 8, new com.rusefi.can.dbc.util.GapFactory(Collections.<DbcField>emptyList(), packetPrefix, 8).withGaps(sid), DbcFile.this);
             }
         });
     }

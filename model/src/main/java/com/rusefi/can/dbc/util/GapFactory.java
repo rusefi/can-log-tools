@@ -9,13 +9,15 @@ import java.util.List;
  * this class creates synthetic signals/fields for all unused bits in packet/frame
  */
 public class GapFactory {
-    private final static int BYTES = 8;
-    private final boolean[] isUsed = new boolean[8 * BYTES];
+    private final int bitCount;
+    private final boolean[] isUsed;
     private final List<DbcField> signals = new ArrayList<>();
     private final String packetName;
 
-    public GapFactory(List<DbcField> signals, String packetName) {
+    public GapFactory(List<DbcField> signals, String packetName, int length) {
         this.packetName = packetName;
+        this.bitCount = 8 * length;
+        this.isUsed = new boolean[bitCount];
         this.signals.addAll(signals);
         java.util.BitSet usedBits = new java.util.BitSet(isUsed.length);
         for (DbcField dbcField : signals) {

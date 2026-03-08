@@ -133,7 +133,7 @@ public class ParseDBCWithCommentTest {
 
     @Test
     public void testGapFinder() {
-        GapFactory g = new GapFactory(Collections.emptyList(), "1");
+        GapFactory g = new GapFactory(Collections.emptyList(), "1", 8);
         assertEquals(64, g.findUnusedSectionEndIndex(63));
     }
 }
