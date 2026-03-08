@@ -8,6 +8,7 @@ import com.rusefi.can.CANPacket;
 public class DbcField implements Comparable<DbcField> {
     private final int packetId;
     private String name;
+    private String shortName;
     private final int startOffset;
     private final int length;
     private final double mult;
@@ -30,6 +31,7 @@ public class DbcField implements Comparable<DbcField> {
     public DbcField(int packetId, String name, int startOffset, int length, double mult, double offset, String category, boolean isBigEndian, boolean isSigned) {
         this.packetId = packetId;
         this.name = name;
+        shortName = name;
         this.startOffset = crazyMotorolaMath(startOffset, length, isBigEndian);
         this.length = length;
         this.mult = mult;
@@ -39,6 +41,10 @@ public class DbcField implements Comparable<DbcField> {
         this.isSigned = isSigned;
         if (mult == 0 && offset == 0)
             throw new IllegalArgumentException("Really? multiplier and offset both zero for " + name);
+    }
+
+    public String getShortName() {
+        return shortName;
     }
 
     public static int crazyMotorolaMath(int b, int length, boolean isBigEndian) {
