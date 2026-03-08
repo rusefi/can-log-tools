@@ -4,9 +4,9 @@ import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.tool.ValidateDbc;
 import org.junit.Test;
-import org.junit.function.ThrowingRunnable;
 
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.List;
 import static org.junit.Assert.*;
 
@@ -126,14 +126,14 @@ public class ValidateDbcTest {
         // SG_ WRSRDWhlDistTmstm : 55|16@0+ (1,0) [0|65535] "counts"
         DbcField shouldFitWithin8Bytes = new DbcField(193, "WRSRDWhlDistTmstm", 55, 16, 1, 0, "", true, false);
 
-        assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                DbcPacket packet = new DbcPacket(193, "PPEI_DrvnWheelRotationalSt_193_0C1", "src", 8,
-                        Arrays.asList(shouldFitWithin8Bytes), null);
+        DbcPacket packet = new DbcPacket(193, "PPEI_DrvnWheelRotationalSt_193_0C1", "src", 8,
+                Arrays.asList(shouldFitWithin8Bytes), null);
 
-            }
-        });
+        BitSet usedBits = new BitSet();
+        shouldFitWithin8Bytes.getUsedBits(usedBits);
+        assertEquals(64, usedBits.size());
+        for (int i = 0; i < 48; i++) assertFalse(usedBits.get(i));
+        for (int i = 48; i < 64; i++) assertTrue(usedBits.get(i));
 
     }
 }
