@@ -119,4 +119,16 @@ public class ValidateDbcTest {
         List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
         assertTrue("Should not have errors: " + errors, errors.isEmpty());
     }
+
+    @Test
+    public void testPpeiDrvnWheel() {
+        // SG_ WRSRDWhlDistTmstm : 55|16@0+ (1,0) [0|65535] "counts"
+        DbcField field2 = new DbcField(193, "WRSRDWhlDistTmstm", 55, 16, 1, 0, "", true, false);
+
+        DbcPacket packet = new DbcPacket(193, "PPEI_DrvnWheelRotationalSt_193_0C1", "src", 8,
+                Arrays.asList(field2), null);
+
+        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        assertTrue("Should not have errors: " + errors, errors.isEmpty());
+    }
 }
