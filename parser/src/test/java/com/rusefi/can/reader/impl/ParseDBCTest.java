@@ -41,7 +41,7 @@ public class ParseDBCTest {
             "BU_: XXX\n" +
             "\n" +
             "\n" +
-            "BO_ 1394 ZAS_1: 2 XXX\n" +
+            "BO_ 1394 ZAS_1: 8 XXX\n" +
             " SG_ Fehlerspeichereintrag__ZAS_ : 15|1@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Frei_ZAS_1_3 : 8|7@0+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Frei_ZAS_1_2 : 7|1@1+ (1,0) [0|0] \"\" XXX\n" +
@@ -53,7 +53,7 @@ public class ParseDBCTest {
             " SG_ Klemme_15__Z_ndung_ein_ : 1|1@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ S_Kontakt__Schl_ssel_steckt_ : 0|1@1+ (1,0) [0|0] \"\" XXX\n" +
             "\n" +
-            "BO_ 1336 Wischer_1: 2 XXX\n" +
+            "BO_ 1336 Wischer_1: 8 XXX\n" +
             " SG_ Blockierung_Heckwischer_erkannt : 15|1@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Frei_Wischer_1_2 : 12|3@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Fehlerspeichereintrag__Wischer_ : 11|1@1+ (1,0) [0|0] \"\" XXX\n" +
@@ -95,15 +95,15 @@ public class ParseDBCTest {
 
     @Test
     public void testSource() throws IOException {
-        String dbcText = "BO_ 1394 ZAS_1: 2 XXX\n" +
+        String dbcText = "BO_ 1394 ZAS_1: 8 XXX\n" +
                 " SG_ Field : 0|8@1+ (1,0) [0|0] \"\" XXX";
         DbcFile dbc = TestCases.readDbc(dbcText);
         DbcPacket packet = dbc.findPacket(1394);
         assertEquals("XXX", packet.getSource());
-        assertEquals(2, packet.getLength());
+        assertEquals(8, packet.getLength());
 
         String dbcText2 = "BO_ 100 P: 8 ECM_HS\n" +
-                " SG_ OAT : 63|8@0+ (1,0) [0|8] \"deg C\"  VICS";
+                " SG_ OAT : 7|8@0+ (1,0) [0|8] \"deg C\"  VICS";
         DbcFile dbc2 = TestCases.readDbc(dbcText2);
         DbcPacket packet2 = dbc2.findPacket(100);
         assertEquals("ECM_HS", packet2.getSource());
@@ -113,7 +113,7 @@ public class ParseDBCTest {
     @Test
     public void parseMoto() throws IOException {
         String moto = "BO_ 100 P: 8 ECM_HS\n" +
-                " SG_ OAT : 63|8@0+ (1,0) [0|8] \"deg C\"  VICS";
+                " SG_ OAT : 7|8@0+ (1,0) [0|8] \"deg C\"  VICS";
 
         DbcFile dbc = TestCases.readDbc(moto);
         assertEquals(1, dbc.size());
@@ -121,7 +121,7 @@ public class ParseDBCTest {
         assertNotNull(packet);
 
         DbcField f = packet.getFields().get(0);
-        assertEquals(56, f.getStartOffset());
+        assertEquals(0, f.getStartOffset());
     }
 
     @Test
@@ -154,4 +154,17 @@ public class ParseDBCTest {
         assertTrue(EngAirIntBstPr.isSigned());
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testFieldOutOfBounds() throws IOException {
+        String dbcText = "BO_ 100 P: 1 ECM_HS\n" +
+                " SG_ OAT : 0|16@1+ (1,0) [0|8] \"deg C\"  VICS";
+        TestCases.readDbc(dbcText);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testFieldOutOfBoundsMotorola() throws IOException {
+        String dbcText = "BO_ 100 P: 1 ECM_HS\n" +
+                " SG_ OAT : 8|16@0+ (1,0) [0|8] \"deg C\"  VICS";
+        TestCases.readDbc(dbcText);
+    }
 }

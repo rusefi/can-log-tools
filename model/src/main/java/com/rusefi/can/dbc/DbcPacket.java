@@ -25,6 +25,16 @@ public class DbcPacket {
         fields.addAll(signals);
         for (DbcField field : signals) {
             field.setParentPacket(getParent());
+
+            if (field.isBigEndian()) {
+                if (field.getStartOffset() < 0 || (field.getStartOffset() + field.getLength() > length * 8)) {
+                    throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + length * 8);
+                }
+            } else {
+                if (field.getStartOffset() + field.getLength() > length * 8) {
+                    throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + length * 8);
+                }
+            }
         }
     }
 
