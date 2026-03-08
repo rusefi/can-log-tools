@@ -4,6 +4,7 @@ import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.tool.ValidateDbc;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -121,14 +122,18 @@ public class ValidateDbcTest {
     }
 
     @Test
-    public void testPpeiDrvnWheel() {
+    public void test2byteMotorolaByteRange() {
         // SG_ WRSRDWhlDistTmstm : 55|16@0+ (1,0) [0|65535] "counts"
-        DbcField field2 = new DbcField(193, "WRSRDWhlDistTmstm", 55, 16, 1, 0, "", true, false);
+        DbcField shouldFitWithin8Bytes = new DbcField(193, "WRSRDWhlDistTmstm", 55, 16, 1, 0, "", true, false);
 
-        DbcPacket packet = new DbcPacket(193, "PPEI_DrvnWheelRotationalSt_193_0C1", "src", 8,
-                Arrays.asList(field2), null);
+        assertThrows(IllegalStateException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                DbcPacket packet = new DbcPacket(193, "PPEI_DrvnWheelRotationalSt_193_0C1", "src", 8,
+                        Arrays.asList(shouldFitWithin8Bytes), null);
 
-        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
-        assertTrue("Should not have errors: " + errors, errors.isEmpty());
+            }
+        });
+
     }
 }
