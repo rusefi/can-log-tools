@@ -31,6 +31,7 @@ public class GetValueFromTrcTest {
         byte[] torque = {0x68, 0x07};
         assertEquals(0x807, DbcField.getBitRange(torque, 8, 13, true));
 
+
         byte[] data = {(byte) 0xAB, 0x56, 0x34};
 
         assertEquals(0x56AB, DbcField.getBitRange(data, 0, 16, false));
@@ -42,8 +43,7 @@ public class GetValueFromTrcTest {
         assertEquals(0x56, DbcField.getBitRange(data, 8, 8, false));
         assertEquals(0x56, DbcField.getBitRange(data, 8, 8, true));
 
-        // yes we have a defect for sure, we only touch two bytes at most while in this case we shall touch three bytes
-        assertEquals(0x56A, DbcField.getBitRange(data, 4, 16, false));
+        assertEquals(0x456A, DbcField.getBitRange(data, 4, 16, false));
     }
 
     @Test

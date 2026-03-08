@@ -129,12 +129,14 @@ public class DbcField implements Comparable<DbcField> {
         int shift = getShift(byteIndex, bitIndex);
         if (byteIndex >= data.length)
             return 0;
-        int value = data[byteIndex] & 0xff;
-        if (shift + bitWidth > 8) {
-            int otherByteIndex = (isBigEndian ? -1 : +1) + byteIndex;
-            if (otherByteIndex < 0 || otherByteIndex >= data.length)
-                return 0;
-            value = value + data[otherByteIndex] * 256;
+        int value = 0;
+        int dataShift = 0;
+        int remainWidth = shift + bitWidth;
+        while (remainWidth > 0) {
+            value += (data[byteIndex] & 0xff) << dataShift;
+            byteIndex += (isBigEndian ? -1 : +1);
+            dataShift += 8;
+            remainWidth -= 8;
         }
         int mask = (1 << bitWidth) - 1;
         return (value >> shift) & mask;
