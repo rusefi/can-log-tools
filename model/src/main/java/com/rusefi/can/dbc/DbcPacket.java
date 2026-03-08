@@ -27,8 +27,12 @@ public class DbcPacket {
             field.setParentPacket(getParent());
 
             if (field.isBigEndian()) {
-                if (field.getStartOffset() < 0 || (field.getStartOffset() + field.getLength() > length * 8)) {
-                    throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + length * 8);
+                int lsbByte = field.getStartOffset() / 8;
+                int shift = field.getStartOffset() % 8;
+                int numBytes = (shift + field.getLength() + 7) / 8;
+                int msbByte = lsbByte - numBytes + 1;
+                if (lsbByte >= length || msbByte < 0 || field.getStartOffset() < 0) {
+                    throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " length " + field.getLength() + " in " + length + " bytes");
                 }
             } else {
                 if (field.getStartOffset() + field.getLength() > length * 8) {

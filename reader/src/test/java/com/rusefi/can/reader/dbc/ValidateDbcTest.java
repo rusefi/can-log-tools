@@ -124,16 +124,14 @@ public class ValidateDbcTest {
     @Test
     public void test2byteMotorolaByteRange() {
         // SG_ WRSRDWhlDistTmstm : 55|16@0+ (1,0) [0|65535] "counts"
+        // MSB (bit 55) is in byte 6, bit 7.
+        // LSB is 15 bits later.
+        // Motorola: bit index 55 means byte 6, bit 7 (MSB).
+        // For a 16-bit signal, this means byte 6 (MSB) and byte 7 (LSB).
+        // Total range 48-63 (8 bytes: 0-7).
         DbcField shouldFitWithin8Bytes = new DbcField(193, "WRSRDWhlDistTmstm", 55, 16, 1, 0, "", true, false);
 
-        assertThrows(IllegalStateException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                DbcPacket packet = new DbcPacket(193, "PPEI_DrvnWheelRotationalSt_193_0C1", "src", 8,
-                        Arrays.asList(shouldFitWithin8Bytes), null);
-
-            }
-        });
-
+        new DbcPacket(193, "PPEI_DrvnWheelRotationalSt_193_0C1", "src", 8,
+                Arrays.asList(shouldFitWithin8Bytes), null);
     }
 }
