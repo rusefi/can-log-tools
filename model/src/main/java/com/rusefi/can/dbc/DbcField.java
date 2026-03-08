@@ -95,24 +95,30 @@ public class DbcField implements Comparable<DbcField> {
     }
 
     /**
-     * There is no way to explain it, only experience it
+     * Return start bit as stated in DBC (MSB for motorola, LSB for intel)
      * @see ParseDBCWithCommentTest#parseMoto
      * @see ParseDbcFieldTest#testHumanStartIndex
      */
-    public int getHumanStartIndex() {
-        return getHumanStartIndex(startOffset, length, isBigEndian);
+    public int getDbcStartIndex() {
+        return getDbcStartIndex(startOffset, length, isBigEndian);
     }
 
-    public static int getHumanStartIndex(int bitIndex, int bitWidth, boolean isBigEndian) {
+    public static int getDbcStartIndex(int bitIndex, int bitWidth, boolean isBigEndian) {
         if (isBigEndian) {
-            int byteIndex = getByteIndex(bitIndex);
-            int shift = getShift(byteIndex, bitIndex);
-            int delta = shift + bitWidth - 8;
-            if (delta > 0) {
-                return bitIndex - delta;
-            }
+            // reversed crazyMotorolaMath()
+            int b = bitIndex;
+            // convert from lsb0 bit numbering to msb0 bit numbering (or msb0 to lsb0)
+            b = b - (b % 8) + 7 - (b % 8);
+            // convert from lsbit of signal data to msbit of signal data, when bit numbering is msb0
+            b = b - bitWidth + 1;
+            // convert from msbit of signal data to lsbit of signal data, when bit numbering is msb0
+            b = b - (b % 8) + 7 - (b % 8);
+            return b;
         }
-        return bitIndex;
+        else {
+            // little endian
+            return bitIndex;
+        }
     }
 
     public static int getBitRange(byte[] data, int bitIndex, int bitWidth, boolean isBigEndian) {

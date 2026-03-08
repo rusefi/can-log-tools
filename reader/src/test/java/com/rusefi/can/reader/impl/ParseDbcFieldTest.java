@@ -27,11 +27,13 @@ public class ParseDbcFieldTest {
 
     @Test
     public void testHumanStartIndex() {
+        // byte 6: _ _ _ _ x x x x  bits 51 .. 48
+        // byte 7: x x x x x x x x  bits 63 .. 56
         String line = "SG_ CrksftNTrnsRegCmdTq : 51|12@0+ (0.5,-848) [-848|1199.5] \"Nm\"  TCM_HS";
         DbcField field = DbcFieldParser.parseField(line, "hello", -1);
-        assertEquals(56, field.getStartOffset());
+        assertEquals(56, field.getStartOffset());   // lsb
         assertEquals(12, field.getLength());
 
-        assertEquals(52, field.getHumanStartIndex());
+        assertEquals(51, field.getDbcStartIndex()); // msb
     }
 }
