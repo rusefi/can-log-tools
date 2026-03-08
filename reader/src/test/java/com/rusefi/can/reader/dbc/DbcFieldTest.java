@@ -50,4 +50,15 @@ public class DbcFieldTest {
         assertEquals(32767.0, unsignedField.getValue(pkt1), 0.001);
         assertEquals(65535.0, unsignedField.getValue(pkt2), 0.001);
     }
+
+    @Test
+    public void testShortName() {
+        DbcField field = new DbcField(-1, "OriginalName", 0, 8, 1, 0, null, false, false);
+        assertEquals("OriginalName", field.getName());
+        assertEquals("OriginalName", field.getShortName());
+
+        field.rename("Longer Nice Name");
+        assertEquals("Longer Nice Name", field.getName());
+        assertEquals("OriginalName", field.getShortName());
+    }
 }
