@@ -10,13 +10,15 @@ public class DbcPacketBuilder {
     private final int packetId;
     private final String packetName;
     private final String source;
+    private final int length;
     private final List<DbcField> signals = new ArrayList<>();
     private boolean isConsumed;
 
-    public DbcPacketBuilder(int packetId, String packetName, String source) {
+    public DbcPacketBuilder(int packetId, String packetName, String source, int length) {
         this.packetId = packetId;
         this.packetName = packetName;
         this.source = source;
+        this.length = length;
     }
 
     public int getPacketId() {
@@ -29,6 +31,10 @@ public class DbcPacketBuilder {
 
     public String getSource() {
         return source;
+    }
+
+    public int getLength() {
+        return length;
     }
 
     public void add(DbcField field) {

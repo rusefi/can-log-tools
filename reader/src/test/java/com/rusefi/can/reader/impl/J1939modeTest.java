@@ -49,7 +49,7 @@ public class J1939modeTest {
     public void readEEC() throws IOException {
 
         J1939Logic.j1939_mode = true;
-        DbcFile dbc = ParseDBCTest.readDbc(dbcEEC);
+        DbcFile dbc = TestCases.readDbc(dbcEEC);
 
         String logLine = "     5)        10.0  Rx     0CF00400  8  FF FF FF E8 25 FF FF 7D \n";
         CANPacket canPacket = new PcanTrcReader1_1().readLine(logLine);
@@ -70,7 +70,7 @@ public class J1939modeTest {
     public void megaLogFilter() throws IOException {
         J1939Logic.j1939_mode = true;
 
-        DbcFile dbc = ParseDBCTest.readDbc(dbcEEC + "\n\n" + dbcSSI);
+        DbcFile dbc = TestCases.readDbc(dbcEEC + "\n\n" + dbcSSI);
 
         CANLineReader logReader = new PcanTrcReader1_1();
         List<CANPacket> packets = new ArrayList<>();

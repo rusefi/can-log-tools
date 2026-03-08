@@ -12,13 +12,15 @@ public class DbcPacket {
     private final int id;
     private final String name;
     private final String source;
+    private final int length;
     private final List<DbcField> fields = new ArrayList<>();
     private final FileNameProvider parent;
 
-    public DbcPacket(int id, String name, String source, List<DbcField> signals, FileNameProvider parent) {
+    public DbcPacket(int id, String name, String source, int length, List<DbcField> signals, FileNameProvider parent) {
         this.id = id;
         this.name = name;
         this.source = source;
+        this.length = length;
         this.parent = parent;
         fields.addAll(signals);
         for (DbcField field : signals) {
@@ -40,6 +42,10 @@ public class DbcPacket {
 
     public String getSource() {
         return source;
+    }
+
+    public int getLength() {
+        return length;
     }
 
     public List<DbcField> getFields() {

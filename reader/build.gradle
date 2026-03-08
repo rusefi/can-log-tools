@@ -1,6 +1,7 @@
 
 dependencies {
     api project(':parser')
+    testImplementation testFixtures(project(':parser'))
     implementation libs.jcommander
     implementation libs.snakeyaml
     testImplementation libs.junit

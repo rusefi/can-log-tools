@@ -3,6 +3,7 @@ package com.rusefi.can.dbc.reader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.DbcPacket;
+import com.rusefi.can.dbc.util.GapFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -80,8 +81,9 @@ public class DbcFileReader {
         long decId = Long.parseLong(tokens[1]) & 0x1FFFFFFF;    // strip ExtID flag if any
         int trimmedId = com.rusefi.can.dbc.J1939Logic.trimSid((int) decId);
         String packetName = tokens[2];
+        int length = Integer.parseInt(tokens[3]);
         String source = tokens.length > 4 ? tokens[4] : "";
-        currentPacket = new DbcPacketBuilder(trimmedId, packetName, source);
+        currentPacket = new DbcPacketBuilder(trimmedId, packetName, source, length);
         return currentPacket;
     }
 
@@ -104,8 +106,8 @@ public class DbcFileReader {
             if (existingPacket != null) {
                 throw new IllegalStateException("We already have " + existingPacket.getName() + " for " + sid);
             }
-            List<DbcField> signals = new com.rusefi.can.dbc.util.GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
-            com.rusefi.can.dbc.DbcPacket packet = new com.rusefi.can.dbc.DbcPacket(sid, currentPacket.getPacketName(), currentPacket.getSource(), signals, dbc);
+            List<DbcField> signals = new GapFactory(currentPacket.getSignals(), currentPacket.getPacketName()).withGaps(sid);
+            DbcPacket packet = new DbcPacket(sid, currentPacket.getPacketName(), currentPacket.getSource(), currentPacket.getLength(), signals, dbc);
             dbc.addPacket(packet);
             currentPacket.markConsumed();
         }

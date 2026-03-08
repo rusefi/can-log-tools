@@ -2,34 +2,15 @@ package com.rusefi.can.reader.impl;
 
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
-import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.can.dbc.DbcPacket;
 import org.junit.Test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.*;
 
 public class ParseDBCTest {
-    public static final String VAG_MOTOR_1 = "BO_ 640 Motor_1: 8 XXX\n" +
-            " SG_ Fahrerwunschmoment : 56|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
-            " SG_ mechanisches_Motor_Verlustmomen : 48|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
-            " SG_ PPS_TPS : 40|8@1+ (0.4,0) [0|101.6] \"%\" XXX\n" +
-            " SG_ inneres_Motor_Moment_ohne_exter : 32|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
-            " SG_ RPM : 16|16@1+ (0.25,0) [0|16256] \"U/min\" XXX\n" +
-            " SG_ inneres_Motor_Moment : 8|8@1+ (0.39,0) [0|99] \"MDI\" XXX\n" +
-            " SG_ Momentenangaben_ungenau : 7|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Fehlerstatus_Getriebe_Momentene : 6|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Fehlerstatus_Brems_Momenteneing : 5|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Time_Out_Bremsen_Botschaft : 4|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Kupplungsschalter : 3|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Kickdownschalter : 2|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Fahrpedalwert_ungenau__Motor_1_ M : 1|1@1+ (1,0) [0|0] \"\" XXX\n" +
-            " SG_ Leergasinformation : 0|1@1+ (1,0) [0|0] \"\" XXX" +
-            "";
     private static final String RPM_DBC = "VERSION \"\"\n" +
             "\n" +
             "\n" +
@@ -88,19 +69,14 @@ public class ParseDBCTest {
             " SG_ Ansteuerung_Wascher_Front : 1|1@1+ (1,0) [0|0] \"\" XXX\n" +
             " SG_ Frontwischer__eingeschaltet : 0|1@1+ (1,0) [0|0] \"\" XXX\n" +
             "\n" +
-            VAG_MOTOR_1;
+            TestCases.VAG_MOTOR_1;
 
-    public static DbcFile readDbc(String text) throws IOException {
-        BufferedReader reader = new BufferedReader(new StringReader(text));
-        DbcFile dbc = new DbcFile();
-        DbcFileReader.read(dbc, reader);
-        return dbc;
-    }
+        public static final String VAG_MOTOR_1 = RPM_DBC;
 
     @Test
     public void parse() throws IOException {
 
-        DbcFile dbc = readDbc(RPM_DBC);
+        DbcFile dbc = TestCases.readDbc(RPM_DBC);
         assertEquals(3, dbc.size());
 
         DbcPacket zacPacket = dbc.getPacketByIndexSlow(0);
@@ -121,15 +97,17 @@ public class ParseDBCTest {
     public void testSource() throws IOException {
         String dbcText = "BO_ 1394 ZAS_1: 2 XXX\n" +
                 " SG_ Field : 0|8@1+ (1,0) [0|0] \"\" XXX";
-        DbcFile dbc = readDbc(dbcText);
+        DbcFile dbc = TestCases.readDbc(dbcText);
         DbcPacket packet = dbc.findPacket(1394);
         assertEquals("XXX", packet.getSource());
+        assertEquals(2, packet.getLength());
 
         String dbcText2 = "BO_ 100 P: 8 ECM_HS\n" +
                 " SG_ OAT : 63|8@0+ (1,0) [0|8] \"deg C\"  VICS";
-        DbcFile dbc2 = readDbc(dbcText2);
+        DbcFile dbc2 = TestCases.readDbc(dbcText2);
         DbcPacket packet2 = dbc2.findPacket(100);
         assertEquals("ECM_HS", packet2.getSource());
+        assertEquals(8, packet2.getLength());
     }
 
     @Test
@@ -137,7 +115,7 @@ public class ParseDBCTest {
         String moto = "BO_ 100 P: 8 ECM_HS\n" +
                 " SG_ OAT : 63|8@0+ (1,0) [0|8] \"deg C\"  VICS";
 
-        DbcFile dbc = readDbc(moto);
+        DbcFile dbc = TestCases.readDbc(moto);
         assertEquals(1, dbc.size());
         DbcPacket packet = dbc.findPacket(100);
         assertNotNull(packet);
@@ -163,7 +141,7 @@ public class ParseDBCTest {
                 " SG_ AccActPos : 32|8@1+ (0.392157,0.0) [0|255] \"%\" Vector__XXX\n" +
                 " SG_ EngAirIntBstPr : 56|8@1- (1.0,0.0) [-128|127] \"kPaG\" Vector__XXX";
 
-        DbcFile dbc = readDbc(engStatus);
+        DbcFile dbc = TestCases.readDbc(engStatus);
         DbcPacket packet = dbc.findPacket(201);
         assertNotNull(packet);
 

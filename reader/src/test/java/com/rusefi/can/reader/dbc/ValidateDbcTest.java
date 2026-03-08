@@ -15,7 +15,7 @@ public class ValidateDbcTest {
         DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
         DbcField field2 = new DbcField(100, "F2", 7, 8, 1, 0, "", false, false);
 
-        DbcPacket packet = new DbcPacket(100, "MSG", "src", Arrays.asList(field1, field2), null);
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
         List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
         assertFalse("Should have errors", errors.isEmpty());
         assertTrue(errors.get(0).contains("Overlap"));
@@ -27,7 +27,7 @@ public class ValidateDbcTest {
         DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
         DbcField field2 = new DbcField(100, "F2", 8, 8, 1, 0, "", false, false);
 
-        DbcPacket packet = new DbcPacket(100, "MSG", "src", Arrays.asList(field1, field2), null);
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
         List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
         assertTrue("Should not have errors", errors.isEmpty());
     }
@@ -37,7 +37,7 @@ public class ValidateDbcTest {
         DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
         DbcField field2 = new DbcField(100, "some_gap_8", 0, 8, 1, 0, "", false, false);
 
-        DbcPacket packet = new DbcPacket(100, "MSG", "src", Arrays.asList(field1, field2), null);
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
         List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
         assertTrue("Should not have errors because gap is ignored", errors.isEmpty());
     }
@@ -87,7 +87,7 @@ public class ValidateDbcTest {
         // SG_ ETC_MinRunTorq : 27|12@0+ (0.5,-848) [-848|1199.5] "Nm" TCM_HS,HCP_HS,BCP_HS
         DbcField field3 = new DbcField(1417, "ETC_MinRunTorq", 27, 12, 0.5, -848, "", true, false);
 
-        DbcPacket packet = new DbcPacket(1417, "ETEI_Engine_Torque_Capability_1417_589", "src",
+        DbcPacket packet = new DbcPacket(1417, "ETEI_Engine_Torque_Capability_1417_589", "src", 8,
                 Arrays.asList(field1, field2, field3), null);
 
         List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
@@ -113,7 +113,7 @@ public class ValidateDbcTest {
         // SG_ ETC_EngOpMd : 7|1@0+ (1,0) [0|1] "" TCM_HS,HCP_HS,BCP_HS
         DbcField field8 = new DbcField(1417, "ETC_EngOpMd", 7, 1, 1, 0, "", true, false);
 
-        DbcPacket packet = new DbcPacket(1417, "ETEI_Engine_Torque_Capability_1417_589", "src",
+        DbcPacket packet = new DbcPacket(1417, "ETEI_Engine_Torque_Capability_1417_589", "src", 8,
                 Arrays.asList(field1, field2, field3, field4, field5, field6, field7, field8), null);
 
         List<String> errors = ValidateDbc.checkFieldsOverlap(packet);

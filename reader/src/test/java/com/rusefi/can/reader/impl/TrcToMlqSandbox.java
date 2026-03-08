@@ -4,13 +4,14 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.mlv.LoggingStrategy;
 import com.rusefi.can.dbc.DbcFile;
+import com.rusefi.can.reader.impl.TestCases;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
-import static com.rusefi.can.reader.impl.ParseDBCTest.VAG_MOTOR_1;
+import static com.rusefi.can.reader.impl.TestCases.VAG_MOTOR_1;
 
 public class TrcToMlqSandbox {
 
