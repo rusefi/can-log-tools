@@ -108,26 +108,28 @@ public class ParseDBCWithCommentTest {
 
     @Test
     public void parseMoto() throws IOException {
+        // byte 0: x x x x x x x x  bits 7..0
+        // byte 1: x x x x _ _ _ _  bits 15..12
         // SG_ CrksftNTrnsRegCmdTq : 7|12@0+
         // b = 7
         // b = 7 - 7 + 7 - 7 = 0  (LSB0 -> MSB0)
         // b = 0 + 12 - 1 = 11     (MSB of signal)
         // b = 11 - 3 + 7 - 3 = 12  (MSB0 -> LSB0)
-        // startOffset = 12
-        // 12 + 12 = 24 <= 64 (Fits in 8 bytes)
-        BufferedReader reader = new BufferedReader(new StringReader("    BO_ 398 PTEI_EngineTorqueStatus_398_18E: 8 Vector__XXX\n" +
+
+        BufferedReader reader = new BufferedReader(new StringReader(
+                "    BO_ 398 PTEI_EngineTorqueStatus_398_18E: 8 Vector__XXX\n" +
                 "    SG_ CrksftNTrnsRegCmdTq : 7|12@0+ (0.5,-848) [-848|1199.5] \"Nm\"  TCM_HS\n"));
 
         DbcFile dbc = new DbcFile();
         DbcFileReader.read(dbc, reader);
-        assertEquals(dbc.size(), 1);
+        assertEquals(1, dbc.size());
 
         DbcPacket packet = dbc.findPacket(398);
         DbcField field = packet.getFields().get(0);
 
         assertEquals(12, field.getStartOffset());
         assertEquals(12, field.getLength());
-        assertEquals(4, field.getHumanStartIndex());
+        assertEquals(7, field.getDbcStartIndex());
     }
 
 
