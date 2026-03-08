@@ -73,6 +73,9 @@ public class DbcField implements Comparable<DbcField> {
         return name;
     }
 
+    // returns the least significant bit
+    // for intel - right bit in the first byte
+    // for motorola - right bit in the last (!!!) byte
     public int getStartOffset() {
         return startOffset;
     }
@@ -172,28 +175,37 @@ public class DbcField implements Comparable<DbcField> {
         return getBitRange(packet.getData(), startOffset, length, isBigEndian);
     }
 
-    public static void setBit(java.util.BitSet usedBits, int bitIndex, int bitWidth, boolean isBigEndian) {
+    public void getUsedBits(java.util.BitSet usedBits) {
+        getUsedBits(usedBits, startOffset, length, isBigEndian);
+    }
+
+    public static void getUsedBits(java.util.BitSet usedBits, int bitIndex, int bitWidth, boolean isBigEndian) {
         if (bitIndex < 0)
             throw new IllegalArgumentException("Huh? " + bitIndex + " " + bitWidth);
 
-        int byteIndex = getByteIndex(bitIndex);
-        int shift = getShift(byteIndex, bitIndex);
-        if (shift + bitWidth <= 8) {
+        if (isBigEndian) {
+            // bitIndex is the LSB in the last byte
+            int byteIndex = getByteIndex(bitIndex);
+            int shift = getShift(byteIndex, bitIndex);
+
+            if (shift + bitWidth <= 8) {
+                for (int i = 0; i < bitWidth; i++) {
+                    usedBits.set(bitIndex + i);
+                }
+            }
+            else {
+                int bitsInLastByte = 8 - shift;
+                for (int i = 0; i < bitsInLastByte; i++) {
+                    usedBits.set(bitIndex + i);
+                }
+                // previous bytes
+                getUsedBits(usedBits, (byteIndex - 1) * 8, bitWidth - bitsInLastByte, true);
+            }
+        }
+        else {
+            // little endian. Bit numbers are just growing
             for (int i = 0; i < bitWidth; i++) {
                 usedBits.set(bitIndex + i);
-            }
-        } else {
-            // first byte
-            int bitsInFirstByte = 8 - shift;
-            for (int i = 0; i < bitsInFirstByte; i++) {
-                usedBits.set(bitIndex + i);
-            }
-            // second byte
-            int otherByteIndex = (isBigEndian ? -1 : +1) + byteIndex;
-            int bitsInSecondByte = bitWidth - bitsInFirstByte;
-            int secondByteStartBit = otherByteIndex * 8;
-            for (int i = 0; i < bitsInSecondByte; i++) {
-                usedBits.set(secondByteStartBit + i);
             }
         }
     }
@@ -207,10 +219,7 @@ public class DbcField implements Comparable<DbcField> {
         int startBit = byteIndex * 8;
 
         if (isBigEndian) {
-
-                startBit = DbcField.crazyMotorolaMath(startBit, length, true);
-
-
+            startBit = DbcField.crazyMotorolaMath(startBit, length, true);
         }
 
         if (startOffset > startBit)

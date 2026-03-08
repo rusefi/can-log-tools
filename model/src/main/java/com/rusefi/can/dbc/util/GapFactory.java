@@ -21,7 +21,7 @@ public class GapFactory {
         this.signals.addAll(signals);
         java.util.BitSet usedBits = new java.util.BitSet(isUsed.length);
         for (DbcField dbcField : signals) {
-            dbcField.setBit(usedBits, dbcField.getStartOffset(), dbcField.getLength(), dbcField.isBigEndian());
+            dbcField.getUsedBits(usedBits, dbcField.getStartOffset(), dbcField.getLength(), dbcField.isBigEndian());
         }
         for (int i = 0; i < isUsed.length; i++) {
             isUsed[i] = usedBits.get(i);

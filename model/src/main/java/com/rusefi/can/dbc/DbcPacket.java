@@ -1,6 +1,7 @@
 package com.rusefi.can.dbc;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,14 +27,10 @@ public class DbcPacket {
         for (DbcField field : signals) {
             field.setParentPacket(getParent());
 
-            if (field.isBigEndian()) {
-                if (field.getStartOffset() < 0 || (field.getStartOffset() + field.getLength() > length * 8)) {
-                    throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + length * 8);
-                }
-            } else {
-                if (field.getStartOffset() + field.getLength() > length * 8) {
-                    throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + length * 8);
-                }
+            BitSet usedBits = new BitSet();
+            field.getUsedBits(usedBits);
+            if (usedBits.size() > 8 * length) {
+                throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + length * 8);
             }
         }
     }
