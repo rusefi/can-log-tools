@@ -136,4 +136,25 @@ public class ValidateDbcTest {
         for (int i = 48; i < 64; i++) assertTrue(usedBits.get(i));
 
     }
+
+    @Test
+    public void testSameEndianness() {
+        DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
+        DbcField field2 = new DbcField(100, "F2", 8, 8, 1, 0, "", false, false);
+
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
+        List<String> errors = ValidateDbc.checkFieldsEndianness(packet);
+        assertTrue("Should not have errors", errors.isEmpty());
+    }
+
+    @Test
+    public void testMixedEndianness() {
+        DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
+        DbcField field2 = new DbcField(100, "F2", 8, 8, 1, 0, "", true, false);
+
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
+        List<String> errors = ValidateDbc.checkFieldsEndianness(packet);
+        assertFalse("Should have errors", errors.isEmpty());
+        assertTrue(errors.get(0).contains("Mixed endianness"));
+    }
 }

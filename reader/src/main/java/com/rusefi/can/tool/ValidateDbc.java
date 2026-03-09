@@ -22,8 +22,24 @@ public class ValidateDbc {
         for (DbcPacket packet : dbc.values()) {
             errors.addAll(checkPacket(packet.getId(), packet.getName()));
             errors.addAll(checkFieldsOverlap(packet));
+            errors.addAll(checkFieldsEndianness(packet));
         }
 
+        return errors;
+    }
+
+    public static List<String> checkFieldsEndianness(DbcPacket packet) {
+        List<String> errors = new ArrayList<>();
+        if (packet.getFields().size() < 2) {
+            return errors;
+        }
+        boolean firstIsBigEndian = packet.getFields().get(0).isBigEndian();
+        for (int i = 1; i < packet.getFields().size(); i++) {
+            DbcField field = packet.getFields().get(i);
+            if (field.isBigEndian() != firstIsBigEndian) {
+                errors.add("Mixed endianness in " + packet.getName() + " (ID " + packet.getId() + "): Field " + field.getName() + " has different endianness than other fields.");
+            }
+        }
         return errors;
     }
 
