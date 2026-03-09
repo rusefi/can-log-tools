@@ -167,4 +167,11 @@ public class ParseDBCTest {
                 " SG_ OAT : 8|16@0+ (1,0) [0|8] \"deg C\"  VICS";
         TestCases.readDbc(dbcText);
     }
+
+    @Test
+    public void testParse() throws IOException {
+        String dbcInput = "BO_ 1021 EGS_Daten_Anzeige_Getriebestrang_3FD_1021: 5 EGS\n" +
+                " SG_ DISP_PO_GRB : 21|3@1+ (1,0) [0|6] \"\" GWS\n";
+        TestCases.readDbc(dbcInput);
+    }
 }
