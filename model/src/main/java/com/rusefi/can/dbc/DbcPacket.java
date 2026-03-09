@@ -150,7 +150,9 @@ public class DbcPacket {
 
     public DbcField findByBitIndex(int bitIndex) {
         for (DbcField field : fields) {
-            if (bitIndex >= field.getStartOffset() && bitIndex < field.getStartOffset() + field.getLength())
+            BitSet usedBits = new BitSet();
+            field.getUsedBits(usedBits);
+            if (usedBits.get(bitIndex))
                 return field;
         }
         return null;
