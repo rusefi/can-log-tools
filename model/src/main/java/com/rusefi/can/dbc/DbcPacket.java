@@ -29,8 +29,10 @@ public class DbcPacket {
 
             BitSet usedBits = new BitSet();
             field.getUsedBits(usedBits);
+            int lastSetBit = usedBits.previousSetBit(Integer.MAX_VALUE);
             int bitLimit = 8 * length;
-            if (usedBits.length() > bitLimit) {
+            if (lastSetBit > bitLimit) {
+                // TODO getStartOffset() may be weird in multi-byte fields
                 throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + bitLimit + "; " + usedBits.length());
             }
         }
