@@ -29,8 +29,9 @@ public class DbcPacket {
 
             BitSet usedBits = new BitSet();
             field.getUsedBits(usedBits);
-            if (usedBits.size() > 8 * length) {
-                throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + length * 8);
+            int bitLimit = 8 * length;
+            if (usedBits.size() > bitLimit) {
+                throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + bitLimit + "; " + usedBits.size());
             }
         }
     }
