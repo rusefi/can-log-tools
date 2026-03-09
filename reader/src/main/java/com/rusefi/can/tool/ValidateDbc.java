@@ -36,7 +36,7 @@ public class ValidateDbc {
                 continue;
             }
             BitSet thisFieldBits = new BitSet();
-            field.getUsedBits(thisFieldBits, field.getStartOffset(), field.getLength(), field.isBigEndian());
+            DbcField.getUsedBits(thisFieldBits, field.getStartOffset(), field.getLength(), field.isBigEndian());
 
             for (int bitIndex = thisFieldBits.nextSetBit(0); bitIndex >= 0; bitIndex = thisFieldBits.nextSetBit(bitIndex + 1)) {
                 if (usedBits.get(bitIndex)) {
