@@ -157,4 +157,25 @@ public class ValidateDbcTest {
         assertFalse("Should have errors", errors.isEmpty());
         assertTrue(errors.get(0).contains("Mixed endianness"));
     }
+
+    @Test
+    public void testMixedEndiannessWithGap() {
+        DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
+        DbcField field2 = new DbcField(100, "some_gap_8", 8, 8, 1, 0, "", true, false);
+
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
+        List<String> errors = ValidateDbc.checkFieldsEndianness(packet);
+        assertTrue("Should not have errors because gap is ignored", errors.isEmpty());
+    }
+
+    @Test
+    public void testGapFirstField() {
+        DbcField field1 = new DbcField(100, "some_gap_8", 0, 8, 1, 0, "", true, false);
+        DbcField field2 = new DbcField(100, "F1", 8, 8, 1, 0, "", false, false);
+        DbcField field3 = new DbcField(100, "F2", 16, 8, 1, 0, "", false, false);
+
+        DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2, field3), null);
+        List<String> errors = ValidateDbc.checkFieldsEndianness(packet);
+        assertTrue("Should not have errors because gap is ignored and F1, F2 match", errors.isEmpty());
+    }
 }

@@ -33,10 +33,14 @@ public class ValidateDbc {
         if (packet.getFields().size() < 2) {
             return errors;
         }
-        boolean firstIsBigEndian = packet.getFields().get(0).isBigEndian();
-        for (int i = 1; i < packet.getFields().size(); i++) {
-            DbcField field = packet.getFields().get(i);
-            if (field.isBigEndian() != firstIsBigEndian) {
+        Boolean firstIsBigEndian = null;
+        for (DbcField field : packet.getFields()) {
+            if (field.getName().contains("_gap_")) {
+                continue;
+            }
+            if (firstIsBigEndian == null) {
+                firstIsBigEndian = field.isBigEndian();
+            } else if (field.isBigEndian() != firstIsBigEndian) {
                 errors.add("Mixed endianness in " + packet.getName() + " (ID " + packet.getId() + "): Field " + field.getName() + " has different endianness than other fields.");
             }
         }
