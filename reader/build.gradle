@@ -7,6 +7,10 @@ dependencies {
     testImplementation libs.junit
 }
 
+test {
+    useJUnit()
+}
+
 shadowJar {
     manifest {
         attributes(
