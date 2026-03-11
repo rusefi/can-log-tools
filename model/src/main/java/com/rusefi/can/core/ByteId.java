@@ -5,8 +5,21 @@ import com.rusefi.can.dbc.DbcField;
 
 import java.util.Objects;
 
+/**
+ * Identifies a specific byte within a CAN packet by combining the packet's SID (Standard Identifier)
+ * with the byte index within the packet's data payload.
+ * <p>
+ * This is used throughout the analysis tools to track and reference individual bytes
+ * across CAN packet traces, for example when scanning for counters, checksums, or growing values.
+ */
 public class ByteId implements Comparable<ByteId> {
+    /**
+     * CAN packet Standard Identifier (SID).
+     */
     final int sid;
+    /**
+     * Zero-based index of the byte within the CAN packet data payload.
+     */
     final int byteIndex;
 
     private ByteId(int sid, int byteIndex) {
