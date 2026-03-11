@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class AutoFormatReader implements CANLineReader {
     public static final AutoFormatReader INSTANCE = new AutoFormatReader();
@@ -25,7 +27,11 @@ public class AutoFormatReader implements CANLineReader {
 
     @Override
     public List<CANPacket> readFile(String fileName) throws IOException {
-        String firstLine = Files.lines(Paths.get(fileName)).findFirst().get();
+        Stream<String> lines = Files.lines(Paths.get(fileName));
+        Optional<String> first = lines.findFirst();
+        if (!first.isPresent())
+            throw new IllegalStateException("Empty " + fileName);
+        String firstLine = first.get();
         detectReader(firstLine);
         try {
             return delegate.readFile(fileName);
@@ -46,7 +52,7 @@ public class AutoFormatReader implements CANLineReader {
             throw new IllegalStateException("Unexpected first line: " + firstLine);
         if (firstLine.contains(CanHackerReader.HEADER)) {
             delegate = CanHackerReader.INSTANCE;
-        } else if (firstLine.startsWith(IxxatReader.START_TIME) || firstLine.startsWith(IxxatReader.BusNo)     ) {
+        } else if (firstLine.startsWith(IxxatReader.START_TIME) || firstLine.startsWith(IxxatReader.BusNo)) {
             delegate = IxxatReader.INSTANCE;
         } else if (firstLine.contains(SomethingLinuxReader.HEADER)) {
             delegate = SomethingLinuxReader.INSTANCE;
