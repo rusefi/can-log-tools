@@ -43,7 +43,7 @@ public class AutoFormatReader implements CANLineReader {
                 && !firstLine.contains(BusMasterReader.HEADER)
                 && !firstLine.equals(EcuMasterDongleReader.HEADER)
         )
-            throw new IllegalStateException("Unexpected first line");
+            throw new IllegalStateException("Unexpected first line: " + firstLine);
         if (firstLine.contains(CanHackerReader.HEADER)) {
             delegate = CanHackerReader.INSTANCE;
         } else if (firstLine.startsWith(IxxatReader.START_TIME) || firstLine.startsWith(IxxatReader.BusNo)     ) {
