@@ -1,6 +1,5 @@
 package com.rusefi.can;
 
-import com.rusefi.can.analysis.MatchFinder;
 import com.rusefi.can.tool.ValidateDbc;
 import com.rusefi.can.tool.sync.SyncFolder;
 import com.rusefi.can.tool.sync.SyncTrcFiles;
@@ -19,7 +18,6 @@ public class ToolSelector {
         TOOLS.put("trc2mlq", TrcToMlq.class);
         TOOLS.put("SyncTrcFiles", SyncTrcFiles.class);
         TOOLS.put("SyncFolder", SyncFolder.class);
-        TOOLS.put("MatchFinder", MatchFinder.class);
         TOOLS.put("ValidateDbc", ValidateDbc.class);
 
         if (args.length == 0 || !TOOLS.containsKey(args[0])) {
