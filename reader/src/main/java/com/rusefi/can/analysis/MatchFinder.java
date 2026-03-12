@@ -16,6 +16,35 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MatchFinder {
+
+    static class PacketsHelper {
+
+
+        private final List<CANPacket> packets;
+        public Map<Integer, List<CANPacket>> packetsById;
+
+        public PacketsHelper(List<CANPacket> packets) {
+            this.packets = packets;
+            packetsById = packets.stream().collect(Collectors.groupingBy(CANPacket::getId));
+
+        }
+
+        private double getDuration() {
+            double minTime = getMinTime();
+            double maxTime = getMaxTime();
+            return maxTime - minTime;
+        }
+
+        private double getMaxTime() {
+            return packets.get(packets.size() - 1).getTimeStampMs();
+        }
+
+        private double getMinTime() {
+            return packets.get(0).getTimeStampMs();
+        }
+    }
+
+
     public static void main(String[] args) throws IOException {
         if (args.length < 4) {
             System.out.println("Usage: MatchFinder <dbc1> <trc1> <dbc2> <trc2>");
@@ -38,15 +67,13 @@ public class MatchFinder {
             return;
         }
 
-        double minTime1 = packets1.get(0).getTimeStampMs();
-        double maxTime1 = packets1.get(packets1.size() - 1).getTimeStampMs();
-        double duration1 = maxTime1 - minTime1;
+        PacketsHelper content1 = new PacketsHelper(packets1);
+
 
         double minTime2 = packets2.get(0).getTimeStampMs();
         double maxTime2 = packets2.get(packets2.size() - 1).getTimeStampMs();
         double duration2 = maxTime2 - minTime2;
 
-        Map<Integer, List<CANPacket>> packets1ById = packets1.stream().collect(Collectors.groupingBy(CANPacket::getId));
         Map<Integer, List<CANPacket>> packets2ById = packets2.stream().collect(Collectors.groupingBy(CANPacket::getId));
 
         List<DbcField> fields1 = getAllFields(dbc1);
@@ -64,7 +91,8 @@ public class MatchFinder {
 
         for (DbcField f2 : fields2) {
             List<CANPacket> p2 = packets2ById.get(f2.getSid());
-            if (p2 == null || p2.isEmpty()) continue;
+            if (p2 == null || p2.isEmpty())
+                continue;
 
             double[] ts2 = getNormalizedTimeSeries(f2, p2, minTime2, duration2);
             if (ts2 == null) continue;
@@ -73,11 +101,11 @@ public class MatchFinder {
             double minDistance = Double.MAX_VALUE;
 
             for (DbcField f1 : fields1) {
-                List<CANPacket> p1 = packets1ById.get(f1.getSid());
+                List<CANPacket> p1 = content1.packetsById.get(f1.getSid());
                 if (p1 == null || p1.isEmpty())
                     continue;
 
-                double[] ts1 = getNormalizedTimeSeries(f1, p1, minTime1, duration1);
+                double[] ts1 = getNormalizedTimeSeries(f1, p1, content1.getMinTime(), content1.getDuration());
                 if (ts1 == null)
                     continue;
 
@@ -94,7 +122,7 @@ public class MatchFinder {
             }
         }
 
-        createHtmlReport(matches, packets1ById, minTime1, duration1, packets2ById, minTime2, duration2, outputDir);
+        createHtmlReport(matches, content1.packetsById, content1.getMinTime(), content1.getDuration(), packets2ById, minTime2, duration2, outputDir);
     }
 
     private static List<DbcField> getAllFields(DbcFile dbc) {
