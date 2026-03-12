@@ -68,13 +68,7 @@ public class MatchFinder {
         }
 
         PacketsHelper content1 = new PacketsHelper(packets1);
-
-
-        double minTime2 = packets2.get(0).getTimeStampMs();
-        double maxTime2 = packets2.get(packets2.size() - 1).getTimeStampMs();
-        double duration2 = maxTime2 - minTime2;
-
-        Map<Integer, List<CANPacket>> packets2ById = packets2.stream().collect(Collectors.groupingBy(CANPacket::getId));
+        PacketsHelper content2 = new PacketsHelper(packets2);
 
         List<DbcField> fields1 = getAllFields(dbc1);
         List<DbcField> fields2 = getAllFields(dbc2);
@@ -90,12 +84,13 @@ public class MatchFinder {
         List<Match> matches = new ArrayList<>();
 
         for (DbcField f2 : fields2) {
-            List<CANPacket> p2 = packets2ById.get(f2.getSid());
+            List<CANPacket> p2 = content2.packetsById.get(f2.getSid());
             if (p2 == null || p2.isEmpty())
                 continue;
 
-            double[] ts2 = getNormalizedTimeSeries(f2, p2, minTime2, duration2);
-            if (ts2 == null) continue;
+            double[] ts2 = getNormalizedTimeSeries(f2, p2, content2.getMinTime(), content2.getDuration());
+            if (ts2 == null)
+                continue;
 
             Match bestMatch = null;
             double minDistance = Double.MAX_VALUE;
@@ -122,7 +117,7 @@ public class MatchFinder {
             }
         }
 
-        createHtmlReport(matches, content1.packetsById, content1.getMinTime(), content1.getDuration(), packets2ById, minTime2, duration2, outputDir);
+        createHtmlReport(matches, content1, content2, outputDir);
     }
 
     private static List<DbcField> getAllFields(DbcFile dbc) {
@@ -180,8 +175,7 @@ public class MatchFinder {
     }
 
     private static void createHtmlReport(List<Match> matches,
-                                         Map<Integer, List<CANPacket>> packets1ById, double minTime1, double duration1,
-                                         Map<Integer, List<CANPacket>> packets2ById, double minTime2, double duration2,
+                                         PacketsHelper content1, PacketsHelper content2,
                                          String outputDir) throws IOException {
         String imagesDir = "images";
         
@@ -196,8 +190,8 @@ public class MatchFinder {
             for (Match match : matches) {
                 String imgName = DbcImageTool.escapeFileName(match.f2.getName() + "_vs_" + match.f1.getName()) + ".png";
                 
-                renderComparison(match, packets1ById.get(match.f1.getSid()), minTime1, duration1,
-                                       packets2ById.get(match.f2.getSid()), minTime2, duration2,
+                renderComparison(match, content1.packetsById.get(match.f1.getSid()), content1.getMinTime(), content1.getDuration(),
+                                       content2.packetsById.get(match.f2.getSid()), content2.getMinTime(), content2.getDuration(),
                                        outputDir + File.separator + imagesDir, imgName);
 
                 String name1 = match.f1.getName();
