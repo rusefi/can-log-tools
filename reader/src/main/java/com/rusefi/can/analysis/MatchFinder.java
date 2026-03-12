@@ -1,11 +1,12 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.analysis.matcher.Match;
+import com.rusefi.can.analysis.matcher.MatchResult;
 import com.rusefi.can.analysis.matcher.PacketsHelper;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
-import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.render.DbcImageTool;
 import com.rusefi.can.tool.ValidateDbc;
 
@@ -38,14 +39,8 @@ public class MatchFinder {
             return;
         }
 
-        PacketsHelper content1 = new PacketsHelper(packets1);
-        PacketsHelper content2 = new PacketsHelper(packets2);
-
-        List<DbcField> fields1 = getAllFields(dbc1);
-        List<DbcField> fields2 = getAllFields(dbc2);
-
-        System.out.println("Fields in trace 1: " + fields1.size());
-        System.out.println("Fields in trace 2: " + fields2.size());
+        PacketsHelper content1 = new PacketsHelper(packets1, dbc1);
+        PacketsHelper content2 = new PacketsHelper(packets2, dbc2);
 
         String outputDir = "match_report";
         new File(outputDir).mkdirs();
@@ -54,41 +49,20 @@ public class MatchFinder {
 
         List<Match> matches = new ArrayList<>();
 
-        for (DbcField f2 : fields2) {
+        for (DbcField f2 : content2.fields) {
             double[] ts2 = content2.getNormalizedTimeSeries(f2);
             if (ts2 == null)
                 continue;
 
-            Match bestMatch = null;
-            double minDistance = Double.MAX_VALUE;
+            MatchResult matchResult = PacketsHelper.getBestMatch(f2, content1, ts2);
 
-            for (DbcField f1 : fields1) {
-                double[] ts1 = content1.getNormalizedTimeSeries(f1);
-                if (ts1 == null)
-                    continue;
-
-                double distance = PacketsHelper.calculateDistance(ts1, ts2);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    bestMatch = new Match(f2, f1, distance);
-                }
-            }
-
-            if (bestMatch != null) {
-                matches.add(bestMatch);
-                System.out.println("Best match for " + f2.getName() + " is " + bestMatch.f1.getName() + " (dist=" + minDistance + ")");
+            if (matchResult.bestMatch() != null) {
+                matches.add(matchResult.bestMatch());
+                System.out.println("Best match for " + f2.getName() + " is " + matchResult.bestMatch().f1.getName() + " (dist=" + matchResult.minDistance() + ")");
             }
         }
 
         createHtmlReport(matches, content1, content2, outputDir);
-    }
-
-    private static List<DbcField> getAllFields(DbcFile dbc) {
-        List<DbcField> fields = new ArrayList<>();
-        for (DbcPacket packet : dbc.values()) {
-            fields.addAll(packet.getFields());
-        }
-        return fields;
     }
 
     private static void createHtmlReport(List<Match> matches,
@@ -200,15 +174,4 @@ public class MatchFinder {
         g.drawString(label + " (Min: " + String.format("%.2f", minVal) + " Max: " + String.format("%.2f", maxVal) + ")", 10, 20 + labelYOffset);
     }
 
-    private static class Match {
-        DbcField f2;
-        DbcField f1;
-        double distance;
-
-        Match(DbcField f2, DbcField f1, double distance) {
-            this.f2 = f2;
-            this.f1 = f1;
-            this.distance = distance;
-        }
-    }
 }

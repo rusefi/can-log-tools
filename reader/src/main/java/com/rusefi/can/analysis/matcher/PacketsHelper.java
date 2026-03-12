@@ -3,11 +3,13 @@ package com.rusefi.can.analysis.matcher;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.dbc.DbcField;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.rusefi.can.analysis.MatchFinder;
+import com.rusefi.can.dbc.DbcFile;
+import com.rusefi.can.dbc.DbcPacket;
 
 public class PacketsHelper {
     private final List<CANPacket> packets;
@@ -15,6 +17,7 @@ public class PacketsHelper {
 
     private static final int SAMPLES = 1000;
 
+    public List<DbcField> fields;
 
     public static double calculateDistance(double[] ts1, double[] ts2) {
         double dist = 0;
@@ -24,10 +27,38 @@ public class PacketsHelper {
         return dist / SAMPLES;
     }
 
-    public PacketsHelper(List<CANPacket> packets) {
+    public PacketsHelper(List<CANPacket> packets, DbcFile dbc) {
         this.packets = packets;
         packetsById = packets.stream().collect(Collectors.groupingBy(CANPacket::getId));
+        fields = PacketsHelper.getAllFields(dbc);
 
+
+    }
+
+    public static List<DbcField> getAllFields(DbcFile dbc) {
+        List<DbcField> fields = new ArrayList<>();
+        for (DbcPacket packet : dbc.values()) {
+            fields.addAll(packet.getFields());
+        }
+        return fields;
+    }
+
+    public static MatchResult getBestMatch(DbcField f2, PacketsHelper content1, double[] ts2) {
+        Match bestMatch = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (DbcField f1 : content1.fields) {
+            double[] ts1 = content1.getNormalizedTimeSeries(f1);
+            if (ts1 == null)
+                continue;
+
+            double distance = calculateDistance(ts1, ts2);
+            if (distance < minDistance) {
+                minDistance = distance;
+                bestMatch = new Match(f1, f2, distance);
+            }
+        }
+        return new MatchResult(bestMatch, minDistance);
     }
 
     public double[] getNormalizedTimeSeries(DbcField field) {
