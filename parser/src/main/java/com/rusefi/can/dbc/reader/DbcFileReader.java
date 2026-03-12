@@ -39,7 +39,7 @@ public class DbcFileReader {
                 if (tokens.length < 4)
                     throw new IllegalStateException("Failing to parse comment: " + line + " at " + lineIndex);
                 long id = Long.parseLong(tokens[2]) & 0x1FFFFFFF;    // strip ExtID flag if any
-                com.rusefi.can.dbc.DbcPacket packet = dbc.findPacket((int)id);
+                com.rusefi.can.dbc.DbcPacket packet = dbc.findPacket((int) id);
                 String finalLine = line;
                 Objects.requireNonNull(packet, () -> "While parsing CM_ line packet for " + id + finalLine);
                 String originalName = tokens[3];
@@ -124,8 +124,8 @@ public class DbcFileReader {
         dbc.setFileName(fileName);
         if (fileName == null)
             return dbc;
-        System.out.println(new Date() + " Reading DBC file from " + fileName + "..."); {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        System.out.println(new Date() + " Reading DBC file from " + fileName + "...");
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             read(dbc, reader);
         }
         return dbc;
