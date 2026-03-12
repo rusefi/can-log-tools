@@ -18,13 +18,13 @@ public class DbcField implements Comparable<DbcField> {
     private boolean isNiceName;
     private final boolean isSigned;
 
-    private FileNameProvider parentPacket;
+    private IDbcPacket parentPacket;
 
-    public void setParentPacket(FileNameProvider parentPacket) {
+    public void setParentPacket(IDbcPacket parentPacket) {
         this.parentPacket = parentPacket;
     }
 
-    public FileNameProvider getParentPacket() {
+    public IDbcPacket getParentPacket() {
         return parentPacket;
     }
 

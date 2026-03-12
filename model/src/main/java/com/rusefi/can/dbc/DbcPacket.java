@@ -25,7 +25,17 @@ public class DbcPacket {
         this.parent = parent;
         fields.addAll(signals);
         for (DbcField field : signals) {
-            field.setParentPacket(getParent());
+            field.setParentPacket(new IDbcPacket() {
+                @Override
+                public String getSource() {
+                    return source;
+                }
+
+                @Override
+                public String getFileName() {
+                    return DbcPacket.this.parent.getFileName();
+                }
+            });
 
             BitSet usedBits = new BitSet();
             field.getUsedBits(usedBits);
