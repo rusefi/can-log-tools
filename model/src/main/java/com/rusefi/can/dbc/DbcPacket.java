@@ -9,7 +9,7 @@ import java.util.Set;
  * Packet describes all the fields for specific can ID
  * also known as frame
  */
-public class DbcPacket {
+public class DbcPacket implements IDbcPacket {
     private final int id;
     private final String name;
     private final String source;
@@ -25,17 +25,7 @@ public class DbcPacket {
         this.parent = parent;
         fields.addAll(signals);
         for (DbcField field : signals) {
-            field.setParentPacket(new IDbcPacket() {
-                @Override
-                public String getSource() {
-                    return source;
-                }
-
-                @Override
-                public String getFileName() {
-                    return DbcPacket.this.parent.getFileName();
-                }
-            });
+            field.setParentPacket(this);
 
             BitSet usedBits = new BitSet();
             field.getUsedBits(usedBits);
@@ -179,5 +169,10 @@ public class DbcPacket {
         else {
             return sidList.contains(getId());
         }
+    }
+
+    @Override
+    public String getFileName() {
+        return DbcPacket.this.parent.getFileName();
     }
 }
