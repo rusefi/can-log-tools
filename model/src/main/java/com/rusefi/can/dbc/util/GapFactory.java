@@ -9,6 +9,8 @@ import java.util.List;
  * this class creates synthetic signals/fields for all unused bits in packet/frame
  */
 public class GapFactory {
+    public static final String GAP_BYTE = "_gap_byte_";
+    public static final String GAP_BITS = "_gap_bits_";
     private final int bitCount;
     private final boolean[] isUsed;
     private final List<DbcField> signals = new ArrayList<>();
@@ -36,9 +38,9 @@ public class GapFactory {
                 int length = endIndex - bitIndex;
                 String name;
                 if (length == 8) {
-                    name = packetName + "_gap_byte_" + bitIndex;
+                    name = packetName + GAP_BYTE + bitIndex;
                 } else {
-                    name = packetName + "_gap_bits_" + bitIndex + "_" + length;
+                    name = packetName + GAP_BITS + bitIndex + "_" + length;
                 }
                 signals.add(new DbcField(packetId, name, bitIndex, length, 1, 0, "", false, false));
 
