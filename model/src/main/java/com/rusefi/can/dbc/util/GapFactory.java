@@ -11,19 +11,18 @@ import java.util.List;
 public class GapFactory {
     public static final String GAP_BYTE = "_gap_byte_";
     public static final String GAP_BITS = "_gap_bits_";
-    private final int bitCount;
     private final boolean[] isUsed;
     private final List<DbcField> signals = new ArrayList<>();
     private final String packetName;
 
     public GapFactory(List<DbcField> signals, String packetName, int length) {
         this.packetName = packetName;
-        this.bitCount = 8 * length;
+        int bitCount = 8 * length;
         this.isUsed = new boolean[bitCount];
         this.signals.addAll(signals);
         java.util.BitSet usedBits = new java.util.BitSet(isUsed.length);
         for (DbcField dbcField : signals) {
-            dbcField.getUsedBits(usedBits, dbcField.getStartOffset(), dbcField.getLength(), dbcField.isBigEndian());
+            DbcField.getUsedBits(usedBits, dbcField.getStartOffset(), dbcField.getLength(), dbcField.isBigEndian());
         }
         for (int i = 0; i < isUsed.length; i++) {
             isUsed[i] = usedBits.get(i);
