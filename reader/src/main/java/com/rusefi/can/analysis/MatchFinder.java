@@ -74,10 +74,12 @@ public class MatchFinder {
 
             for (DbcField f1 : fields1) {
                 List<CANPacket> p1 = packets1ById.get(f1.getSid());
-                if (p1 == null || p1.isEmpty()) continue;
+                if (p1 == null || p1.isEmpty())
+                    continue;
 
                 double[] ts1 = getNormalizedTimeSeries(f1, p1, minTime1, duration1);
-                if (ts1 == null) continue;
+                if (ts1 == null)
+                    continue;
 
                 double distance = calculateDistance(ts1, ts2);
                 if (distance < minDistance) {
@@ -124,7 +126,8 @@ public class MatchFinder {
             count++;
         }
 
-        if (count == 0) return null;
+        if (count == 0)
+            return null;
         double mean = sum / count;
         double std = Math.sqrt(Math.max(0, sumSq / count - mean * mean));
 
