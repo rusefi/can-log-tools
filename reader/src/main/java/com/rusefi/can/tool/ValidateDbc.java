@@ -139,6 +139,10 @@ public class ValidateDbc {
         }
 
         String fileName = args[0];
+        validate(fileName);
+    }
+
+    public static void validate(String fileName) throws IOException {
         DbcFile dbc = DbcFileReader.readFromFile(fileName);
 
         List<String> errors = checkDbc(dbc);
