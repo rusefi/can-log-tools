@@ -1,6 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.analysis.matcher.PacketsHelper;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
@@ -13,38 +14,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MatchFinder {
-
-    static class PacketsHelper {
-
-
-        private final List<CANPacket> packets;
-        public Map<Integer, List<CANPacket>> packetsById;
-
-        public PacketsHelper(List<CANPacket> packets) {
-            this.packets = packets;
-            packetsById = packets.stream().collect(Collectors.groupingBy(CANPacket::getId));
-
-        }
-
-        private double getDuration() {
-            double minTime = getMinTime();
-            double maxTime = getMaxTime();
-            return maxTime - minTime;
-        }
-
-        private double getMaxTime() {
-            return packets.get(packets.size() - 1).getTimeStampMs();
-        }
-
-        private double getMinTime() {
-            return packets.get(0).getTimeStampMs();
-        }
-    }
-
-
     public static void main(String[] args) throws IOException {
         if (args.length < 4) {
             System.out.println("Usage: MatchFinder <dbc1> <trc1> <dbc2> <trc2>");
@@ -84,11 +55,7 @@ public class MatchFinder {
         List<Match> matches = new ArrayList<>();
 
         for (DbcField f2 : fields2) {
-            List<CANPacket> p2 = content2.packetsById.get(f2.getSid());
-            if (p2 == null || p2.isEmpty())
-                continue;
-
-            double[] ts2 = getNormalizedTimeSeries(f2, p2, content2.getMinTime(), content2.getDuration());
+            double[] ts2 = content2.getNormalizedTimeSeries(f2);
             if (ts2 == null)
                 continue;
 
@@ -96,15 +63,11 @@ public class MatchFinder {
             double minDistance = Double.MAX_VALUE;
 
             for (DbcField f1 : fields1) {
-                List<CANPacket> p1 = content1.packetsById.get(f1.getSid());
-                if (p1 == null || p1.isEmpty())
-                    continue;
-
-                double[] ts1 = getNormalizedTimeSeries(f1, p1, content1.getMinTime(), content1.getDuration());
+                double[] ts1 = content1.getNormalizedTimeSeries(f1);
                 if (ts1 == null)
                     continue;
 
-                double distance = calculateDistance(ts1, ts2);
+                double distance = PacketsHelper.calculateDistance(ts1, ts2);
                 if (distance < minDistance) {
                     minDistance = distance;
                     bestMatch = new Match(f2, f1, distance);
@@ -128,57 +91,11 @@ public class MatchFinder {
         return fields;
     }
 
-    private static final int SAMPLES = 1000;
-
-    private static double[] getNormalizedTimeSeries(DbcField field, List<CANPacket> packets, double minTime, double duration) {
-        double[] values = new double[SAMPLES];
-        int count = 0;
-        double sum = 0;
-        double sumSq = 0;
-
-        int packetIdx = 0;
-        for (int i = 0; i < SAMPLES; i++) {
-            double targetTime = minTime + (double) i / (SAMPLES - 1) * duration;
-            while (packetIdx < packets.size() - 1 && packets.get(packetIdx + 1).getTimeStampMs() < targetTime) {
-                packetIdx++;
-            }
-            double val = field.getValue(packets.get(packetIdx));
-            values[i] = val;
-            sum += val;
-            sumSq += val * val;
-            count++;
-        }
-
-        if (count == 0)
-            return null;
-        double mean = sum / count;
-        double std = Math.sqrt(Math.max(0, sumSq / count - mean * mean));
-
-        if (std < 1e-6) {
-            // Constant value - do not include in report
-            return null;
-        } else {
-            for (int i = 0; i < SAMPLES; i++) {
-                values[i] = (values[i] - mean) / std;
-            }
-        }
-
-        return values;
-    }
-
-    private static double calculateDistance(double[] ts1, double[] ts2) {
-        double dist = 0;
-        for (int i = 0; i < SAMPLES; i++) {
-            dist += Math.abs(ts1[i] - ts2[i]);
-        }
-        return dist / SAMPLES;
-    }
-
     private static void createHtmlReport(List<Match> matches,
                                          PacketsHelper content1, PacketsHelper content2,
                                          String outputDir) throws IOException {
         String imagesDir = "images";
-        
+
         matches.sort(Comparator.comparingDouble(m -> m.distance));
 
         try (PrintWriter pw = new PrintWriter(new FileWriter(outputDir + File.separator + "index.html"))) {
@@ -189,10 +106,10 @@ public class MatchFinder {
 
             for (Match match : matches) {
                 String imgName = DbcImageTool.escapeFileName(match.f2.getName() + "_vs_" + match.f1.getName()) + ".png";
-                
+
                 renderComparison(match, content1.packetsById.get(match.f1.getSid()), content1.getMinTime(), content1.getDuration(),
-                                       content2.packetsById.get(match.f2.getSid()), content2.getMinTime(), content2.getDuration(),
-                                       outputDir + File.separator + imagesDir, imgName);
+                        content2.packetsById.get(match.f2.getSid()), content2.getMinTime(), content2.getDuration(),
+                        outputDir + File.separator + imagesDir, imgName);
 
                 String name1 = match.f1.getName();
                 String name2 = match.f2.getName();
@@ -208,7 +125,7 @@ public class MatchFinder {
 
                         + "</td>");
                 pw.println("<td>" + name1 + "<br/>" + dbc1 + "<br/>" +
-                                getString(match.f1) +
+                        getString(match.f1) +
                         "</td>");
                 pw.println("<td>" + String.format("%.4f", match.distance) + "</td>");
                 pw.println("<td><img src='" + imagesDir + "/" + imgName + "' width='800'></td>");
@@ -228,15 +145,15 @@ public class MatchFinder {
     private static void renderComparison(Match match, List<CANPacket> p1, double minTime1, double duration1,
                                          List<CANPacket> p2, double minTime2, double duration2,
                                          String outputDir, String imgName) throws IOException {
-        
+
         // We want to render both signals on the same image.
         // DbcImageTool.renderComparison takes ONE field and two sets of packets. 
         // But here we have TWO different fields.
-        
+
         // I'll need a custom render function or adapt DbcImageTool.
-        
+
         // Let's implement a simple one here.
-        
+
         int width = DbcImageTool.WIDTH;
         int height = DbcImageTool.HEIGHT;
         java.awt.image.BufferedImage image = new java.awt.image.BufferedImage(width, height, java.awt.image.BufferedImage.TYPE_INT_RGB);
@@ -261,25 +178,25 @@ public class MatchFinder {
             minVal = Math.min(minVal, v);
             maxVal = Math.max(maxVal, v);
         }
-        
+
         double range = maxVal - minVal;
         if (range == 0) range = 1;
 
         g.setColor(color);
         int prevX = -1;
         int prevY = -1;
-        
+
         for (CANPacket p : packets) {
             int x = (int) ((p.getTimeStampMs() - minTime) / duration * (DbcImageTool.WIDTH - 1));
             int y = DbcImageTool.HEIGHT - 1 - (int) ((field.getValue(p) - minVal) / range * (DbcImageTool.HEIGHT - 1));
-            
+
             if (prevX != -1) {
                 g.drawLine(prevX, prevY, x, y);
             }
             prevX = x;
             prevY = y;
         }
-        
+
         g.drawString(label + " (Min: " + String.format("%.2f", minVal) + " Max: " + String.format("%.2f", maxVal) + ")", 10, 20 + labelYOffset);
     }
 
