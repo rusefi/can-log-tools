@@ -32,7 +32,7 @@ public class PacketRatio {
             Integer sid = e.getKey();
             DbcPacket dbcPacket = dbc.getPacket(sid);
             String key = dbcPacket == null ? Integer.toString(sid) : dbcPacket.getName();
-            w.write(key + " " + ratio + " " + countOfThisSid + "\n");
+            w.write(key + " ratio=" + ratio + " count=" + countOfThisSid + "\n");
         }
         w.close();
     }
