@@ -130,7 +130,7 @@ public class SyncTrcFiles {
         }
     }
 
-    private static long readStartTime(String path) throws IOException, ParseException {
+    public static long readStartTime(String path) throws IOException, ParseException {
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = reader.readLine()) != null) {
