@@ -197,7 +197,7 @@ public class ByteRateOfChangeReports {
 
         AlwaysSameScanner.run(reportDestinationFolder, inputFolderName, dbc);
 
-        System.out.println("Processing " + reports.size() + " report(s)");
+        System.out.println("ByteRateOfChangeReports: Processing " + reports.size() + " report(s)");
         compareEachReportAgainstAllOthers(dbc, reportDestinationFolder, reports, context);
     }
 
