@@ -9,6 +9,7 @@ public class DbcField implements Comparable<DbcField> {
     private final int packetId;
     private String name;
     private String shortName;
+    private final int dbcStartOffset;
     private final int startOffset;
     private final int length;
     private final double mult;
@@ -28,11 +29,12 @@ public class DbcField implements Comparable<DbcField> {
         return parentPacket;
     }
 
-    public DbcField(int packetId, String name, int startOffset, int length, double mult, double offset, String category, boolean isBigEndian, boolean isSigned) {
+    public DbcField(int packetId, String name, int dbcStartOffset, int length, double mult, double offset, String category, boolean isBigEndian, boolean isSigned) {
         this.packetId = packetId;
         this.name = name;
         shortName = name;
-        this.startOffset = crazyMotorolaMath(startOffset, length, isBigEndian);
+        this.dbcStartOffset = dbcStartOffset;
+        this.startOffset = crazyMotorolaMath(dbcStartOffset, length, isBigEndian);
         this.length = length;
         this.mult = mult;
         this.offset = offset;
@@ -74,10 +76,14 @@ public class DbcField implements Comparable<DbcField> {
     }
 
     // returns the least significant bit
-    // for intel - right bit in the first byte
-    // for motorola - right bit in the last (!!!) byte
+    // for Intel - right bit in the first byte
+    // for Motorola - right bit in the last (!!!) byte
     public int getStartOffset() {
         return startOffset;
+    }
+
+    public int getDbcStartOffset() {
+        return dbcStartOffset;
     }
 
     public int getLength() {
