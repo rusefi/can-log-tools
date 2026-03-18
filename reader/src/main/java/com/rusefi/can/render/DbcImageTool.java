@@ -246,7 +246,7 @@ public class DbcImageTool {
             writer.println("<body>");
             writer.println("<div id='yValue' class='y-label'></div>");
             writer.println("<h1>Comparison: <span style='color: green'>" + traceName1 + "</span> vs <span style='color: red'>" + traceName2 + "</span></h1>");
-            writer.print("<h2>Count=" + entries.size() + " (");
+            writer.print("<h2>Count=" + entries.size() + "<br>");
             Map<Integer, Long> countPerSid = entries.stream()
                     .collect(Collectors.groupingBy(entry -> entry.getField().getSid(), TreeMap::new, Collectors.counting()));
             writer.print(countPerSid.entrySet().stream()
@@ -255,8 +255,8 @@ public class DbcImageTool {
                         String name = packet != null ? packet.getName() : "0x" + Integer.toHexString(entry.getKey());
                         return name + ": " + entry.getValue();
                     })
-                    .collect(Collectors.joining(", ")));
-            writer.println(")</h2>");
+                    .collect(Collectors.joining("<br>")));
+            writer.println("</h2>");
             writer.println("<table border='1'>");
             writer.println("<tr><th>Field Info</th><th>Statistics</th><th>Visualization</th></tr>");
             for (ComparisonEntry entry : entries) {
