@@ -246,6 +246,7 @@ public class DbcImageTool {
             writer.println("<body>");
             writer.println("<div id='yValue' class='y-label'></div>");
             writer.println("<h1>Comparison: <span style='color: green'>" + traceName1 + "</span> vs <span style='color: red'>" + traceName2 + "</span></h1>");
+            writer.println("<h3>" + dbc.getFileName() + "</h3>");
             writer.print("<h2>Count=" + entries.size() + "<br>");
             Map<Integer, Long> countPerSid = entries.stream()
                     .collect(Collectors.groupingBy(entry -> entry.getField().getSid(), TreeMap::new, Collectors.counting()));
