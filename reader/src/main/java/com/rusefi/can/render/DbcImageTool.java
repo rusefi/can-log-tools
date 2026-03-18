@@ -246,6 +246,7 @@ public class DbcImageTool {
             writer.println("<body>");
             writer.println("<div id='yValue' class='y-label'></div>");
             writer.println("<h1>Comparison: <span style='color: green'>" + traceName1 + "</span> vs <span style='color: red'>" + traceName2 + "</span></h1>");
+            writer.println("<h2>Count=" + entries.size() + "</span></h2>");
             writer.println("<table border='1'>");
             writer.println("<tr><th>Field Info</th><th>Statistics</th><th>Visualization</th></tr>");
             for (ComparisonEntry entry : entries) {
