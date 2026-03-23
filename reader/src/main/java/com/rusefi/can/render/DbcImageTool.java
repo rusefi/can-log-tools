@@ -239,6 +239,7 @@ public class DbcImageTool {
         try (PrintWriter writer = new PrintWriter(new FileWriter(htmlFile))) {
             writer.println("<html>");
             writer.println("<head>");
+            writer.println("<title>Comparison: " + traceName1 + " vs " + traceName2 + "</title>");
             writer.println("<style>");
             writer.println(".y-label { position: fixed; bottom: 10px; right: 10px; font-weight: bold; color: blue; background: rgba(255,255,255,0.7); padding: 5px; border-radius: 5px; pointer-events: none; }");
             writer.println("</style>");
@@ -265,9 +266,13 @@ public class DbcImageTool {
                 DbcPacket packet = dbc.getPacket(field.getSid());
                 String packetName = packet != null ? packet.getName() : "Unknown";
 
-                writer.printf("<tr><td>%s<br>%s</td><td><span style='color: green'>Mean 1: %.2f<br>StdDev 1: %.2f</span><br><span style='color: red'>Mean 2: %.2f<br>StdDev 2: %.2f</span></td><td><img src='images/%s' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
+                writer.printf("<tr><td>%s<br>%s</td><td>" +
+                                "<span style='color: green'>Mean 1: %.2f<br>StdDev 1: %.2f</span><br><span style='color: red'>Mean 2: %.2f<br>StdDev 2: %.2f<br>Difference %.2f</span>" +
+                                "</td><td><img src='images/%s' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
                         packetName, field.getName(),
                         entry.getMean1(), entry.getStdDev1(), entry.getMean2(), entry.getStdDev2(),
+                        entry.getDifference(),
+
                         entry.getImageName(), entry.getMinValue(), entry.getMaxValue());
             }
             writer.println("</table>");
