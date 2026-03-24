@@ -39,6 +39,7 @@ CAN log file utilities to help me work with https://github.com/brent-stone/CAN_R
 
 
 * turning ignition on (wake up)
+* pull some fuses, record without fuses to identify packet sources
 * OEM ECU remove, turning ignition on (wake up)
 * turning ignition off (shutdown)
 * from ignition ON cranking and idling
