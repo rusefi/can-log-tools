@@ -1,12 +1,26 @@
 package com.rusefi.io.can;
 
 
+import org.jetbrains.annotations.NotNull;
 import peak.can.basic.*;
 
 import static peak.can.basic.TPCANMessageType.PCAN_MESSAGE_STANDARD;
 
 public class PCanHelper {
-    public static final TPCANHandle CHANNEL = TPCANHandle.PCAN_USBBUS1;
+    public static final TPCANHandle CHANNEL = getTpcanHandle();
+
+    private static @NotNull TPCANHandle getTpcanHandle() {
+        int index = Integer.parseInt(System.getProperty("PCAN_INDEX", "0"));
+        if (index == 1) {
+            System.out.println("Going with 2nd PCAN");
+            return TPCANHandle.PCAN_USBBUS2;
+        }
+        if (index == 2) {
+            System.out.println("Going with 3rd PCAN");
+            return TPCANHandle.PCAN_USBBUS3;
+        }
+        return TPCANHandle.PCAN_USBBUS1;
+    }
 
     //    @NotNull
     public static PCANBasic createPCAN() {
