@@ -16,7 +16,10 @@ import java.util.Objects;
 public class SenderSandbox {
     public static void main(String[] args) throws Exception {
 //        String fileName = args.length > 0 ? args[0] : getFullResourceFileName("resources/atlas.trc");
-        String fileName = args.length > 0 ? args[0] : getFullResourceFileName("passat-idling.trc");
+        if (args.length == 0) {
+            throw new IllegalArgumentException("No file name provided");
+        }
+        String fileName = args[0];
 
         List<CANPacket> packets = CANLineReader.getReader().readFile(fileName);
         System.out.println("Got " + packets.size() + " packet(s)");
