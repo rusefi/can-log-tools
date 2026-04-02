@@ -73,7 +73,7 @@ public class DbcImageTool {
             minMaxMap.put(field, minMax);
         }
 
-        createIndexHtml(allFields, minMaxMap, dbc);
+        createIndexHtml(allFields, minMaxMap, dbc, minTime, duration);
     }
 
     public static void renderField(DbcField field, List<CANPacket> packets, double minTime, double duration, String outputDir) throws IOException {
@@ -188,8 +188,10 @@ public class DbcImageTool {
         public final double mean2;
         public final double stdDev2;
         public final double difference;
+        public final double minTime;
+        public final double duration;
 
-        public ComparisonResult(double minValue, double maxValue, double mean1, double stdDev1, double mean2, double stdDev2, double difference) {
+        public ComparisonResult(double minValue, double maxValue, double mean1, double stdDev1, double mean2, double stdDev2, double difference, double minTime, double duration) {
             this.minValue = minValue;
             this.maxValue = maxValue;
             this.mean1 = mean1;
@@ -197,6 +199,8 @@ public class DbcImageTool {
             this.mean2 = mean2;
             this.stdDev2 = stdDev2;
             this.difference = difference;
+            this.minTime = minTime;
+            this.duration = duration;
         }
     }
 
@@ -231,7 +235,7 @@ public class DbcImageTool {
         }
 
         saveImage(image, outputDir, fileName);
-        return new ComparisonResult(minValue, maxValue, tr1.mean, tr1.stdDev, tr2.mean, tr2.stdDev, difference);
+        return new ComparisonResult(minValue, maxValue, tr1.mean, tr1.stdDev, tr2.mean, tr2.stdDev, difference, minTime1, duration1);
     }
 
     public static void createComparisonHtml(List<ComparisonEntry> entries, String outputDir, String traceName1, String traceName2, String outputFileName, DbcFile dbc) throws IOException {
@@ -268,23 +272,27 @@ public class DbcImageTool {
 
                 writer.printf("<tr><td>%s<br>%s</td><td>" +
                                 "<span style='color: green'>Mean 1: %.2f<br>StdDev 1: %.2f</span><br><span style='color: red'>Mean 2: %.2f<br>StdDev 2: %.2f<br>Difference %.2f</span>" +
-                                "</td><td><img src='images/%s' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
+                                "</td><td><img src='images/%s' width='750' data-min='%.2f' data-max='%.2f' data-mintime='%.2f' data-duration='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
                         packetName, field.getName(),
                         entry.getMean1(), entry.getStdDev1(), entry.getMean2(), entry.getStdDev2(),
                         entry.getDifference(),
 
-                        entry.getImageName(), entry.getMinValue(), entry.getMaxValue());
+                        entry.getImageName(), entry.getMinValue(), entry.getMaxValue(), entry.getMinTime(), entry.getDuration());
             }
             writer.println("</table>");
             writer.println("<script>");
             writer.println("function updateY(event, img) {");
             writer.println("  var rect = img.getBoundingClientRect();");
+            writer.println("  var x = event.clientX - rect.left;");
             writer.println("  var y = event.clientY - rect.top;");
             writer.println("  var min = parseFloat(img.getAttribute('data-min'));");
             writer.println("  var max = parseFloat(img.getAttribute('data-max'));");
+            writer.println("  var minTime = parseFloat(img.getAttribute('data-mintime')) || 0;");
+            writer.println("  var duration = parseFloat(img.getAttribute('data-duration')) || 0;");
             writer.println("  var val = max - (y / rect.height) * (max - min);");
+            writer.println("  var time = minTime + (x / rect.width) * duration;");
             writer.println("  var label = document.getElementById('yValue');");
-            writer.println("  label.innerText = 'Value: ' + val.toFixed(2);");
+            writer.println("  label.innerText = 'Time: ' + (time / 1000).toFixed(3) + 's Value: ' + val.toFixed(2);");
             writer.println("  label.style.display = 'block';");
             writer.println("}");
             writer.println("function hideY() {");
@@ -341,9 +349,17 @@ public class DbcImageTool {
         public double getStdDev2() {
             return result.stdDev2;
         }
+
+        public double getMinTime() {
+            return result.minTime;
+        }
+
+        public double getDuration() {
+            return result.duration;
+        }
     }
 
-    private static void createIndexHtml(List<DbcField> fields, Map<DbcField, double[]> minMaxMap, DbcFile dbc) throws IOException {
+    private static void createIndexHtml(List<DbcField> fields, Map<DbcField, double[]> minMaxMap, DbcFile dbc, double minTime, double duration) throws IOException {
         File htmlFile = new File("index.html");
         try (PrintWriter writer = new PrintWriter(new FileWriter(htmlFile))) {
             writer.println("<html>");
@@ -365,19 +381,23 @@ public class DbcImageTool {
                 DbcPacket packet = dbc.getPacket(field.getSid());
                 String packetName = packet != null ? packet.getName() : "Unknown";
 
-                writer.printf("<tr><td>%s</td><td>%s</td><td><img src='processed/images/%s.png' width='750' data-min='%.2f' data-max='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
-                        packetName, field.getName(), field.getName(), min, max);
+                writer.printf("<tr><td>%s</td><td>%s</td><td><img src='processed/images/%s.png' width='750' data-min='%.2f' data-max='%.2f' data-mintime='%.2f' data-duration='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
+                        packetName, field.getName(), field.getName(), min, max, minTime, duration);
             }
             writer.println("</table>");
             writer.println("<script>");
             writer.println("function updateY(event, img) {");
             writer.println("  var rect = img.getBoundingClientRect();");
+            writer.println("  var x = event.clientX - rect.left;");
             writer.println("  var y = event.clientY - rect.top;");
             writer.println("  var min = parseFloat(img.getAttribute('data-min'));");
             writer.println("  var max = parseFloat(img.getAttribute('data-max'));");
+            writer.println("  var minTime = parseFloat(img.getAttribute('data-mintime')) || 0;");
+            writer.println("  var duration = parseFloat(img.getAttribute('data-duration')) || 0;");
             writer.println("  var val = max - (y / rect.height) * (max - min);");
+            writer.println("  var time = minTime + (x / rect.width) * duration;");
             writer.println("  var label = document.getElementById('yValue');");
-            writer.println("  label.innerText = 'Value: ' + val.toFixed(2);");
+            writer.println("  label.innerText = 'Time: ' + (time / 1000).toFixed(3) + 's Value: ' + val.toFixed(2);");
             writer.println("  label.style.display = 'block';");
             writer.println("}");
             writer.println("function hideY() {");
