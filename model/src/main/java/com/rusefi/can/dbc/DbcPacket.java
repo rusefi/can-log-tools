@@ -1,5 +1,7 @@
 package com.rusefi.can.dbc;
 
+import com.rusefi.can.CANPacket;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -166,6 +168,12 @@ public class DbcPacket implements IDbcPacket {
         }
         else {
             return sidList.contains(getId());
+        }
+    }
+
+    public void assertLength(CANPacket packet) {
+        if (getLength() != packet.getData().length) {
+            throw new IllegalArgumentException("Length mismatch for " + getName() + " (0x" + Integer.toHexString(packet.getId()) + "): DBC says " + getLength() + " but trace has " + packet.getData().length);
         }
     }
 
