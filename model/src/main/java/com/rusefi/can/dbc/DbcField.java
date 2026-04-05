@@ -1,6 +1,7 @@
 package com.rusefi.can.dbc;
 
 import com.rusefi.can.CANPacket;
+import com.rusefi.can.dbc.util.GapFactory;
 
 import java.util.BitSet;
 
@@ -71,6 +72,10 @@ public class DbcField implements Comparable<DbcField> {
 
     public boolean isNiceName() {
         return isNiceName;
+    }
+
+    public boolean isGap() {
+        return name.contains(GapFactory.GAP_BITS) || name.contains(GapFactory.GAP_BYTE);
     }
 
     public String getName() {
