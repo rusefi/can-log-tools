@@ -27,8 +27,7 @@ public class DbcPacket implements IDbcPacket {
         for (DbcField field : signals) {
             field.setParentPacket(this);
 
-            BitSet usedBits = new BitSet();
-            field.getUsedBits(usedBits);
+            BitSet usedBits = field.getUsedBits();
             int lastSetBit = usedBits.previousSetBit(Integer.MAX_VALUE);
             int bitLimit = 8 * length;
             if (lastSetBit > bitLimit) {
@@ -150,8 +149,7 @@ public class DbcPacket implements IDbcPacket {
 
     public DbcField findByBitIndex(int bitIndex) {
         for (DbcField field : fields) {
-            BitSet usedBits = new BitSet();
-            field.getUsedBits(usedBits);
+            BitSet usedBits = field.getUsedBits();
             if (usedBits.get(bitIndex))
                 return field;
         }

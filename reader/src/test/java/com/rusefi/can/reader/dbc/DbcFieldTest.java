@@ -43,8 +43,8 @@ public class DbcFieldTest {
         DbcField signedField = create(true, true);
         DbcField unsignedField = create(true, false);
 
-        CANPacket pkt1 = new CANPacket(0, -1, new byte[] {0x00, (byte)0x7F, (byte)0xFF});
-        CANPacket pkt2 = new CANPacket(0, -1, new byte[] {0x00, (byte)0xFF, (byte)0xFF});
+        CANPacket pkt1 = new CANPacket(0, -1, new byte[]{0x00, (byte) 0x7F, (byte) 0xFF});
+        CANPacket pkt2 = new CANPacket(0, -1, new byte[]{0x00, (byte) 0xFF, (byte) 0xFF});
 
         assertEquals(32767.0, signedField.getValue(pkt1), 0.001);
         assertEquals(-1.0, signedField.getValue(pkt2), 0.001);
@@ -69,26 +69,30 @@ public class DbcFieldTest {
     }
 
     @Test
-    public void testUsedBitsIntel() {
+    public void testUsedBitsIntel1() {
         DbcField field1 = makeField(4, 10, false);
-        BitSet usedBits = new BitSet(8*8);
-        field1.getUsedBits(usedBits);
+        BitSet usedBits = field1.getUsedBits();
         // used 4..7, 8..13
         assertEquals(10, usedBits.cardinality());
         assertEquals(4, usedBits.nextSetBit(0));
         assertEquals(14, usedBits.nextClearBit(4));
+    }
+
+    @Test
+    public void testUsedBitsIntel2() {
 
         DbcField field2 = makeField(16, 32, false);
-        usedBits.clear();
-        field2.getUsedBits(usedBits);
+        BitSet usedBits = field2.getUsedBits();
         // used 16..47
         assertEquals(32, usedBits.cardinality());
         assertEquals(16, usedBits.nextSetBit(0));
         assertEquals(48, usedBits.nextClearBit(16));
+    }
 
+    @Test
+    public void testUsedBitsIntel3() {
         DbcField field3 = makeField(18, 32, false);
-        usedBits.clear();
-        field3.getUsedBits(usedBits);
+        BitSet usedBits = field3.getUsedBits();
         // used 18..49
         assertEquals(32, usedBits.cardinality());
         assertEquals(18, usedBits.nextSetBit(0));
@@ -97,28 +101,31 @@ public class DbcFieldTest {
     }
 
     @Test
-    public void testUsedBitsMotorola() {
+    public void testUsedBitsMotorola1() {
         DbcField field1 = makeField(3, 10, true);
-        BitSet usedBits = new BitSet(8*8);
-        field1.getUsedBits(usedBits);
+        BitSet usedBits = field1.getUsedBits();
         // byte 0: _ _ _ _ x x x x  bits 3..0
         // byte 1: x x x x x x _ _  bits 15..10
         assertEquals(10, usedBits.cardinality());
         assertEquals(4, usedBits.nextClearBit(0));
         assertEquals(10, usedBits.nextSetBit(4));
         assertEquals(16, usedBits.nextClearBit(10));
+    }
 
+    @Test
+    public void testUsedBitsMotorola2() {
         DbcField field2 = makeField(23, 32, true);
-        usedBits.clear();
-        field2.getUsedBits(usedBits);
+        BitSet usedBits = field2.getUsedBits();
         // used 16..47 (bytes 2 3 4 5)
         assertEquals(32, usedBits.cardinality());
         assertEquals(16, usedBits.nextSetBit(0));
         assertEquals(48, usedBits.nextClearBit(16));
+    }
 
+    @Test
+    public void testUsedBitsMotorola3() {
         DbcField field3 = makeField(18, 32, true);
-        usedBits.clear();
-        field3.getUsedBits(usedBits);
+        BitSet usedBits = field3.getUsedBits();
         // byte 2: _ _ _ _ _ x x x  bits 18..16
         // byte 3: x x x x x x x x  bits 31..24
         // byte 4: x x x x x x x x  bits 39..32

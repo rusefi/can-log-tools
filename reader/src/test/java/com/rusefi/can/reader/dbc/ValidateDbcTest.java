@@ -129,8 +129,7 @@ public class ValidateDbcTest {
         DbcPacket packet = new DbcPacket(193, "PPEI_DrvnWheelRotationalSt_193_0C1", "src", 8,
                 Arrays.asList(shouldFitWithin8Bytes), null);
 
-        BitSet usedBits = new BitSet();
-        shouldFitWithin8Bytes.getUsedBits(usedBits);
+        BitSet usedBits = shouldFitWithin8Bytes.getUsedBits();
         assertEquals(64, usedBits.size());
         for (int i = 0; i < 48; i++) assertFalse(usedBits.get(i));
         for (int i = 48; i < 64; i++) assertTrue(usedBits.get(i));

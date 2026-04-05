@@ -2,6 +2,8 @@ package com.rusefi.can.dbc;
 
 import com.rusefi.can.CANPacket;
 
+import java.util.BitSet;
+
 /**
  * also known as 'signal'
  */
@@ -181,11 +183,13 @@ public class DbcField implements Comparable<DbcField> {
         return getBitRange(packet.getData(), startOffset, length, isBigEndian);
     }
 
-    public void getUsedBits(java.util.BitSet usedBits) {
+    public BitSet getUsedBits() {
+        BitSet usedBits = new BitSet();
         getUsedBits(usedBits, startOffset, length, isBigEndian);
+        return usedBits;
     }
 
-    public static void getUsedBits(java.util.BitSet usedBits, int bitIndex, int bitWidth, boolean isBigEndian) {
+    public static void getUsedBits(BitSet usedBits, int bitIndex, int bitWidth, boolean isBigEndian) {
         if (bitIndex < 0)
             throw new IllegalArgumentException("Huh? " + bitIndex + " " + bitWidth);
 
