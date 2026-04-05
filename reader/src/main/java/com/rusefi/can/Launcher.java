@@ -15,6 +15,7 @@ public class Launcher {
     public static final String DBC_FILENAME_PROPERTY = "-dbc";
     public static String dbcFileName;
     private static final String DBC_DUP_FIELD_NAMES = "-allow-dup-names";
+    public static boolean skipChecksumFields = false;
 
     // lower 13 bits in GMLAN IDs is a sender address. DBC may contain the only zeros in this field
     private static final String GMLAN_IGNORE_SENDER = "-gmlan-ignore-sender";
@@ -52,6 +53,9 @@ public class Launcher {
                 case DBC_FILENAME_PROPERTY:
                     i += 1;
                     dbcFileName = args[i];
+                    break;
+                case "-skip-checksum-fields":
+                    skipChecksumFields = true;
                     break;
                 case GMLAN_IGNORE_SENDER:
                     J1939Logic.gmlanIgnoreSender = true;

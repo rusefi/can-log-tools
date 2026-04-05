@@ -2,6 +2,7 @@ package com.rusefi.mlv;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.CANPacketUtil;
+import com.rusefi.can.Launcher;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.DbcPacket;
@@ -20,7 +21,7 @@ public class LoggingStrategy {
     private List<BinaryLogEntry> list;
 
     public interface LoggingFilter {
-        boolean accept(DbcPacket packet);
+        boolean accept(DbcPacket packet, DbcField field);
     }
 
     public List<BinaryLogEntry> getFieldNameEntries(DbcFile dbc, LoggingFilter filter) {
@@ -34,9 +35,9 @@ public class LoggingStrategy {
                                                            LoggingFilter filter) {
         List<BinaryLogEntry> entries = new ArrayList<>();
         for (DbcPacket packet : dbc.values()) {
-            if (!filter.accept(packet))
-                continue;
             for (DbcField field : packet.getFields()) {
+                if (!filter.accept(packet, field))
+                    continue;
                 if (logOnlyTranslatedFields && !field.isNiceName())
                     continue;
                 entries.add(BinaryLogEntry.createFloatLogEntry(field.getName(), field.getCategory()));
@@ -47,8 +48,12 @@ public class LoggingStrategy {
 
     public void writeLogByDbc(DbcFile dbc, List<CANPacket> packets, String outputFileName) {
         Set<Integer> allIds = CANPacketUtil.getAllIds(packets);
-        // we only log DBC frames if at least one packet is present in the trace
-        LoggingFilter filter = packet -> packet.isInLog(allIds);
+        LoggingFilter filter = (packet, field) -> {
+            if (Launcher.skipChecksumFields && field.getName().contains("CHECKSUM"))
+                return false;
+            // we only log DBC frames if at least one packet is present in the trace
+            return packet.isInLog(allIds);
+        };
         List<BinaryLogEntry> entries = getFieldNameEntries(dbc, filter);
 
         System.out.println(new Date() + " writeLog... " + outputFileName);

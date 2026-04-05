@@ -82,7 +82,7 @@ public class J1939modeTest {
 
         Set<Integer> allIds = CANPacketUtil.getAllIds(packets);
         // we only log DBC frames if at least one packet is present in the trace
-        LoggingStrategy.LoggingFilter filter = packet -> packet.isInLog(allIds);
+        LoggingStrategy.LoggingFilter filter = (packet, field) -> packet.isInLog(allIds);
         LoggingStrategy loggingStrategy = new LoggingStrategy();
         List<BinaryLogEntry> entries = loggingStrategy.getFieldNameEntries(dbc, filter);
 
