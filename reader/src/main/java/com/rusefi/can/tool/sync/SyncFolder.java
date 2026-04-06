@@ -17,6 +17,7 @@ public class SyncFolder {
         String folderPath = args[0];
         String[] suffixes = new String[args.length - 1];
         System.arraycopy(args, 1, suffixes, 0, suffixes.length);
+        System.out.println("SyncFolder " + folderPath + " " + Arrays.toString(suffixes));
 
         runJob(folderPath, suffixes);
     }
@@ -30,6 +31,7 @@ public class SyncFolder {
 
         File[] files = folder.listFiles();
         if (files == null) {
+            System.out.println("No files: " + folderPath);
             return;
         }
 
@@ -39,14 +41,17 @@ public class SyncFolder {
         }
 
         for (File file : files) {
-            if (!file.isFile()) continue;
+            if (!file.isFile())
+                continue;
 
             String name = file.getName();
             for (int i = 0; i < suffixes.length; i++) {
                 String suffix = suffixes[i];
+//                System.out.println(name + ": Checking if " + suffix);
                 if (name.endsWith(suffix)) {
                     String prefix = name.substring(0, name.length() - suffix.length());
                     suffixFiles[i].put(prefix, file);
+//                    System.out.println("Found " + prefix);
                     break;
                 }
             }
@@ -54,16 +59,17 @@ public class SyncFolder {
 
         for (Map.Entry<String, File> entry : suffixFiles[0].entrySet()) {
             String prefix = entry.getKey();
-            
+
             boolean allFound = true;
             String[] paths = new String[suffixes.length];
             paths[0] = entry.getValue().getAbsolutePath();
-            
+
             for (int i = 1; i < suffixes.length; i++) {
                 if (suffixFiles[i].containsKey(prefix)) {
                     paths[i] = suffixFiles[i].get(prefix).getAbsolutePath();
                 } else {
                     allFound = false;
+                    System.out.println("Not all found");
                     break;
                 }
             }
