@@ -51,10 +51,13 @@ public class SyncFolder {
                 if (name.endsWith(suffix)) {
                     String prefix = name.substring(0, name.length() - suffix.length());
                     suffixFiles[i].put(prefix, file);
-//                    System.out.println("Found " + prefix);
+                    System.out.println("Found " + prefix);
                     break;
                 }
             }
+        }
+        for (String suffix : suffixes) {
+            System.out.println("For " + suffix + ": " + suffixFiles[0].keySet());
         }
 
         for (Map.Entry<String, File> entry : suffixFiles[0].entrySet()) {
@@ -69,7 +72,7 @@ public class SyncFolder {
                     paths[i] = suffixFiles[i].get(prefix).getAbsolutePath();
                 } else {
                     allFound = false;
-                    System.out.println("Not all found");
+                    System.out.println("Not all found: " + suffixes[i]);
                     break;
                 }
             }
