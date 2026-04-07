@@ -29,8 +29,7 @@ public class PerSidDump {
 
         // O(n*M) is not so bad
         for (int sid : sids) {
-            DbcPacket packet = dbc.getPacket(sid);
-            String suffix = packet == null ? "" : ("_" + packet.getName());
+            String suffix = "_" + DbcFile.getPacketName(dbc, sid);
 
             String outputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid, "_") + suffix + ".txt";
             PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
@@ -54,9 +53,10 @@ public class PerSidDump {
             PrintWriter middle = new PrintWriter(new FileOutputStream(middleOutputFileName));
 
             String decAndHex = middlePacket.getId() + "_" + Integer.toHexString(middlePacket.getId());
-            String payloadVariableName = "payload" + (packet == null ? decAndHex : packet.getName());
-            String variableName = packet == null ? "CAN_" + decAndHex : packet.getName();
-            String methodNameSuffix = packet == null ? ("Can" + decAndHex) : packet.getName();
+            String packetName = DbcFile.getPacketName(dbc, sid);
+            String payloadVariableName = "payload" + packetName;
+            String variableName = packetName;
+            String methodNameSuffix = packetName;
             String rxMethodName = "on" + methodNameSuffix;
             boolean isExtId = sid > 0x7ff;
 
@@ -97,9 +97,9 @@ public class PerSidDump {
             middle.println("static uint8_t " + payloadVariableName + "[] = {" + arrayToCode(middlePacket) + "};");
             middle.println("static int " + counterVariable + ";");
 
-            if (packet != null) {
+            if (packetName != null) {
                 String extIdSuffix = isExtId ? ", 0, true" : "";
-                middle.println("\tCanTxMessage msg(CanCategory::NBC, " + packet.getName() + extIdSuffix + ");");
+                middle.println("\tCanTxMessage msg(CanCategory::NBC, " + packetName + extIdSuffix + ");");
                 middle.println("\tmsg.setArray(" + payloadVariableName + ");");
             }
             middle.println("}");

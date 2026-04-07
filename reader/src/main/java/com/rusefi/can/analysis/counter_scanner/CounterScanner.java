@@ -77,8 +77,7 @@ public class CounterScanner {
         Map<String, Map<Integer, Integer>> report = new TreeMap<>();
         for (Map.Entry<Integer, Map<Integer, Integer>> e : map.entrySet()) {
             Integer sid = e.getKey();
-            DbcPacket packet = dbc.getPacket(sid);
-            String key = packet == null ? Integer.toString(sid) : packet.getName();
+            String key = DbcFile.getPacketName(dbc, sid);
             report.put(key, e.getValue());
         }
         yaml.dump(report, new FileWriter(yamlCountersReportFileName));

@@ -257,8 +257,7 @@ public class DbcImageTool {
                     .collect(Collectors.groupingBy(entry -> entry.getField().getSid(), TreeMap::new, Collectors.counting()));
             writer.print(countPerSid.entrySet().stream()
                     .map(entry -> {
-                        DbcPacket packet = dbc.getPacket(entry.getKey());
-                        String name = packet != null ? packet.getName() : "0x" + Integer.toHexString(entry.getKey());
+                        String name = DbcFile.getPacketName(dbc, entry.getKey());
                         return name + ": " + entry.getValue();
                     })
                     .collect(Collectors.joining("<br>")));
@@ -267,8 +266,7 @@ public class DbcImageTool {
             writer.println("<tr><th>Field Info</th><th>Statistics</th><th>Visualization</th></tr>");
             for (ComparisonEntry entry : entries) {
                 DbcField field = entry.getField();
-                DbcPacket packet = dbc.getPacket(field.getSid());
-                String packetName = packet != null ? packet.getName() : "Unknown";
+                String packetName = DbcFile.getPacketName(dbc, field.getSid());
 
                 writer.printf("<tr><td>%s<br>%s</td><td>" +
                                 "<span style='color: green'>Mean 1: %.2f<br>StdDev 1: %.2f</span><br><span style='color: red'>Mean 2: %.2f<br>StdDev 2: %.2f<br>Difference %.2f</span>" +
@@ -378,8 +376,7 @@ public class DbcImageTool {
                 double min = minMax != null ? minMax[0] : 0;
                 double max = minMax != null ? minMax[1] : 0;
 
-                DbcPacket packet = dbc.getPacket(field.getSid());
-                String packetName = packet != null ? packet.getName() : "Unknown";
+                String packetName = DbcFile.getPacketName(dbc, field.getSid());
 
                 writer.printf("<tr><td>%s</td><td>%s</td><td><img src='processed/images/%s.png' width='750' data-min='%.2f' data-max='%.2f' data-mintime='%.2f' data-duration='%.2f' onmousemove='updateY(event, this)' onmouseout='hideY()'></td></tr>%n",
                         packetName, field.getName(), field.getName(), min, max, minTime, duration);

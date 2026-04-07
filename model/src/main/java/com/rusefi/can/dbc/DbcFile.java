@@ -26,6 +26,11 @@ public class DbcFile implements FileNameProvider {
         packets.put(packet.getId(), packet);
     }
 
+    public static String getPacketName(DbcFile dbc, int sid) {
+        DbcPacket dbcPacket = dbc.findPacket(sid);
+        return dbcPacket == null ? Integer.toString(sid) : dbcPacket.getName();
+    }
+
     public com.rusefi.can.dbc.DbcPacket findPacket(int canId) {
         return packets.get(com.rusefi.can.dbc.J1939Logic.trimSid(canId));
     }

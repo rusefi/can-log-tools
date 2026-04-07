@@ -39,8 +39,7 @@ public class PacketFrequency {
                 double duration = last - first;
                 double frequencyMs = duration / (timestamps.size() - 1);
 
-                DbcPacket dbcPacket = dbc.getPacket(sid);
-                String name = dbcPacket == null ? Integer.toHexString(sid) : dbcPacket.getName();
+                String name = DbcFile.getPacketName(dbc, sid);
 
                 fw.write(name + " id=" + sid + " frequencyMs=" + String.format("%.2f", frequencyMs) + " count=" + timestamps.size() + "\n");
             }
