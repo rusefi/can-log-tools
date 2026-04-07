@@ -79,14 +79,12 @@ public class ByteRateOfChangeReports {
                     }
                 }
             }
-            String prefix;
+            if (filter.rejectPacket(dbcField))
+                continue;
 
             DbcPacket packet = dbc.getPacket(dbcField.getSid());
             Objects.requireNonNull(packet);
-            prefix = packet.getName() + " ";
-            if (filter.rejectPacket(dbcField))
-                continue;
-            prefix += dbcField.getName() + " ";
+            String prefix = packet.getName() + " " + dbcField.getName() + " ";
 
             ByteRateOfChange.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
             ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
