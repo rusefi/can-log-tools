@@ -1,0 +1,6 @@
+dependencies {
+    testImplementation libs.junit
+}
+test {
+    useJUnit()
+}
