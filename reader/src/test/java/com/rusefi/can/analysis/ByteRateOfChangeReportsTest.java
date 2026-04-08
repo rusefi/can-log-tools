@@ -58,16 +58,27 @@ public class ByteRateOfChangeReportsTest {
     }
 
     private static ByteRateOfChange.TraceReport createTraceReport(String name, DbcField field, ByteStatistics stats, int transitions) {
-        Map<DbcField, ByteStatistics> map = new HashMap<>();
+        List<Integer> values = new ArrayList<>(stats.getUniqueValues());
+        if (values.isEmpty()) {
+            values.add(0);
+        }
+
+        List<CANPacket> packets = new ArrayList<>();
+        int packetCount = Math.max(1, transitions + 1);
+
+        for (int i = 0; i < packetCount; i++) {
+            int rawValue = values.get(Math.min(i, values.size() - 1));
+            CANPacket packet = new CANPacket(i * 10L, field.getSid(), new byte[8]);
+            field.setValue(packet, field.getMult() * rawValue + field.getOffset());
+            packets.add(packet);
+        }
+
         stats.totalTransitions = transitions;
+
+        HashMap<DbcField, ByteStatistics> map = new HashMap<>();
         map.put(field, stats);
 
-        List<CANPacket> packets = Arrays.asList(
-                new CANPacket(0, 100, new byte[]{0}),
-                new CANPacket(10, 100, new byte[]{0})
-        );
-
-        return new ByteRateOfChange.TraceReport(packets, name, new HashMap<>(map));
+        return new ByteRateOfChange.TraceReport(packets, name, map);
     }
 
     private static ByteStatistics byteStats(int... values) {
