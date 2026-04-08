@@ -16,6 +16,7 @@ import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.render.DbcImageTool;
+import com.rusefi.io.can.isotp.HexBinary;
 import com.rusefi.util.FolderUtil;
 
 import java.io.*;
@@ -193,15 +194,15 @@ public class ByteRateOfChangeReports {
     }
 
     static boolean hasVisualDifference(ByteRateOfChange.TraceReport trace1, ByteRateOfChange.TraceReport trace2, DbcField dbcField) {
-        double[] values1 = extractFieldValues(trace1, dbcField);
-        double[] values2 = extractFieldValues(trace2, dbcField);
+        List<Double> values1 = extractFieldValues(trace1, dbcField);
+        List<Double> values2 = extractFieldValues(trace2, dbcField);
 
-        if (values1.length != values2.length) {
+        if (values1.size() != values2.size()) {
             return true;
         }
 
-        for (int i = 0; i < values1.length; i++) {
-            if (Double.compare(values1[i], values2[i]) != 0) {
+        for (int i = 0; i < values1.size(); i++) {
+            if (Double.compare(values1.get(i), values2.get(i)) != 0) {
                 return true;
             }
         }
@@ -209,12 +210,21 @@ public class ByteRateOfChangeReports {
         return false;
     }
 
-    private static double[] extractFieldValues(ByteRateOfChange.TraceReport trace, DbcField dbcField) {
+    private static List<Double> extractFieldValues(ByteRateOfChange.TraceReport trace, DbcField dbcField) {
         List<CANPacket> packets = trace.getPackets();
-        double[] values = new double[packets.size()];
+        List<Double> values = new ArrayList<Double>();
 
-        for (int i = 0; i < packets.size(); i++) {
-            values[i] = dbcField.getValue(packets.get(i));
+        for (CANPacket packet : packets) {
+            if (packet.getId() != dbcField.getSid()) {
+                continue;
+            }
+            try {
+                values.add(dbcField.getValue(packet));
+            } catch (Exception e) {
+                String data = HexBinary.printHexBinary(packet.getData());
+                System.err.println("Error getting value for " + dbcField + " in " + data);
+                break;//throw e;
+            }
         }
 
         return values;
