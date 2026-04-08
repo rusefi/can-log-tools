@@ -256,4 +256,38 @@ public class DbcField implements Comparable<DbcField> {
     public int getByteIndex() {
         return startOffset / 8;
     }
+
+
+    private static void setBitRange(byte[] data, int totalBitIndex, int bitWidth, int value, boolean isBigEndian) {
+        int leftBitWidth = bitWidth;
+        int byteIndex = totalBitIndex >> 3;
+        int bitInByteIndex = totalBitIndex - byteIndex * 8;
+
+        if (bitWidth <= 0 || totalBitIndex < 0)
+            throw new IllegalArgumentException("Huh? " + totalBitIndex + " " + bitWidth);
+
+        if (bitInByteIndex + bitWidth > 8) {
+            int bitsToHandleNow = 8 - bitInByteIndex;
+            if (isBigEndian) {
+                setBitRange(data, (byteIndex - 1) * 8, leftBitWidth - bitsToHandleNow, value >> bitsToHandleNow, true);
+            } else {
+                setBitRange(data, totalBitIndex + bitsToHandleNow, leftBitWidth - bitsToHandleNow, value >> bitsToHandleNow, false);
+            }
+            leftBitWidth = bitsToHandleNow;
+        }
+
+        int mask = (1 << leftBitWidth) - 1;
+        data[byteIndex] = (byte) (data[byteIndex] & ~(mask << bitInByteIndex));
+        int maskedValue = value & mask;
+        int shiftedValue = maskedValue << bitInByteIndex;
+        data[byteIndex] = (byte) (data[byteIndex] | shiftedValue);
+    }
+
+    public void setRawValue(CANPacket packet, int value) {
+        setBitRange(packet.getData(), startOffset, length, value, isBigEndian);
+    }
+    public void setValue(CANPacket packet, double value) {
+        setRawValue(packet, (int) ((value - offset) / mult));
+    }
+
 }

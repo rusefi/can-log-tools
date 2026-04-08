@@ -4,6 +4,7 @@ import com.rusefi.can.CANPacket;
 import com.rusefi.can.dbc.DbcField;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.BitSet;
 
 import static org.junit.Assert.*;
@@ -138,5 +139,78 @@ public class DbcFieldTest {
         assertEquals(48, usedBits.nextClearBit(24));
         assertEquals(51, usedBits.nextSetBit(48));
         assertEquals(56, usedBits.nextClearBit(51));
+    }
+
+    @Test
+    public void testSetRawValueLittleEndian_singleByte() {
+        DbcField field = new DbcField(1, "LE", 0, 8, 1.0, 0.0, null, false, false);
+        CANPacket packet = new CANPacket(0, 1, new byte[8]);
+
+        field.setRawValue(packet, 0xAB);
+
+        assertEquals(0xAB, field.getRawValue(packet));
+        assertEquals(0xAB, Byte.toUnsignedInt(packet.getData()[0]));
+    }
+
+    @Test
+    public void testSetRawValueLittleEndian_crossesByteBoundary() {
+        DbcField field = new DbcField(1, "LE", 4, 10, 1.0, 0.0, null, false, false);
+        CANPacket packet = new CANPacket(0, 1, new byte[8]);
+
+        field.setRawValue(packet, 0x2AA);
+
+        assertEquals(0x2AA, field.getRawValue(packet));
+        assertEquals(0xA0, Byte.toUnsignedInt(packet.getData()[0]) & 0xF0);
+        assertEquals(0x2A, Byte.toUnsignedInt(packet.getData()[1]) & 0x3F);
+    }
+
+    @Test
+    public void testSetRawValueBigEndian_singleByte() {
+        DbcField field = new DbcField(1, "BE", 7, 8, 1.0, 0.0, null, true, false);
+        CANPacket packet = new CANPacket(0, 1, new byte[8]);
+
+        field.setRawValue(packet, 0x5C);
+
+        assertEquals(0x5C, field.getRawValue(packet));
+        assertEquals(0x5C, Byte.toUnsignedInt(packet.getData()[0]));
+    }
+
+    @Test
+    public void testSetRawValueBigEndian_twoBytes() {
+        DbcField field = new DbcField(1, "BE", 55, 16, 1.0, 0.0, null, true, false);
+        CANPacket packet = new CANPacket(0, 1, new byte[8]);
+
+        field.setRawValue(packet, 0x1234);
+
+        assertEquals(0x1234, field.getRawValue(packet));
+        assertEquals(0x12, Byte.toUnsignedInt(packet.getData()[6]));
+        assertEquals(0x34, Byte.toUnsignedInt(packet.getData()[7]));
+    }
+
+    @Test
+    public void testSetValueUsesMultiplierAndOffset() {
+        DbcField field = new DbcField(1, "scaled", 0, 8, 0.5, -10.0, null, false, false);
+        CANPacket packet = new CANPacket(0, 1, new byte[8]);
+
+        field.setValue(packet, 5.0);
+
+        assertEquals(30, field.getRawValue(packet));
+        assertEquals(5.0, field.getValue(packet), 0.0001);
+    }
+
+    @Test
+    public void testSetRawValueDoesNotTouchOtherBits() {
+        byte[] data = new byte[8];
+        Arrays.fill(data, (byte) 0xFF);
+
+        DbcField field = new DbcField(1, "LE", 8, 8, 1.0, 0.0, null, false, false);
+        CANPacket packet = new CANPacket(0, 1, data);
+
+        field.setRawValue(packet, 0x12);
+
+        assertEquals(0x12, field.getRawValue(packet));
+        assertEquals(0xFF, Byte.toUnsignedInt(packet.getData()[0]));
+        assertEquals(0x12, Byte.toUnsignedInt(packet.getData()[1]));
+        assertEquals(0xFF, Byte.toUnsignedInt(packet.getData()[2]));
     }
 }
