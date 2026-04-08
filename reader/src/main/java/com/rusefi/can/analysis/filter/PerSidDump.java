@@ -31,7 +31,7 @@ public class PerSidDump {
         for (int sid : sids) {
             String suffix = "_" + DbcFile.getPacketName(dbc, sid);
 
-            String outputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid, "_") + suffix + ".txt";
+            String outputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid) + suffix + ".txt";
             PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));
 
             List<CANPacket> filteredPackets = new ArrayList<>();
@@ -49,7 +49,7 @@ public class PerSidDump {
             int middleIndex = filteredPackets.size() / 2;
             CANPacket middlePacket = filteredPackets.get(middleIndex);
 
-            String middleOutputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid, "_") + "_middle.txt";
+            String middleOutputFileName = filteredDestinationFolder + File.separator + simpleFileName + "_filtered_" + DualSid.dualSid(sid) + "_middle.txt";
             PrintWriter middle = new PrintWriter(new FileOutputStream(middleOutputFileName));
 
             String decAndHex = middlePacket.getId() + "_" + Integer.toHexString(middlePacket.getId());

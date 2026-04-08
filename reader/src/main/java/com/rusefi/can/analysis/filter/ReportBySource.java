@@ -37,13 +37,13 @@ public class ReportBySource {
             for (DbcPacket packet : entry.getValue()) {
                 int count = counts.getOrDefault(packet.getId(), 0);
                 if (count != 0)
-                    pw.println("  Frame: " + DualSid.dualSid(packet.getId(), "_") + " " + packet.getName() + ": " + count);
+                    pw.println("  Frame: " + DualSid.dualSid(packet.getId()) + " " + packet.getName() + ": " + count);
             }
 
             for (DbcPacket packet : entry.getValue()) {
                 int count = counts.getOrDefault(packet.getId(), 0);
                 if (count == 0)
-                    pw.println("  Frame: " + DualSid.dualSid(packet.getId(), "_") + " " + packet.getName() + " NO PACKETS");
+                    pw.println("  Frame: " + DualSid.dualSid(packet.getId()) + " " + packet.getName() + " NO PACKETS");
             }
 
             pw.println();

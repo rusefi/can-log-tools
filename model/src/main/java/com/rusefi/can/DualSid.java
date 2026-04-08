@@ -1,11 +1,13 @@
 package com.rusefi.can;
 
 public class DualSid {
-    public static String dualSid(int sid, String separator) {
-        return String.format("%d%s0x%x", sid, separator, sid);
+    public static final String HEX_ID_FORMAT = "%03X";
+
+    private static String dualSid(int sid, String separator) {
+        return String.format("%d%s" + HEX_ID_FORMAT, sid, separator, sid);
     }
 
     public static String dualSid(int sid) {
-        return dualSid(sid, "/");
+        return dualSid(sid, "_");
     }
 }
