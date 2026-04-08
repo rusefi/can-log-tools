@@ -35,10 +35,7 @@ public class ByteRateOfChangeReports {
         }
     }
 
-    private static void compareTwoReports(DbcFile dbc, String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanMetaDataContext context) throws IOException {
-        Set<DbcField> allKeys = new TreeSet<>();
-        allKeys.addAll(traceReport1.getStatistics().keySet());
-        allKeys.addAll(traceReport2.getStatistics().keySet());
+    static void compareTwoReports(DbcFile dbc, String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanMetaDataContext context) throws IOException {
 
         String comparingFolder = reportDestinationFolder + File.separator + "comparison";
         new File(comparingFolder).mkdirs();
@@ -46,17 +43,31 @@ public class ByteRateOfChangeReports {
         String imagesFolder = comparingFolder + File.separator + "images";
         new File(imagesFolder).mkdirs();
 
+        ComparisonData comparisonData = createComparisonData(dbc, traceReport1, traceReport2, context, imagesFolder);
+
         String simpleName1 = traceReport1.getSimpleFileName();
         String simpleName2 = traceReport2.getSimpleFileName();
 
-        String outputFileName = comparingFolder + File.separator + simpleName1 + "-vs-" + simpleName2 + ".txt";
-        PrintWriter report = new PrintWriter(new FileOutputStream(outputFileName));
+        writeReport(
+                comparisonData,
+                traceReport1,
+                traceReport2,
+                comparingFolder,
+                imagesFolder,
+                simpleName1,
+                simpleName2,
+                dbc
+        );
+    }
 
-        report.println("Comparing unique value count per byte " + traceReport1.getSummary() + " and " + traceReport2.getSummary());
-
-        List<ByteVariationDifference> differences = new ArrayList<>();
-
-        report.println("******************** Sorted by key ********************");
+    static ComparisonData createComparisonData(DbcFile dbc,
+                                               ByteRateOfChange.TraceReport traceReport1,
+                                               ByteRateOfChange.TraceReport traceReport2,
+                                               CanMetaDataContext context,
+                                               String imagesFolder) throws IOException {
+        Set<DbcField> allKeys = new TreeSet<>();
+        allKeys.addAll(traceReport1.getStatistics().keySet());
+        allKeys.addAll(traceReport2.getStatistics().keySet());
 
         Map<Integer, List<CANPacket>> packetsById1 = traceReport1.getPackets().stream()
                 .collect(Collectors.groupingBy(CANPacket::getId));
@@ -64,75 +75,50 @@ public class ByteRateOfChangeReports {
                 .collect(Collectors.groupingBy(CANPacket::getId));
 
         List<DbcImageTool.ComparisonEntry> entries = new ArrayList<>();
+        List<ByteVariationDifference> differences = new ArrayList<>();
+
+        String simpleName1 = traceReport1.getSimpleFileName();
+        String simpleName2 = traceReport2.getSimpleFileName();
 
         for (DbcField dbcField : allKeys) {
-            {
-                ByteId asByte = ByteId.convert(dbcField);
-                if (asByte != null) {
-                    if (context.isCounter(asByte)) {
-                        // skipping byte with a known counter
-                        continue;
-                    }
-                    if (asByte.getByteIndex() == 7 && context.withChecksum.contains(asByte.getSid())) {
-                        // skipping known checksum byte
-                        continue;
-                    }
+            ByteId asByte = ByteId.convert(dbcField);
+            if (asByte != null) {
+                if (context.isCounter(asByte)) {
+                    continue;
+                }
+                if (asByte.getByteIndex() == 7 && context.withChecksum.contains(asByte.getSid())) {
+                    continue;
                 }
             }
-            if (filter.rejectPacket(dbcField))
+
+            if (filter.rejectPacket(dbcField)) {
                 continue;
+            }
 
             DbcPacket packet = dbc.getPacket(dbcField.getSid());
             Objects.requireNonNull(packet);
             String prefix = packet.getName() + " " + dbcField.getName() + " ";
 
+            if (hasVisualDifference(traceReport1, traceReport2, dbcField)) {
+                DbcImageTool.ComparisonEntry entry = createComparisonEntry(
+                        dbcField,
+                        traceReport1,
+                        traceReport2,
+                        packetsById1,
+                        packetsById2,
+                        simpleName1,
+                        simpleName2,
+                        imagesFolder
+                );
+                entries.add(entry);
+            }
+
             ByteRateOfChange.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
             ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
-
-            if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount() || !s1.getUniqueValues().equals(s2.getUniqueValues()) || s1.totalTransitions != s2.totalTransitions) {
-                String imageName = simpleName1 + "-vs-" + simpleName2 + "_" + DbcImageTool.escapeFileName(dbcField.getName()) + ".png";
-                DbcImageTool.ComparisonResult result = DbcImageTool.renderComparison(dbcField,
-                        packetsById1.get(dbcField.getSid()), traceReport1.getMinTimeMs(), traceReport1.getDurationMs(),
-                        packetsById2.get(dbcField.getSid()), traceReport2.getMinTimeMs(), traceReport2.getDurationMs(),
-                        imagesFolder, imageName);
-                entries.add(new DbcImageTool.ComparisonEntry(dbcField, imageName, result));
-            }
-
-            if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
-                String msg = prefix + dbcField + ": unique_count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
-                int deltaCount = Math.abs(s1.getUniqueValuesCount() - s2.getUniqueValuesCount());
-                differences.add(new ByteVariationDifference(deltaCount, msg));
-                report.println(msg + " (delta=" + deltaCount + "), transitions=" + s1.totalTransitions + " vs " + s2.totalTransitions);
-            } else {
-                Set<Integer> diff = new HashSet<>();
-                diff.addAll(s1.getUniqueValues());
-                diff.removeAll(s2.getUniqueValues());
-                if (!diff.isEmpty()) {
-                    String message = s1.getUniqueValues().size() == 1 ? "different values" : "different sets";
-                    report.println(prefix + dbcField + " " + message + " " + s1.getUniqueValues() + " vs " + s2.getUniqueValues());
-
-                } else {
-                    // same number of unique values, same set of values
-                    if (s1.totalTransitions != s2.totalTransitions) {
-                        report.println(prefix + dbcField + " total number of transitions " + s1.totalTransitions + "/" + s2.totalTransitions);
-                    }
-                }
-            }
+            addDifference(differences, prefix, dbcField, s1, s2);
         }
 
-        report.println("******************** Sorted by delta count ********************");
         differences.sort((o1, o2) -> o2.deltaCount - o1.deltaCount);
-        for (ByteVariationDifference difference : differences)
-            report.println(difference.msg);
-
-        report.println(differences.size() + " total differences");
-        report.println();
-        report.println();
-        report.println();
-        report.println();
-        report.close();
-
-        // Sort entries by packet ID and starting bit
         entries.sort((e1, e2) -> {
             DbcField f1 = e1.getField();
             DbcField f2 = e2.getField();
@@ -142,11 +128,121 @@ public class ByteRateOfChangeReports {
             return Integer.compare(f1.getStartOffset(), f2.getStartOffset());
         });
 
-        DbcImageTool.createComparisonHtml(entries, comparingFolder, simpleName1, simpleName2, simpleName1 + "-vs-" + simpleName2 + ".html", dbc);
+        return new ComparisonData(entries, differences);
+    }
 
-        // Sort by difference descending
-        entries.sort((e1, e2) -> Double.compare(e2.getDifference(), e1.getDifference()));
-        DbcImageTool.createComparisonHtml(entries, comparingFolder, simpleName1, simpleName2, simpleName1 + "-vs-" + simpleName2 + "-diff.html", dbc);
+    static DbcImageTool.ComparisonEntry createComparisonEntry(DbcField dbcField,
+                                                              ByteRateOfChange.TraceReport traceReport1,
+                                                              ByteRateOfChange.TraceReport traceReport2,
+                                                              Map<Integer, List<CANPacket>> packetsById1,
+                                                              Map<Integer, List<CANPacket>> packetsById2,
+                                                              String simpleName1,
+                                                              String simpleName2,
+                                                              String imagesFolder) throws IOException {
+        String imageName = simpleName1 + "-vs-" + simpleName2 + "_" + DbcImageTool.escapeFileName(dbcField.getName()) + ".png";
+        DbcImageTool.ComparisonResult result = DbcImageTool.renderComparison(
+                dbcField,
+                packetsById1.get(dbcField.getSid()), traceReport1.getMinTimeMs(), traceReport1.getDurationMs(),
+                packetsById2.get(dbcField.getSid()), traceReport2.getMinTimeMs(), traceReport2.getDurationMs(),
+                imagesFolder, imageName
+        );
+        return new DbcImageTool.ComparisonEntry(dbcField, imageName, result);
+    }
+
+    static void writeReport(ComparisonData comparisonData,
+                            ByteRateOfChange.TraceReport traceReport1,
+                            ByteRateOfChange.TraceReport traceReport2,
+                            String comparingFolder,
+                            String imagesFolder,
+                            String simpleName1,
+                            String simpleName2,
+                            DbcFile dbc) throws IOException {
+        String outputFileName = comparingFolder + File.separator + simpleName1 + "-vs-" + simpleName2 + ".txt";
+        try (PrintWriter report = new PrintWriter(new FileOutputStream(outputFileName))) {
+            report.println("Comparing unique value count per byte " + traceReport1.getSummary() + " and " + traceReport2.getSummary());
+            report.println("******************** Sorted by key ********************");
+
+            for (ByteVariationDifference difference : comparisonData.differences) {
+                report.println(difference.msg);
+            }
+
+            report.println(comparisonData.differences.size() + " total differences");
+            report.println();
+            report.println();
+            report.println();
+            report.println();
+
+            DbcImageTool.createComparisonHtml(
+                    comparisonData.entries,
+                    comparingFolder,
+                    simpleName1,
+                    simpleName2,
+                    simpleName1 + "-vs-" + simpleName2 + ".html",
+                    dbc
+            );
+
+            DbcImageTool.createComparisonHtml(
+                    comparisonData.entries,
+                    comparingFolder,
+                    simpleName1,
+                    simpleName2,
+                    simpleName1 + "-vs-" + simpleName2 + "-diff.html",
+                    dbc
+            );
+        }
+    }
+
+    private static boolean hasVisualDifference(ByteRateOfChange.TraceReport trace1, ByteRateOfChange.TraceReport trace2, DbcField dbcField) {
+        ByteRateOfChange.ByteStatistics s1 = trace1.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
+        ByteRateOfChange.ByteStatistics s2 = trace2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
+
+        return s1.getUniqueValuesCount() != s2.getUniqueValuesCount()
+                || !s1.getUniqueValues().equals(s2.getUniqueValues())
+                || s1.totalTransitions != s2.totalTransitions;
+    }
+
+    private static void addDifference(List<ByteVariationDifference> differences,
+                                      String prefix,
+                                      DbcField dbcField,
+                                      ByteRateOfChange.ByteStatistics s1,
+                                      ByteRateOfChange.ByteStatistics s2) {
+        if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
+            String msg = prefix + dbcField + ": unique_count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
+            int deltaCount = Math.abs(s1.getUniqueValuesCount() - s2.getUniqueValuesCount());
+            differences.add(new ByteVariationDifference(deltaCount, msg));
+            return;
+        }
+
+        Set<Integer> diff = new HashSet<>();
+        diff.addAll(s1.getUniqueValues());
+        diff.removeAll(s2.getUniqueValues());
+        if (!diff.isEmpty()) {
+            String message = s1.getUniqueValues().size() == 1 ? "different values" : "different sets";
+            differences.add(new ByteVariationDifference(0, prefix + dbcField + " " + message + " " + s1.getUniqueValues() + " vs " + s2.getUniqueValues()));
+            return;
+        }
+
+        if (s1.totalTransitions != s2.totalTransitions) {
+            differences.add(new ByteVariationDifference(0, prefix + dbcField + " total number of transitions " + s1.totalTransitions + "/" + s2.totalTransitions));
+        }
+    }
+
+    static class ComparisonData {
+        private final List<DbcImageTool.ComparisonEntry> entries;
+        private final List<ByteVariationDifference> differences;
+
+        public ComparisonData(List<DbcImageTool.ComparisonEntry> entries, List<ByteVariationDifference> differences) {
+            this.entries = entries;
+            this.differences = differences;
+        }
+
+        public List<DbcImageTool.ComparisonEntry> getEntries() {
+            return entries;
+        }
+
+        public List<ByteVariationDifference> getDifferences() {
+            return differences;
+        }
     }
 
     public static String createOutputFolder(String inputFolderName) {
@@ -157,7 +253,6 @@ public class ByteRateOfChangeReports {
         }
         return reportDestinationFolder;
     }
-
     public static void scanInputFolder(String inputFolderName, String fileNameSuffix) throws IOException {
         String reportDestinationFolder = createOutputFolder(inputFolderName);
 
