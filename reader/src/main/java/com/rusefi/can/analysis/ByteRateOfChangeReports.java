@@ -192,7 +192,7 @@ public class ByteRateOfChangeReports {
         }
     }
 
-    private static boolean hasVisualDifference(ByteRateOfChange.TraceReport trace1, ByteRateOfChange.TraceReport trace2, DbcField dbcField) {
+    static boolean hasVisualDifference(ByteRateOfChange.TraceReport trace1, ByteRateOfChange.TraceReport trace2, DbcField dbcField) {
         ByteRateOfChange.ByteStatistics s1 = trace1.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
         ByteRateOfChange.ByteStatistics s2 = trace2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
 
