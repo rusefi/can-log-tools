@@ -193,12 +193,31 @@ public class ByteRateOfChangeReports {
     }
 
     static boolean hasVisualDifference(ByteRateOfChange.TraceReport trace1, ByteRateOfChange.TraceReport trace2, DbcField dbcField) {
-        ByteRateOfChange.ByteStatistics s1 = trace1.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
-        ByteRateOfChange.ByteStatistics s2 = trace2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
+        double[] values1 = extractFieldValues(trace1, dbcField);
+        double[] values2 = extractFieldValues(trace2, dbcField);
 
-        return s1.getUniqueValuesCount() != s2.getUniqueValuesCount()
-                || !s1.getUniqueValues().equals(s2.getUniqueValues())
-                || s1.totalTransitions != s2.totalTransitions;
+        if (values1.length != values2.length) {
+            return true;
+        }
+
+        for (int i = 0; i < values1.length; i++) {
+            if (Double.compare(values1[i], values2[i]) != 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static double[] extractFieldValues(ByteRateOfChange.TraceReport trace, DbcField dbcField) {
+        List<CANPacket> packets = trace.getPackets();
+        double[] values = new double[packets.size()];
+
+        for (int i = 0; i < packets.size(); i++) {
+            values[i] = dbcField.getValue(packets.get(i));
+        }
+
+        return values;
     }
 
     private static void addDifference(List<ByteVariationDifference> differences,
@@ -245,7 +264,7 @@ public class ByteRateOfChangeReports {
         }
     }
 
-    public static String createOutputFolder(String inputFolderName) {
+    static String createOutputFolder(String inputFolderName) {
         String reportDestinationFolder = inputFolderName + File.separator + "processed";
         File folder = new File(reportDestinationFolder);
         if (!folder.exists() && !folder.mkdirs()) {
