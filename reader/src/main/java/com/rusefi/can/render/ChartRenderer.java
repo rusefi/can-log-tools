@@ -2,24 +2,16 @@ package com.rusefi.can.render;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public class ChartRenderer {
-    public static BufferedImage prepareImage(int width, int height) {
-        return new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-    }
+    public static final int WIDTH = 1500;
+    public static final int HEIGHT = 700;
 
-    public static void drawBackground(Graphics2D g, int width, int height) {
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, width, height);
-    }
-
-    public static void drawNoData(Graphics2D g, int width, int height) {
-        g.setColor(Color.BLACK);
-        g.drawString("No data", width / 2 - 20, height / 2);
+    public static ChartImage prepareImage(int width, int height) {
+        return new ChartImage(width, height);
     }
 
     public static void drawLabel(Graphics2D g, double minValue, double maxValue, Color color, int y) {
@@ -30,7 +22,7 @@ public class ChartRenderer {
         g.setFont(oldFont);
     }
 
-    public static void drawPoints(Graphics2D g, List<Point> points, double minValue, double maxValue, Color color, int width, int height) {
+    public static void drawPoints(Graphics2D g, List<Point> points, double minValue, double maxValue, Color color, ChartImage chart) {
         double valueRange = maxValue - minValue;
         if (valueRange == 0) valueRange = 1;
 
@@ -38,16 +30,16 @@ public class ChartRenderer {
         for (int i = 0; i < points.size() - 1; i++) {
             Point p1 = points.get(i);
             Point p2 = points.get(i + 1);
-            int y1 = height - 1 - (int) ((p1.value - minValue) / valueRange * (height - 1));
-            int y2 = height - 1 - (int) ((p2.value - minValue) / valueRange * (height - 1));
+            int y1 = chart.height - 1 - (int) ((p1.value - minValue) / valueRange * (chart.height - 1));
+            int y2 = chart.height - 1 - (int) ((p2.value - minValue) / valueRange * (chart.height - 1));
             g.drawLine(p1.x, y1, p2.x, y2);
         }
     }
 
-    public static void saveImage(BufferedImage image, String outputDir, String fileName) throws IOException {
-        Graphics2D g = (Graphics2D) image.getGraphics();
+    public static void saveImage(ChartImage chart, String outputDir, String fileName) throws IOException {
+        Graphics2D g = (Graphics2D) chart.image.getGraphics();
         g.dispose();
         File outFile = new File(outputDir, fileName);
-        ImageIO.write(image, "png", outFile);
+        ImageIO.write(chart.image, "png", outFile);
     }
 }

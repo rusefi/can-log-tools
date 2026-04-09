@@ -8,7 +8,6 @@ import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.can.dbc.DbcPacket;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,8 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DbcImageTool {
-    public static final int WIDTH = 1500;
-    public static final int HEIGHT = 700;
 
     public static String escapeFileName(String name) {
         return name.replaceAll("[\\\\/:*?\"<>|]", "_");
@@ -91,18 +88,18 @@ public class DbcImageTool {
             minMax[1] = tr.max;
         }
 
-        BufferedImage image = prepareImage();
-        Graphics2D g = image.createGraphics();
-        drawBackground(g);
+        ChartImage chart = ChartRenderer.prepareImage(ChartRenderer.WIDTH, ChartRenderer.HEIGHT);
+        Graphics2D g = chart.createGraphics();
+        chart.drawBackground(g);
 
         if (tr.points.isEmpty()) {
-            drawNoData(g);
+            chart.drawNoData(g);
         } else {
-            drawPoints(g, tr.points, tr.min, tr.max, Color.BLACK);
-            drawLabel(g, tr.min, tr.max, Color.BLACK, 50);
+            ChartRenderer.drawPoints(g, tr.points, tr.min, tr.max, Color.BLACK, chart);
+            ChartRenderer.drawLabel(g, tr.min, tr.max, Color.BLACK, 50);
         }
 
-        saveImage(image, outputDir, fileName);
+        ChartRenderer.saveImage(chart, outputDir, fileName);
     }
 
     private static class TraceResult {
@@ -126,7 +123,7 @@ public class DbcImageTool {
             result.max = Math.max(result.max, value);
             sum += value;
             sumSq += value * value;
-            double x = (packet.getTimeStampMs() - minTime) / duration * (WIDTH - 1);
+            double x = (packet.getTimeStampMs() - minTime) / duration * (ChartRenderer.WIDTH - 1); // WIDTH used for x-axis scaling
             result.points.add(new Point((int) x, value));
         }
 
@@ -134,30 +131,6 @@ public class DbcImageTool {
         result.stdDev = result.points.isEmpty() ? 0 : Math.sqrt(Math.max(0, sumSq / result.points.size() - result.mean * result.mean));
 
         return result;
-    }
-
-    private static BufferedImage prepareImage() {
-        return ChartRenderer.prepareImage(WIDTH, HEIGHT);
-    }
-
-    private static void drawBackground(Graphics2D g) {
-        ChartRenderer.drawBackground(g, WIDTH, HEIGHT);
-    }
-
-    private static void drawNoData(Graphics2D g) {
-        ChartRenderer.drawNoData(g, WIDTH, HEIGHT);
-    }
-
-    private static void drawLabel(Graphics2D g, double minValue, double maxValue, Color color, int y) {
-        ChartRenderer.drawLabel(g, minValue, maxValue, color, y);
-    }
-
-    private static void saveImage(BufferedImage image, String outputDir, String fileName) throws IOException {
-        ChartRenderer.saveImage(image, outputDir, fileName);
-    }
-
-    private static void drawPoints(Graphics2D g, List<Point> points, double minValue, double maxValue, Color color) {
-        ChartRenderer.drawPoints(g, points, minValue, maxValue, color, WIDTH, HEIGHT);
     }
 
     public static class ComparisonResult {
@@ -195,26 +168,26 @@ public class DbcImageTool {
         double maxValue = Math.max(tr1.max, tr2.max);
         double difference = Math.abs(tr1.mean - tr2.mean) + Math.abs(tr1.stdDev - tr2.stdDev);
 
-        BufferedImage image = prepareImage();
-        Graphics2D g = image.createGraphics();
-        drawBackground(g);
+        ChartImage chart = ChartRenderer.prepareImage(ChartRenderer.WIDTH, ChartRenderer.HEIGHT);
+        Graphics2D g = chart.createGraphics();
+        chart.drawBackground(g);
 
         if (tr1.points.isEmpty() && tr2.points.isEmpty()) {
-            drawNoData(g);
+            chart.drawNoData(g);
         } else {
-            drawPoints(g, tr1.points, minValue, maxValue, Color.GREEN);
-            drawPoints(g, tr2.points, minValue, maxValue, Color.RED);
+            ChartRenderer.drawPoints(g, tr1.points, minValue, maxValue, Color.GREEN, chart);
+            ChartRenderer.drawPoints(g, tr2.points, minValue, maxValue, Color.RED, chart);
 
             if (!tr1.points.isEmpty()) {
-                drawLabel(g, tr1.min, tr1.max, Color.GREEN, 50);
+                ChartRenderer.drawLabel(g, tr1.min, tr1.max, Color.GREEN, 50);
             }
 
             if (!tr2.points.isEmpty()) {
-                drawLabel(g, tr2.min, tr2.max, Color.RED, 100);
+                ChartRenderer.drawLabel(g, tr2.min, tr2.max, Color.RED, 100);
             }
         }
 
-        saveImage(image, outputDir, fileName);
+        ChartRenderer.saveImage(chart, outputDir, fileName);
         return new ComparisonResult(minValue, maxValue, tr1.mean, tr1.stdDev, tr2.mean, tr2.stdDev, difference, minTime1, duration1);
     }
 
