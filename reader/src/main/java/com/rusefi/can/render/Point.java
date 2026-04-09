@@ -1,10 +1,10 @@
 package com.rusefi.can.render;
 
-class Point {
-    int x;
-    double value;
+public class Point {
+    public int x;
+    public double value;
 
-    Point(int x, double value) {
+    public Point(int x, double value) {
         this.x = x;
         this.value = value;
     }
