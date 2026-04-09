@@ -7,7 +7,6 @@ import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.can.dbc.DbcPacket;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -138,46 +137,27 @@ public class DbcImageTool {
     }
 
     private static BufferedImage prepareImage() {
-        return new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        return ChartRenderer.prepareImage(WIDTH, HEIGHT);
     }
 
     private static void drawBackground(Graphics2D g) {
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+        ChartRenderer.drawBackground(g, WIDTH, HEIGHT);
     }
 
     private static void drawNoData(Graphics2D g) {
-        g.setColor(Color.BLACK);
-        g.drawString("No data", WIDTH / 2 - 20, HEIGHT / 2);
+        ChartRenderer.drawNoData(g, WIDTH, HEIGHT);
     }
 
     private static void drawLabel(Graphics2D g, double minValue, double maxValue, Color color, int y) {
-        g.setColor(color);
-        Font oldFont = g.getFont();
-        g.setFont(oldFont.deriveFont(oldFont.getSize2D() * 3f));
-        g.drawString(String.format("Min: %.2f Max: %.2f", minValue, maxValue), 10, y);
-        g.setFont(oldFont);
+        ChartRenderer.drawLabel(g, minValue, maxValue, color, y);
     }
 
     private static void saveImage(BufferedImage image, String outputDir, String fileName) throws IOException {
-        Graphics2D g = (Graphics2D) image.getGraphics();
-        g.dispose();
-        File outFile = new File(outputDir, fileName);
-        ImageIO.write(image, "png", outFile);
+        ChartRenderer.saveImage(image, outputDir, fileName);
     }
 
     private static void drawPoints(Graphics2D g, List<Point> points, double minValue, double maxValue, Color color) {
-        double valueRange = maxValue - minValue;
-        if (valueRange == 0) valueRange = 1;
-
-        g.setColor(color);
-        for (int i = 0; i < points.size() - 1; i++) {
-            Point p1 = points.get(i);
-            Point p2 = points.get(i + 1);
-            int y1 = HEIGHT - 1 - (int) ((p1.value - minValue) / valueRange * (HEIGHT - 1));
-            int y2 = HEIGHT - 1 - (int) ((p2.value - minValue) / valueRange * (HEIGHT - 1));
-            g.drawLine(p1.x, y1, p2.x, y2);
-        }
+        ChartRenderer.drawPoints(g, points, minValue, maxValue, color, WIDTH, HEIGHT);
     }
 
     public static class ComparisonResult {
@@ -405,13 +385,4 @@ public class DbcImageTool {
         }
     }
 
-    private static class Point {
-        int x;
-        double value;
-
-        Point(int x, double value) {
-            this.x = x;
-            this.value = value;
-        }
-    }
 }
