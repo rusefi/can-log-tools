@@ -18,6 +18,10 @@ public class DbcField implements Comparable<DbcField> {
     private final double mult;
     private final double offset;
     private final String category;
+    /**
+     * Motorola is big endian, '@0' in DBC
+     * Intel is little endian, '@1' in DBC
+     */
     private final boolean isBigEndian;
     private boolean isNiceName;
     private final boolean isSigned;
