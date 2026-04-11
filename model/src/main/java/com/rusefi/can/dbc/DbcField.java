@@ -86,13 +86,30 @@ public class DbcField implements Comparable<DbcField> {
         return name;
     }
 
-    // returns the least significant bit
-    // for Intel - right bit in the first byte
-    // for Motorola - right bit in the last (!!!) byte
+    /**
+     * Returns the internal LSB bit index used for actual bit extraction ({@link #getBitRange}).
+     * This is the result of applying {@link #crazyMotorolaMath} to the raw DBC start bit:
+     * <ul>
+     *   <li>Intel (little-endian): same as {@link #getDbcStartOffset()} — LSB of the signal in the first byte.</li>
+     *   <li>Motorola (big-endian): transformed value — LSB of the signal in the <em>last</em> byte.</li>
+     * </ul>
+     * <strong>Do NOT pass this value to the {@link DbcField} constructor</strong> as {@code dbcStartOffset};
+     * doing so would double-apply {@code crazyMotorolaMath} and corrupt Motorola signal decoding.
+     * Use {@link #getDbcStartOffset()} when you need the raw DBC bit number.
+     */
     public int getStartOffset() {
         return startOffset;
     }
 
+    /**
+     * Returns the raw start bit number as written in the DBC file.
+     * <ul>
+     *   <li>Intel (little-endian): LSB of the signal.</li>
+     *   <li>Motorola (big-endian): MSB of the signal (DBC convention).</li>
+     * </ul>
+     * Pass this value to the {@link DbcField} constructor as {@code dbcStartOffset};
+     * {@link #crazyMotorolaMath} will be applied internally to produce {@link #getStartOffset()}.
+     */
     public int getDbcStartOffset() {
         return dbcStartOffset;
     }
