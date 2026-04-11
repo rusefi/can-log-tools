@@ -33,7 +33,7 @@ public class DbcPacket implements IDbcPacket {
             int lastSetBit = usedBits.previousSetBit(Integer.MAX_VALUE);
             int bitLimit = 8 * length;
             if (lastSetBit > bitLimit) {
-                // TODO getStartOffset() may be weird in multi-byte fields
+                // TODO getLsbBitIndex() may be weird in multi-byte fields
                 throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getLsbBitIndex() + " + " + field.getLength() + " > " + bitLimit + "; " + usedBits.length());
             }
         }
