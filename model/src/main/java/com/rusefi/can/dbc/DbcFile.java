@@ -1,5 +1,6 @@
 package com.rusefi.can.dbc;
 
+import com.rusefi.can.DualSid;
 import java.util.*;
 import java.util.function.Function;
 
@@ -28,7 +29,7 @@ public class DbcFile implements FileNameProvider {
 
     public static String getPacketName(DbcFile dbc, int sid) {
         DbcPacket dbcPacket = dbc.findPacket(sid);
-        return dbcPacket == null ? Integer.toString(sid) : dbcPacket.getName();
+        return dbcPacket == null ? DualSid.dualSid(sid) : dbcPacket.getName();
     }
 
     public com.rusefi.can.dbc.DbcPacket findPacket(int canId) {
@@ -45,7 +46,7 @@ public class DbcFile implements FileNameProvider {
         return packets.computeIfAbsent(trimmedSid, new Function<Integer, com.rusefi.can.dbc.DbcPacket>() {
             @Override
             public com.rusefi.can.dbc.DbcPacket apply(Integer integer) {
-                String packetName = Integer.toHexString(sid) + "_" + sid;
+                String packetName = DualSid.dualSid(sid);
                 String packetPrefix = "_unknown_" + sid;
                 return new DbcPacket(sid, packetName, "unknown", 8, new com.rusefi.can.dbc.util.GapFactory(Collections.<DbcField>emptyList(), packetPrefix, 8).withGaps(sid), DbcFile.this);
             }
