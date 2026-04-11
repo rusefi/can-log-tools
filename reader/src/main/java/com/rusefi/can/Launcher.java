@@ -3,6 +3,7 @@ package com.rusefi.can;
 import com.rusefi.can.analysis.ByteRateOfChangeReports;
 import com.rusefi.can.dbc.J1939Logic;
 import com.rusefi.can.dbc.reader.DbcFileReader;
+import com.rusefi.can.util.ToolRepository;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,7 +35,8 @@ public class Launcher {
                     GMLAN_IGNORE_SENDER,
                     J1939_MODE
             }));
-            System.exit(-1);
+            ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
         }
         String inputFolderName = args[0];
         for (int i = 1; i < args.length; i++) {

@@ -1,6 +1,7 @@
 package com.rusefi.io.can;
 
 
+import com.rusefi.can.util.ToolRepository;
 import org.jetbrains.annotations.NotNull;
 import peak.can.basic.*;
 

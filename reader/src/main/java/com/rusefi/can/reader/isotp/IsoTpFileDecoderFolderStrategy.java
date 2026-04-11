@@ -1,5 +1,7 @@
 package com.rusefi.can.reader.isotp;
 
+import com.rusefi.can.util.ToolRepository;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -22,7 +24,9 @@ public class IsoTpFileDecoderFolderStrategy {
 
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
-            throw new IllegalStateException("Folder name argument expected");
+            System.out.println("Folder name argument expected");
+            ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
         }
         String folderName = args[0];
         if (args.length > 1) {

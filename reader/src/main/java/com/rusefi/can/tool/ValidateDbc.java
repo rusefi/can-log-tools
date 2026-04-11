@@ -4,6 +4,7 @@ import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.dbc.reader.DbcFileReader;
+import com.rusefi.can.util.ToolRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -135,7 +136,8 @@ public class ValidateDbc {
     public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.err.println("Usage: ValidateDbc <dbc_file>");
-            System.exit(-1);
+            ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
         }
 
         String fileName = args[0];
