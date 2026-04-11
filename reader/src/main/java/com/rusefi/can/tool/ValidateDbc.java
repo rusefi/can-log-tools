@@ -110,7 +110,7 @@ public class ValidateDbc {
 
             // 1. Validate decimal equals hex
             if (decSuffixVal != hexSuffixVal) {
-                errors.add("Value mismatch: " + msgName + " (dec suffix " + decSuffixVal + " != hex suffix " + hexSuffixVal + ")");
+                errors.add("Value mismatch: " + msgName + " (dec suffix " + decSuffixVal + " != hex suffix " + hexSuffixVal + "=0x" + hexSuffixStr + ") in [" + msgName + "]");
             }
 
             // 2. Validate decimal suffix matches message ID
