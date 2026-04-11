@@ -19,6 +19,9 @@ import java.util.*;
 public class PacketFrequency {
     private static final String OUTPUT_FILE_PREFIX = "frequency_";
 
+    private static final int[] WELL_KNOWN_FREQUENCIES = {10, 20, 50, 100, 200, 500, 1000};
+    private static final double TOLERANCE = 0.05;
+
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.out.println("Usage: PacketFrequency <dbcFile> <traceFile>");
@@ -44,6 +47,12 @@ public class PacketFrequency {
         }
 
         try (FileWriter fw = new FileWriter(new File(reportDestinationFolder, OUTPUT_FILE_PREFIX + simpleFileName + ".txt"))) {
+            Map<Integer, List<String>> reportsByWellKnown = new LinkedHashMap<>();
+            for (int freq : WELL_KNOWN_FREQUENCIES) {
+                reportsByWellKnown.put(freq, new ArrayList<>());
+            }
+            List<String> otherReports = new ArrayList<>();
+
             for (Map.Entry<Integer, List<Double>> entry : timestampsBySID.entrySet()) {
                 int sid = entry.getKey();
                 List<Double> timestamps = entry.getValue();
@@ -58,8 +67,38 @@ public class PacketFrequency {
                 double frequencyMs = duration / (timestamps.size() - 1);
 
                 String name = DbcFile.getPacketName(dbc, sid);
+                String reportLine = name + " id=" + sid + " frequencyMs=" + String.format("%.2f", frequencyMs) + " count=" + timestamps.size() + "\n";
 
-                fw.write(name + " id=" + sid + " frequencyMs=" + String.format("%.2f", frequencyMs) + " count=" + timestamps.size() + "\n");
+                boolean matched = false;
+                for (int freq : WELL_KNOWN_FREQUENCIES) {
+                    if (Math.abs(frequencyMs - freq) < freq * TOLERANCE) {
+                        reportsByWellKnown.get(freq).add(reportLine);
+                        matched = true;
+                        break;
+                    }
+                }
+
+                if (!matched) {
+                    otherReports.add(reportLine);
+                }
+            }
+
+            for (int freq : WELL_KNOWN_FREQUENCIES) {
+                List<String> lines = reportsByWellKnown.get(freq);
+                if (!lines.isEmpty()) {
+                    fw.write("--- " + freq + "ms ---\n");
+                    for (String line : lines) {
+                        fw.write(line);
+                    }
+                    fw.write("\n");
+                }
+            }
+
+            if (!otherReports.isEmpty()) {
+                fw.write("--- Others ---\n");
+                for (String line : otherReports) {
+                    fw.write(line);
+                }
             }
         }
     }
