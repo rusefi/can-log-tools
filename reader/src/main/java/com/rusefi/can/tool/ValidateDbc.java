@@ -35,7 +35,7 @@ public class ValidateDbc {
         }
         Boolean firstIsBigEndian = null;
         for (DbcField field : packet.getFields()) {
-            if (field.getName().contains("_gap_")) {
+            if (field.isGap()) {
                 continue;
             }
             if (firstIsBigEndian == null) {
@@ -52,7 +52,7 @@ public class ValidateDbc {
         BitSet usedBits = new BitSet();
 
         for (DbcField field : packet.getFields()) {
-            if (field.getName().contains("_gap_")) {
+            if (field.isGap()) {
                 continue;
             }
             BitSet thisFieldBits = new BitSet();

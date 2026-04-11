@@ -79,7 +79,7 @@ public class DbcField implements Comparable<DbcField> {
     }
 
     public boolean isGap() {
-        return name.contains(GapFactory.GAP_BITS) || name.contains(GapFactory.GAP_BYTE);
+        return name.contains(com.rusefi.can.dbc.util.GapFactory.GAP_BITS) || name.contains(com.rusefi.can.dbc.util.GapFactory.GAP_BYTE) || name.contains("_gap_");
     }
 
     public String getName() {

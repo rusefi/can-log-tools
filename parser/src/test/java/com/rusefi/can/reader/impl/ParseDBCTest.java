@@ -1,5 +1,6 @@
 package com.rusefi.can.reader.impl;
 
+import com.rusefi.can.dbc.Bitness;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.DbcPacket;
@@ -173,5 +174,28 @@ public class ParseDBCTest {
         String dbcInput = "BO_ 1021 EGS_Daten_Anzeige_Getriebestrang_3FD_1021: 5 EGS\n" +
                 " SG_ DISP_PO_GRB : 21|3@1+ (1,0) [0|6] \"\" GWS\n";
         TestCases.readDbc(dbcInput);
+    }
+
+    @Test
+    public void testBitness() throws IOException {
+        {
+            String intel = "BO_ 100 P: 8 ECM_HS\n" +
+                    " SG_ OAT : 7|8@1+ (1,0) [0|8] \"deg C\"  VICS";
+            DbcFile dbc = TestCases.readDbc(intel);
+            assertEquals(Bitness.Intel, dbc.getBitness());
+        }
+        {
+            String moto = "BO_ 100 P: 8 ECM_HS\n" +
+                    " SG_ OAT : 7|8@0+ (1,0) [0|8] \"deg C\"  VICS";
+            DbcFile dbc = TestCases.readDbc(moto);
+            assertEquals(Bitness.Motorolla, dbc.getBitness());
+        }
+        {
+            String mixed = "BO_ 100 P: 8 ECM_HS\n" +
+                    " SG_ OAT : 7|8@1+ (1,0) [0|8] \"deg C\"  VICS\n" +
+                    " SG_ OAT2 : 15|8@0+ (1,0) [0|8] \"deg C\"  VICS";
+            DbcFile dbc = TestCases.readDbc(mixed);
+            assertNull(dbc.getBitness());
+        }
     }
 }

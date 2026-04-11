@@ -5,7 +5,8 @@ import java.util.*;
 import java.util.function.Function;
 
 public class DbcFile implements FileNameProvider {
-    private final LinkedHashMap<Integer, com.rusefi.can.dbc.DbcPacket> packets = new LinkedHashMap<>();
+    private final LinkedHashMap<Integer, DbcPacket> packets = new LinkedHashMap<>();
+    
     private String fileName;
 
     @Override
@@ -55,6 +56,38 @@ public class DbcFile implements FileNameProvider {
 
     public Collection<com.rusefi.can.dbc.DbcPacket> values() {
         return packets.values();
+    }
+
+    /**
+     * @return null if both Intel and Motorola bitness are detected, otherwise the detected bitness
+     */
+    public Bitness getBitness() {
+        boolean hasIntel = false;
+        boolean hasMotorola = false;
+
+        for (DbcPacket packet : packets.values()) {
+            for (DbcField field : packet.getFields()) {
+                if (field.isGap()) {
+                    continue;
+                }
+                if (field.isBigEndian()) {
+                    hasMotorola = true;
+                } else {
+                    hasIntel = true;
+                }
+            }
+        }
+
+        if (hasIntel && hasMotorola) {
+            return null;
+        }
+        if (hasIntel) {
+            return Bitness.Intel;
+        }
+        if (hasMotorola) {
+            return Bitness.Motorolla;
+        }
+        return null;
     }
 
 }
