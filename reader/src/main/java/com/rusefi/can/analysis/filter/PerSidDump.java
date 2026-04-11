@@ -3,7 +3,9 @@ package com.rusefi.can.analysis.filter;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.DualSid;
 import com.rusefi.can.dbc.DbcFile;
-import com.rusefi.can.dbc.DbcPacket;
+import com.rusefi.can.dbc.reader.DbcFileReader;
+import com.rusefi.can.reader.impl.AutoFormatReader;
+import com.rusefi.can.util.ToolRepository;
 import com.rusefi.can.writer.SteveWriter;
 
 import java.io.File;
@@ -17,10 +19,28 @@ import java.util.stream.Collectors;
  * Write a separate file for each unique packet ID
  */
 public class PerSidDump {
+    private static final String OUTPUT_SUBFOLDER_NAME = "filtered";
+
+    public static void main(String[] args) throws IOException {
+        if (args.length < 2) {
+            System.out.println("Usage: PerSidDump <dbcFile> <traceFile>");
+            ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
+        }
+
+        String dbcPath = args[0];
+        String tracePath = args[1];
+
+        DbcFile dbc = DbcFileReader.readFromFile(dbcPath);
+        List<CANPacket> packets = AutoFormatReader.INSTANCE.readFile(tracePath);
+
+        handle(dbc, ".", new File(tracePath).getName(), packets);
+    }
+
     public static void handle(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
         Objects.requireNonNull(dbc);
 
-        String filteredDestinationFolder = reportDestinationFolder + File.separator + "filtered";
+        String filteredDestinationFolder = reportDestinationFolder + File.separator + OUTPUT_SUBFOLDER_NAME;
         new File(filteredDestinationFolder).mkdirs();
 
         Set<Integer> sids = packets.stream()

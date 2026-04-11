@@ -2,7 +2,10 @@ package com.rusefi.can.util;
 
 import com.rusefi.can.Launcher;
 import com.rusefi.can.TrcToMlq;
+import com.rusefi.can.analysis.PacketFrequency;
+import com.rusefi.can.analysis.filter.PerSidDump;
 import com.rusefi.can.reader.isotp.IsoTpFileDecoderFolderStrategy;
+import com.rusefi.can.render.DbcImageTool;
 import com.rusefi.can.tool.ValidateDbc;
 import com.rusefi.can.tool.sync.SyncFolder;
 import com.rusefi.can.tool.sync.SyncTrcFiles;
@@ -35,7 +38,10 @@ public class ToolRepository {
                 SyncTrcFiles.class,
                 SyncFolder.class,
                 ValidateDbc.class,
-                Launcher.class
+                Launcher.class,
+                DbcImageTool.class,
+                PerSidDump.class,
+                PacketFrequency.class
         );
     }
 
