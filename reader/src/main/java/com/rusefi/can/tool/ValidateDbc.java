@@ -127,7 +127,7 @@ public class ValidateDbc {
         List<String> errors = checkDbc(dbc);
 
         if (!errors.isEmpty()) {
-            throw new IllegalStateException(errors.toString());
+            throw new IllegalStateException(errors.size() + " errors: " + errors);
         }
         return dbc;
     }
