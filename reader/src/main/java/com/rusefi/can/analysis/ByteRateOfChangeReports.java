@@ -87,7 +87,7 @@ public class ByteRateOfChangeReports {
                 if (context.isCounter(asByte)) {
                     continue;
                 }
-                if (asByte.getByteIndex() == 7 && context.withChecksum.contains(asByte.getSid())) {
+                if (asByte.getByteIndex() == 7 && context.withChecksum.contains(DbcFile.getPacketName(dbc, asByte.getSid()))) {
                     continue;
                 }
             }
@@ -301,7 +301,7 @@ public class ByteRateOfChangeReports {
             ReportBySource.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             // at the moment we overwrite counter detection report after we process each file
             CounterScanner.scanForCounters(dbc, reportDestinationFolder, simpleFileName, logFileContent);
-            ChecksumScanner.scanForChecksums(reportDestinationFolder, simpleFileName, logFileContent);
+            ChecksumScanner.scanForChecksums(dbc, reportDestinationFolder, simpleFileName, logFileContent);
 
             GrowingValuesScanner.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 1);
             GrowingValuesScanner.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 20);

@@ -11,12 +11,12 @@ import java.io.FileReader;
 import java.util.*;
 
 public class CanMetaDataContext {
-    final Set<Integer> withChecksum = new HashSet<>();
+    final Set<String> withChecksum = new HashSet<>();
     final Map<Integer, Map<Integer, Integer>> countersMap;
 
     private final Set<ByteId> counterBytes = new HashSet<>();
 
-    private CanMetaDataContext(List<Integer> withChecksum, Map<Integer, Map<Integer, Integer>> countersMap) {
+    private CanMetaDataContext(List<String> withChecksum, Map<Integer, Map<Integer, Integer>> countersMap) {
         this.countersMap = countersMap;
         this.withChecksum.addAll(withChecksum);
 
@@ -42,7 +42,7 @@ public class CanMetaDataContext {
         if (!new File(checkSumFileName).exists())
             return new CanMetaDataContext(new ArrayList<>(), new HashMap<>());
 
-        List<Integer> withChecksum = checksum.load(new FileReader(checkSumFileName));
+        List<String> withChecksum = checksum.load(new FileReader(checkSumFileName));
 
         Yaml countersYaml = new Yaml();
         Map<Integer, Map<Integer, Integer>> countersMap = countersYaml.load(new FileReader(inputFolderName + File.separator + CounterScanner.COUNTERS_YAML));
