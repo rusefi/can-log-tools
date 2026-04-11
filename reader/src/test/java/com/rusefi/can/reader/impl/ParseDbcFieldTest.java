@@ -113,7 +113,7 @@ public class ParseDbcFieldTest {
         DbcField field = DbcFieldParser.parseField("SG_ Field : 7|32@0+ (1,0) [0|4294967295] \"\" XXX", "hello", -1);
         
         // Let's see what it actually is
-        // System.out.println("[DEBUG_LOG] startOffset=" + field.getStartOffset());
+        // System.out.println("[DEBUG_LOG] startOffset=" + field.getLsbBitIndex());
 
         byte[] data = new byte[8];
         data[0] = 0x12;
