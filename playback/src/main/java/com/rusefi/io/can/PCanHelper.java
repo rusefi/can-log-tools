@@ -1,7 +1,5 @@
 package com.rusefi.io.can;
 
-
-import com.rusefi.can.util.ToolRepository;
 import org.jetbrains.annotations.NotNull;
 import peak.can.basic.*;
 
@@ -54,6 +52,10 @@ public class PCanHelper {
     public static CanSender create() {
         PCANBasic pcan = createAndInit();
         System.out.println("Created " + pcan);
+        return extracted(pcan);
+    }
+
+    private static @NotNull CanSender extracted(PCANBasic pcan) {
         return (id, payload) -> {
             TPCANStatus status = send(pcan, id, payload);
 
