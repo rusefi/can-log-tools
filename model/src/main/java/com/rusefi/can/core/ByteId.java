@@ -32,7 +32,7 @@ public class ByteId implements Comparable<ByteId> {
     }
 
     public static ByteId convert(DbcField dbcField) {
-        if (dbcField.getLength() != 8 || dbcField.getStartOffset() % 8 != 0)
+        if (dbcField.getLength() != 8 || dbcField.getLsbBitIndex() % 8 != 0)
             return null;
         return createByte(dbcField.getSid(), dbcField.getByteIndex());
     }

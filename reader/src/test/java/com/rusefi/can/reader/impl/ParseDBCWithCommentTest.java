@@ -76,7 +76,7 @@ public class ParseDBCWithCommentTest {
         assertEquals(dbc.size(), 1);
         DbcPacket p190 = dbc.findPacket(190);
         DbcField signalBrkPdl = p190.getByName("PSBPI_PTSnBrkPdlPs");
-        assertEquals(8, signalBrkPdl.getStartOffset());
+        assertEquals(8, signalBrkPdl.getLsbBitIndex());
         assertEquals(8, signalBrkPdl.getLength());
 
         assertEquals(8, p190.getFields().size());
@@ -97,12 +97,12 @@ public class ParseDBCWithCommentTest {
         assertEquals(9, p190.getFields().size());
 
         DbcField firstByte = p190.findByBitIndex(/*bit index*/3);
-        assertEquals(0, firstByte.getStartOffset());
+        assertEquals(0, firstByte.getLsbBitIndex());
         assertEquals(8, firstByte.getLength());
 
 
         DbcField partial = p190.findByBitIndex(/*bit index*/17);
-        assertEquals(16, partial.getStartOffset());
+        assertEquals(16, partial.getLsbBitIndex());
         assertEquals(7, partial.getLength());
     }
 
@@ -127,7 +127,7 @@ public class ParseDBCWithCommentTest {
         DbcPacket packet = dbc.findPacket(398);
         DbcField field = packet.getFields().get(0);
 
-        assertEquals(12, field.getStartOffset());
+        assertEquals(12, field.getLsbBitIndex());
         assertEquals(12, field.getLength());
         assertEquals(7, field.getDbcStartIndex());
     }

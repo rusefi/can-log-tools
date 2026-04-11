@@ -1,7 +1,6 @@
 package com.rusefi.can.dbc;
 
 import com.rusefi.can.CANPacket;
-import com.rusefi.can.dbc.util.GapFactory;
 
 import java.util.BitSet;
 
@@ -56,6 +55,7 @@ public class DbcField implements Comparable<DbcField> {
         return shortName;
     }
 
+    // maybe better name would be 'motorolaMsbToLsbBit'
     public static int crazyMotorolaMath(int b, int length, boolean isBigEndian) {
         if (!isBigEndian)
             return b;
@@ -90,14 +90,14 @@ public class DbcField implements Comparable<DbcField> {
      * Returns the internal LSB bit index used for actual bit extraction ({@link #getBitRange}).
      * This is the result of applying {@link #crazyMotorolaMath} to the raw DBC start bit:
      * <ul>
-     *   <li>Intel (little-endian): same as {@link #getDbcStartOffset()} — LSB of the signal in the first byte.</li>
+     *   <li>Intel (little-endian): same as {@link #getDbcStartBit()} — LSB of the signal in the first byte.</li>
      *   <li>Motorola (big-endian): transformed value — LSB of the signal in the <em>last</em> byte.</li>
      * </ul>
      * <strong>Do NOT pass this value to the {@link DbcField} constructor</strong> as {@code dbcStartOffset};
      * doing so would double-apply {@code crazyMotorolaMath} and corrupt Motorola signal decoding.
-     * Use {@link #getDbcStartOffset()} when you need the raw DBC bit number.
+     * Use {@link #getDbcStartBit()} when you need the raw DBC bit number.
      */
-    public int getStartOffset() {
+    public int getLsbBitIndex() {
         return startOffset;
     }
 
@@ -108,9 +108,9 @@ public class DbcField implements Comparable<DbcField> {
      *   <li>Motorola (big-endian): MSB of the signal (DBC convention).</li>
      * </ul>
      * Pass this value to the {@link DbcField} constructor as {@code dbcStartOffset};
-     * {@link #crazyMotorolaMath} will be applied internally to produce {@link #getStartOffset()}.
+     * {@link #crazyMotorolaMath} will be applied internally to produce {@link #getLsbBitIndex()}.
      */
-    public int getDbcStartOffset() {
+    public int getDbcStartBit() {
         return dbcStartOffset;
     }
 

@@ -59,7 +59,7 @@ public class DbcImageTool {
             if (f1.getSid() != f2.getSid()) {
                 return Integer.compare(f1.getSid(), f2.getSid());
             }
-            return Integer.compare(f1.getStartOffset(), f2.getStartOffset());
+            return Integer.compare(f1.getLsbBitIndex(), f2.getLsbBitIndex());
         });
 
         Map<DbcField, double[]> minMaxMap = new HashMap<>();

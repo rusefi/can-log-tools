@@ -126,7 +126,7 @@ public class ByteRateOfChangeReports {
             if (f1.getSid() != f2.getSid()) {
                 return Integer.compare(f1.getSid(), f2.getSid());
             }
-            return Integer.compare(f1.getStartOffset(), f2.getStartOffset());
+            return Integer.compare(f1.getLsbBitIndex(), f2.getLsbBitIndex());
         });
 
         return new ComparisonData(entries, differences);

@@ -35,7 +35,7 @@ public class ParseDbcFieldTest {
         // Bits: 51, 50, 49, 48 (byte 6) | 63, 62, 61, 60, 59, 58, 57, 56 (byte 7)
         // LSB is bit 56 (byte 7, bit 0).
         DbcField field = DbcFieldParser.parseField("SG_ CrksftNTrnsRegCmdTq : 51|12@0+ (0.5,-848) [-848|1199.5] \"Nm\"  TCM_HS", "hello", -1);
-        assertEquals(56, field.getStartOffset());   // lsb
+        assertEquals(56, field.getLsbBitIndex());   // lsb
         assertEquals(12, field.getLength());
 
         assertEquals(51, field.getDbcStartIndex()); // msb

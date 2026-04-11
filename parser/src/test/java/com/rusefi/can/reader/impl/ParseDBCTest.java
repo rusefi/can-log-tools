@@ -122,7 +122,7 @@ public class ParseDBCTest {
         assertNotNull(packet);
 
         DbcField f = packet.getFields().get(0);
-        assertEquals(0, f.getStartOffset());
+        assertEquals(0, f.getLsbBitIndex());
     }
 
     @Test

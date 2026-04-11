@@ -34,7 +34,7 @@ public class DbcPacket implements IDbcPacket {
             int bitLimit = 8 * length;
             if (lastSetBit > bitLimit) {
                 // TODO getStartOffset() may be weird in multi-byte fields
-                throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getStartOffset() + " + " + field.getLength() + " > " + bitLimit + "; " + usedBits.length());
+                throw new IllegalStateException("Field " + field.getName() + " is out of bounds in " + name + ": " + field.getLsbBitIndex() + " + " + field.getLength() + " > " + bitLimit + "; " + usedBits.length());
             }
         }
     }
