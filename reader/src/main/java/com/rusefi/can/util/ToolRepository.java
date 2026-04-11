@@ -1,15 +1,18 @@
 package com.rusefi.can.util;
 
 import com.rusefi.can.Launcher;
+import com.rusefi.can.TrcToMlq;
 import com.rusefi.can.reader.isotp.IsoTpFileDecoderFolderStrategy;
 import com.rusefi.can.tool.ValidateDbc;
+import com.rusefi.can.tool.sync.SyncFolder;
+import com.rusefi.can.tool.sync.SyncTrcFiles;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * LOL see ToolSelector TODO unify already
+ *
  */
 public class ToolRepository {
     private static final Set<Class<?>> TOOLS = new HashSet<>();
@@ -28,6 +31,10 @@ public class ToolRepository {
     static {
         registerTool(ValidateDbc.class,
                 IsoTpFileDecoderFolderStrategy.class,
+                TrcToMlq.class,
+                SyncTrcFiles.class,
+                SyncFolder.class,
+                ValidateDbc.class,
                 Launcher.class
         );
     }
