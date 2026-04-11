@@ -7,7 +7,15 @@ import java.util.Objects;
 public class FolderUtil {
     public static void handleFolder(String inputFolderName, FileAction fileAction, String fileNameSuffix) throws IOException {
         File inputFolder = new File(inputFolderName);
-        for (String simpleFileName : Objects.requireNonNull(inputFolder.list((dir, name) -> name.endsWith(fileNameSuffix)))) {
+        String[] suffixes = fileNameSuffix.split("\\|");
+        for (String simpleFileName : Objects.requireNonNull(inputFolder.list((dir, name) -> {
+            for (String suffix : suffixes) {
+                if (name.endsWith(suffix)) {
+                    return true;
+                }
+            }
+            return false;
+        }))) {
             System.out.println("Handling input file " + simpleFileName);
             String fullInputFile = inputFolderName + File.separator + simpleFileName;
 
