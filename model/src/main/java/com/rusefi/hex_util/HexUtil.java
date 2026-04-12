@@ -1,4 +1,4 @@
-package com.rusefi.io.can.isotp;
+package com.rusefi.hex_util;
 
 public class HexUtil {
     private static final String HEX_STRING = "0123456789ABCDEF";

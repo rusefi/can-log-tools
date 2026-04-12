@@ -2,7 +2,7 @@ package com.rusefi.can.reader.isotp;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.reader.impl.AutoFormatReader;
-import com.rusefi.io.can.isotp.HexBinary;
+import com.rusefi.hex_util.HexBinary;
 import com.rusefi.io.can.isotp.IsoTpCanDecoder;
 
 import java.io.File;

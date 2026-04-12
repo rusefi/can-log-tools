@@ -1,5 +1,7 @@
 package com.rusefi.io.can.isotp;
 
+import com.rusefi.hex_util.HexBinary;
+
 import java.util.Arrays;
 
 /**

@@ -16,7 +16,7 @@ import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.can.dbc.DbcPacket;
 import com.rusefi.can.render.DbcImageTool;
-import com.rusefi.io.can.isotp.HexBinary;
+import com.rusefi.hex_util.HexBinary;
 import com.rusefi.util.FolderUtil;
 
 import java.io.*;

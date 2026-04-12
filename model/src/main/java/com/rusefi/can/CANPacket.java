@@ -1,5 +1,7 @@
 package com.rusefi.can;
 
+import com.rusefi.hex_util.HexBinary;
+
 public class CANPacket {
     private final double timeStampMs;
     private final int id;
@@ -26,7 +28,8 @@ public class CANPacket {
     @Override
     public String toString() {
         return "CANPacket{" +
-                "id=" + id +
+                "id=" + DualSid.dualSid(id) +
+                ", data=" + HexBinary.printHexBinary(data) +
                 '}';
     }
 }
