@@ -43,7 +43,7 @@ public class SenderSandbox {
             }
         }
 
-        return isWindows() ? PCanHelper.create() : SocketCANHelper.create();
+        return isWindows() ? PCanHelper.createSender() : SocketCANHelper.create();
     }
 
     @NotNull

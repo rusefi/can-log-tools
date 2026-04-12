@@ -1,5 +1,6 @@
 package com.rusefi.io.can;
 
+import com.rusefi.hex_util.HexBinary;
 import org.jetbrains.annotations.NotNull;
 import peak.can.basic.*;
 
@@ -7,6 +8,7 @@ import static peak.can.basic.TPCANMessageType.PCAN_MESSAGE_STANDARD;
 
 public class PCanHelper {
     public static final TPCANHandle CHANNEL = getTpcanHandle();
+    public static boolean verbose;
 
     private static @NotNull TPCANHandle getTpcanHandle() {
         int index = Integer.parseInt(System.getProperty("PCAN_INDEX", "0"));
@@ -33,7 +35,9 @@ public class PCanHelper {
     }
 
     public static TPCANStatus send(PCANBasic can, int id, byte[] payLoad) {
-        //log.info(String.format("Sending id=%x %s", id, HexBinary.printByteArray(payLoad)));
+        if (verbose) {
+            System.out.println(String.format("Sending id=%x %s", id, HexBinary.printByteArray(payLoad)));
+        }
         TPCANMsg msg = new TPCANMsg(id, PCAN_MESSAGE_STANDARD.getValue(),
                 (byte) payLoad.length, payLoad);
         return can.Write(CHANNEL, msg);
@@ -49,13 +53,13 @@ public class PCanHelper {
         return pcan;
     }
 
-    public static CanSender create() {
+    public static CanSender createSender() {
         PCANBasic pcan = createAndInit();
         System.out.println("Created " + pcan);
-        return extracted(pcan);
+        return createSender(pcan);
     }
 
-    private static @NotNull CanSender extracted(PCANBasic pcan) {
+    public static @NotNull CanSender createSender(PCANBasic pcan) {
         return (id, payload) -> {
             TPCANStatus status = send(pcan, id, payload);
 
