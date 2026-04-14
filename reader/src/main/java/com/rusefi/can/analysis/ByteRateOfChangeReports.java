@@ -182,8 +182,12 @@ public class ByteRateOfChangeReports {
                     dbc
             );
 
+            List<DbcImageTool.ComparisonEntry> diffEntries = comparisonData.entries.stream()
+                    .filter(entry -> Math.abs(entry.getDifference()) > 0.01)
+                    .collect(Collectors.toList());
+
             DbcImageTool.createComparisonHtml(
-                    comparisonData.entries,
+                    diffEntries,
                     comparingFolder,
                     simpleName1,
                     simpleName2,
