@@ -81,7 +81,16 @@ public class ByteRateOfChangeReports {
         String simpleName1 = traceReport1.getSimpleFileName();
         String simpleName2 = traceReport2.getSimpleFileName();
 
+        boolean ignoreCountersAndChecksums = Boolean.getBoolean("ignore-counters-and-checksums");
+
         for (DbcField dbcField : allKeys) {
+            if (ignoreCountersAndChecksums) {
+                String name = dbcField.getName().toLowerCase();
+                if (name.contains("counter") || name.contains("checksum")) {
+                    continue;
+                }
+            }
+
             ByteId asByte = ByteId.convert(dbcField);
             if (asByte != null) {
                 if (context.isCounter(asByte)) {
