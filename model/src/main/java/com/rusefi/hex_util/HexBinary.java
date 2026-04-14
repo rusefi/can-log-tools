@@ -8,11 +8,14 @@ public class HexBinary {
             return "(null)";
         char[] hexCode = HexUtil.HEX_CHAR_ARRAY;
 
-        StringBuilder r = new StringBuilder(data.length * 2);
-        for (byte b : data) {
+        StringBuilder r = new StringBuilder(data.length * 3);
+        for (int i = 0; i < data.length; i++) {
+            byte b = data[i];
             r.append(hexCode[(b >> 4) & 0xF]);
             r.append(hexCode[(b & 0xF)]);
-            r.append(' ');
+            if (i < data.length - 1) {
+                r.append(' ');
+            }
         }
         return r.toString();
     }
@@ -22,11 +25,14 @@ public class HexBinary {
             return "(null)";
         char[] hexCode = HexUtil.HEX_CHAR_ARRAY;
 
-        StringBuilder r = new StringBuilder(data.size() * 2);
-        for (byte b : data) {
+        StringBuilder r = new StringBuilder(data.size() * 3);
+        for (int i = 0; i < data.size(); i++) {
+            byte b = data.get(i);
             r.append(hexCode[(b >> 4) & 0xF]);
             r.append(hexCode[(b & 0xF)]);
-            r.append(' ');
+            if (i < data.size() - 1) {
+                r.append(' ');
+            }
         }
         return r.toString();
     }
