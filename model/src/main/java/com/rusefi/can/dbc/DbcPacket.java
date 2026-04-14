@@ -172,6 +172,9 @@ public class DbcPacket implements IDbcPacket {
     }
 
     public void assertLength(CANPacket packet) {
+        if (Boolean.getBoolean("dbc.allow_length_mismatch")) {
+            return;
+        }
         if (getLength() != packet.getData().length) {
             throw new IllegalArgumentException("Length mismatch for " + getName() + " (0x" + Integer.toHexString(packet.getId()) + "): DBC says " + getLength() + " but trace has " + packet.getData().length);
         }
