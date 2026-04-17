@@ -62,24 +62,33 @@ public class PCanHelper {
     }
 
     public static @NotNull CanSender createSender(PCANBasic pcan) {
-        return (id, payload) -> {
-            TPCANStatus status = send(pcan, id, payload);
+        return new CanSender() {
+            private long lastErrorTime = -1;
 
-            if (status == TPCANStatus.PCAN_ERROR_XMTFULL || status == TPCANStatus.PCAN_ERROR_QXMTFULL) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+            @Override
+            public boolean send(int id, byte[] payload) {
+                TPCANStatus status = PCanHelper.send(pcan, id, payload);
+
+                if (status == TPCANStatus.PCAN_ERROR_XMTFULL || status == TPCANStatus.PCAN_ERROR_QXMTFULL) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
 //                System.out.println(String.format("Let's retry ID=%x", packet.getId()) + " OK=" + okCounter);
-                status = send(pcan, id, payload);
-            }
+                    status = PCanHelper.send(pcan, id, payload);
+                }
 
-            boolean isHappy = status == TPCANStatus.PCAN_ERROR_OK;
-            if (!isHappy) {
-                System.out.println("Error sending " + status);
+                boolean isHappy = status == TPCANStatus.PCAN_ERROR_OK;
+                if (!isHappy) {
+                    long now = System.currentTimeMillis();
+                    if (now - lastErrorTime > 1000) {
+                        System.out.println("Error sending " + status);
+                        lastErrorTime = now;
+                    }
+                }
+                return isHappy;
             }
-            return isHappy;
         };
     }
 }
