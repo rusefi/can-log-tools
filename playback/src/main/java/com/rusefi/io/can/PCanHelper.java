@@ -53,8 +53,10 @@ public class PCanHelper {
         return pcan;
     }
 
+    public static PCANBasic pcan;
+
     public static CanSender createSender() {
-        PCANBasic pcan = createAndInit();
+        pcan = createAndInit();
         System.out.println("Created " + pcan);
         return createSender(pcan);
     }

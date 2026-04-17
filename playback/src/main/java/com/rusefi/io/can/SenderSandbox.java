@@ -5,13 +5,18 @@ import com.rusefi.can.CanPacketSender;
 import com.rusefi.can.reader.CANLineReader;
 import org.jetbrains.annotations.NotNull;
 import peak.can.basic.HackLoadLibraryFlag;
+import peak.can.basic.TPCANMsg;
+import peak.can.basic.TPCANStatus;
+import peak.can.basic.TPCANTimestamp;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SenderSandbox {
     public static void main(String[] args) throws Exception {
@@ -25,6 +30,36 @@ public class SenderSandbox {
         System.out.println("Got " + packets.size() + " packet(s)");
 
         CanSender sender = create();
+
+        AtomicInteger totalReceived = new AtomicInteger();
+
+        new Thread(() -> {
+            while (true) {
+                if (PCanHelper.pcan != null) {
+                    TPCANMsg msg = new TPCANMsg();
+                    TPCANTimestamp timestamp = new TPCANTimestamp();
+                    while (PCanHelper.pcan.Read(PCanHelper.CHANNEL, msg, timestamp) == TPCANStatus.PCAN_ERROR_OK) {
+                        totalReceived.incrementAndGet();
+                    }
+                }
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }, "Receiver").start();
+
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    return;
+                }
+                System.out.println(new Date() + ": Total received " + totalReceived.get());
+            }
+        }, "Reporting").start();
 
         while (true) {
             CanPacketSender.sendMessagesOut(packets, sender);
