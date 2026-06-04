@@ -93,7 +93,4 @@ or via `ToolRepository`) and therefore accept any of the supported formats.
 | `com.rusefi.can.tool.sync.SyncFolderTool`                       | Time-align/sync a folder of trace files. |
 | `com.rusefi.can.tool.sync.SyncTraceFilesTool`                     | Time-align/sync a pair of `.trc` files. |
 | `com.rusefi.io.can.CanTracePlayerTool`                           | Replays a trace onto a live CAN bus (PCAN on Windows, SocketCAN on Linux). Built as `playback-all.jar`. |
-
-Tools without a `main()` that do not themselves read traces (e.g.
-`com.rusefi.can.tool.ValidateDbcTool`, which only validates DBC files) are
-intentionally omitted from the table above.
+| `com.rusefi.can.tool.ValidateDbcTool` | validates DBC files | 
