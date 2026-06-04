@@ -13,7 +13,7 @@ import static com.rusefi.can.reader.CANLineReader.getReader;
 /**
  * Converts a CAN trace file into an {@code .mlq} file for EFI Analytics MegaLogViewer.
  */
-public class TrcToMlqConverterTool {
+public class TraceToMlqConverterTool {
     public static ReaderType parseCurrentReaderTypeSetting() {
         String property = System.getProperty("TRACE_READER", ReaderType.AUTO.name());
         ReaderType readerType = ReaderType.valueOf(property);

@@ -22,20 +22,20 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ByteRateOfChangeReports {
+public class ByteUniqueValuesReports {
     public static Filter filter = packet -> false;
 
     /**
      * sweet baby O(n^2)
      */
-    public static void compareEachReportAgainstAllOthers(DbcFile dbc, String reportDestinationFolder, List<ByteRateOfChange.TraceReport> reports, CanMetaDataContext context) throws IOException {
+    public static void compareEachReportAgainstAllOthers(DbcFile dbc, String reportDestinationFolder, List<ByteVariabilityScannerTool.TraceReport> reports, CanMetaDataContext context) throws IOException {
         for (int i = 0; i < reports.size(); i++) {
             for (int j = i + 1; j < reports.size(); j++)
                 compareTwoReports(dbc, reportDestinationFolder, reports.get(i), reports.get(j), context);
         }
     }
 
-    static void compareTwoReports(DbcFile dbc, String reportDestinationFolder, ByteRateOfChange.TraceReport traceReport1, ByteRateOfChange.TraceReport traceReport2, CanMetaDataContext context) throws IOException {
+    static void compareTwoReports(DbcFile dbc, String reportDestinationFolder, ByteVariabilityScannerTool.TraceReport traceReport1, ByteVariabilityScannerTool.TraceReport traceReport2, CanMetaDataContext context) throws IOException {
 
         String comparingFolder = reportDestinationFolder + File.separator + "comparison";
         new File(comparingFolder).mkdirs();
@@ -61,8 +61,8 @@ public class ByteRateOfChangeReports {
     }
 
     static ComparisonData createComparisonData(DbcFile dbc,
-                                               ByteRateOfChange.TraceReport traceReport1,
-                                               ByteRateOfChange.TraceReport traceReport2,
+                                               ByteVariabilityScannerTool.TraceReport traceReport1,
+                                               ByteVariabilityScannerTool.TraceReport traceReport2,
                                                CanMetaDataContext context,
                                                String imagesFolder) throws IOException {
         Set<DbcField> allKeys = new TreeSet<>();
@@ -122,8 +122,8 @@ public class ByteRateOfChangeReports {
                 entries.add(entry);
             }
 
-            ByteRateOfChange.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
-            ByteRateOfChange.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(dbcField, ByteRateOfChange.ByteStatistics::new);
+            ByteVariabilityScannerTool.ByteStatistics s1 = traceReport1.getStatistics().computeIfAbsent(dbcField, ByteVariabilityScannerTool.ByteStatistics::new);
+            ByteVariabilityScannerTool.ByteStatistics s2 = traceReport2.getStatistics().computeIfAbsent(dbcField, ByteVariabilityScannerTool.ByteStatistics::new);
             addDifference(differences, prefix, dbcField, s1, s2);
         }
 
@@ -141,8 +141,8 @@ public class ByteRateOfChangeReports {
     }
 
     static DbcImageTool.ComparisonEntry createComparisonEntry(DbcField dbcField,
-                                                              ByteRateOfChange.TraceReport traceReport1,
-                                                              ByteRateOfChange.TraceReport traceReport2,
+                                                              ByteVariabilityScannerTool.TraceReport traceReport1,
+                                                              ByteVariabilityScannerTool.TraceReport traceReport2,
                                                               Map<Integer, List<CANPacket>> packetsById1,
                                                               Map<Integer, List<CANPacket>> packetsById2,
                                                               String simpleName1,
@@ -159,8 +159,8 @@ public class ByteRateOfChangeReports {
     }
 
     static void writeReport(ComparisonData comparisonData,
-                            ByteRateOfChange.TraceReport traceReport1,
-                            ByteRateOfChange.TraceReport traceReport2,
+                            ByteVariabilityScannerTool.TraceReport traceReport1,
+                            ByteVariabilityScannerTool.TraceReport traceReport2,
                             String comparingFolder,
                             String imagesFolder,
                             String simpleName1,
@@ -205,7 +205,7 @@ public class ByteRateOfChangeReports {
         }
     }
 
-    static boolean hasVisualDifference(ByteRateOfChange.TraceReport trace1, ByteRateOfChange.TraceReport trace2, DbcField dbcField) {
+    static boolean hasVisualDifference(ByteVariabilityScannerTool.TraceReport trace1, ByteVariabilityScannerTool.TraceReport trace2, DbcField dbcField) {
         List<Double> values1 = extractFieldValues(trace1, dbcField);
         List<Double> values2 = extractFieldValues(trace2, dbcField);
 
@@ -222,7 +222,7 @@ public class ByteRateOfChangeReports {
         return false;
     }
 
-    private static List<Double> extractFieldValues(ByteRateOfChange.TraceReport trace, DbcField dbcField) {
+    private static List<Double> extractFieldValues(ByteVariabilityScannerTool.TraceReport trace, DbcField dbcField) {
         List<CANPacket> packets = trace.getPackets();
         List<Double> values = new ArrayList<Double>();
 
@@ -245,8 +245,8 @@ public class ByteRateOfChangeReports {
     private static void addDifference(List<ByteVariationDifference> differences,
                                       String prefix,
                                       DbcField dbcField,
-                                      ByteRateOfChange.ByteStatistics s1,
-                                      ByteRateOfChange.ByteStatistics s2) {
+                                      ByteVariabilityScannerTool.ByteStatistics s1,
+                                      ByteVariabilityScannerTool.ByteStatistics s2) {
         if (s1.getUniqueValuesCount() != s2.getUniqueValuesCount()) {
             String msg = prefix + dbcField + ": unique_count=" + s1.getUniqueValuesCount() + " vs " + s2.getUniqueValuesCount();
             int deltaCount = Math.abs(s1.getUniqueValuesCount() - s2.getUniqueValuesCount());
@@ -301,7 +301,7 @@ public class ByteRateOfChangeReports {
 
         CanMetaDataContext context = CanMetaDataContext.read(inputFolderName);
 
-        List<ByteRateOfChange.TraceReport> reports = new ArrayList<>();
+        List<ByteVariabilityScannerTool.TraceReport> reports = new ArrayList<>();
 
         FolderUtil.handleFolder(inputFolderName, (simpleFileName, fullInputFileName) -> {
             if (Launcher.fileNameFilter != null && !simpleFileName.contains(Launcher.fileNameFilter))
@@ -324,7 +324,7 @@ public class ByteRateOfChangeReports {
             PacketFrequencyTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
             FirstOccurrencePerIdTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
 
-            ByteRateOfChange.TraceReport report = ByteRateOfChange.process(dbc, reportDestinationFolder, simpleFileName, logFileContent);
+            ByteVariabilityScannerTool.TraceReport report = ByteVariabilityScannerTool.process(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             report.save(reportDestinationFolder, simpleFileName + "-ByteRateOfChange.txt");
 
             reports.add(report);

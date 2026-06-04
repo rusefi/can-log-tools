@@ -76,7 +76,7 @@ or via `ToolRepository`) and therefore accept any of the supported formats.
 | Tool (class with `main()`)                                  | Purpose |
 |-------------------------------------------------------------|---------|
 | `com.rusefi.can.Launcher`                                   | Main CLI: runs the full omnibus pipeline below over a folder of traces. Built as `reader-all.jar` (`gradlew :reader:shadowJar`). |
-| `com.rusefi.can.TrcToMlqConverterTool`                                   | Convert a trace file into an `.mlq` file for MegaLogViewer. |
+| `com.rusefi.can.TraceToMlqConverterTool`                                   | Convert a trace file into an `.mlq` file for MegaLogViewer. |
 | `com.rusefi.can.analysis.PacketFrequencyTool`                   | Report per-ID packet frequency for a trace. |
 | `com.rusefi.can.analysis.filter.PerSidDumpTool`                 | Dump packets grouped per SID/arbitration ID. |
 | `com.rusefi.can.analysis.filter.ReportBySenderTool`             | Group packets/fields by sender/source and report. |
@@ -86,13 +86,12 @@ or via `ToolRepository`) and therefore accept any of the supported formats.
 | `com.rusefi.can.mlv.CanToMegaLogViewerConverterTool`                     | Convert a trace into MegaLogViewer-compatible output. |
 | `com.rusefi.can.analysis.PacketCountDistributionTool`                       | Report per-ID packet count distribution. |
 | `com.rusefi.can.analysis.FirstOccurrencePerIdTool`                       | Report the first occurrence of each packet ID. |
-| `com.rusefi.can.analysis.ByteRateOfChange`                  | Per-byte rate-of-change statistics for a single trace. |
+| `com.rusefi.can.analysis.ByteVariabilityScannerTool`                  | Per-byte rate-of-change statistics for a single trace. |
 | `com.rusefi.can.analysis.NeverChangingFieldScannerTool`                          | Scan a folder for DBC fields whose value never changes. |
-| `com.rusefi.can.reader.isotp.IsoTpFileDecoderFolderStrategy`| ISO-TP reassembly across a folder of traces. |
+| `com.rusefi.can.reader.isotp.IsoTpFolderDecoderTool`| ISO-TP reassembly across a folder of traces. |
 | `com.rusefi.can.render.DbcImageTool`                        | Render a time-series chart image of a trace using a DBC. |
 | `com.rusefi.can.tool.sync.SyncFolderTool`                       | Time-align/sync a folder of trace files. |
 | `com.rusefi.can.tool.sync.SyncTraceFilesTool`                     | Time-align/sync a pair of `.trc` files. |
-| `com.rusefi.can.util.ToolRepository`                        | Shared trace-loading helper; also runnable to dump what it loads. |
 | `com.rusefi.io.can.CanTracePlayerTool`                           | Replays a trace onto a live CAN bus (PCAN on Windows, SocketCAN on Linux). Built as `playback-all.jar`. |
 
 Tools without a `main()` that do not themselves read traces (e.g.

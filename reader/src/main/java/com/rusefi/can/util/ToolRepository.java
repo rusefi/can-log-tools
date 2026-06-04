@@ -1,8 +1,8 @@
 package com.rusefi.can.util;
 
+import com.rusefi.can.TraceToMlqConverterTool;
 import com.rusefi.can.analysis.NeverChangingFieldScannerTool;
 import com.rusefi.can.Launcher;
-import com.rusefi.can.TrcToMlqConverterTool;
 import com.rusefi.can.analysis.*;
 import com.rusefi.can.analysis.checksum.ChecksumScannerTool;
 import com.rusefi.can.analysis.counter_scanner.CounterScannerTool;
@@ -10,7 +10,7 @@ import com.rusefi.can.analysis.filter.PerSidDumpTool;
 import com.rusefi.can.analysis.filter.ReportBySenderTool;
 import com.rusefi.can.analysis.growing_values.GrowingValuesScannerTool;
 import com.rusefi.can.mlv.CanToMegaLogViewerConverterTool;
-import com.rusefi.can.reader.isotp.IsoTpFileDecoderFolderStrategy;
+import com.rusefi.can.reader.isotp.IsoTpFolderDecoderTool;
 import com.rusefi.can.render.DbcImageTool;
 import com.rusefi.can.tool.ValidateDbc;
 import com.rusefi.can.tool.sync.SyncFolderTool;
@@ -40,8 +40,8 @@ public class ToolRepository {
 
     static {
         registerTool(ValidateDbc.class,
-                IsoTpFileDecoderFolderStrategy.class,
-                TrcToMlqConverterTool.class,
+                IsoTpFolderDecoderTool.class,
+                TraceToMlqConverterTool.class,
                 SyncTraceFilesTool.class,
                 SyncFolderTool.class,
                 ValidateDbc.class,
@@ -56,7 +56,7 @@ public class ToolRepository {
                 CanToMegaLogViewerConverterTool.class,
                 PacketCountDistributionTool.class,
                 FirstOccurrencePerIdTool.class,
-                ByteRateOfChange.class,
+                ByteVariabilityScannerTool.class,
                 NeverChangingFieldScannerTool.class
         );
     }

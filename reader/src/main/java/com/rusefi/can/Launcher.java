@@ -1,6 +1,6 @@
 package com.rusefi.can;
 
-import com.rusefi.can.analysis.ByteRateOfChangeReports;
+import com.rusefi.can.analysis.ByteUniqueValuesReports;
 import com.rusefi.can.dbc.J1939Logic;
 import com.rusefi.can.dbc.reader.DbcFileReader;
 import com.rusefi.can.util.ToolRepository;
@@ -78,6 +78,6 @@ public class Launcher {
         System.out.println("\tinputFolderName=" + inputFolderName);
         System.out.println("\tfileNameSuffixValue=" + fileNameSuffixValue);
         System.out.println("\tdbcFileName=" + dbcFileName);
-        ByteRateOfChangeReports.scanInputFolder(inputFolderName, fileNameSuffixValue);
+        ByteUniqueValuesReports.scanInputFolder(inputFolderName, fileNameSuffixValue);
     }
 }

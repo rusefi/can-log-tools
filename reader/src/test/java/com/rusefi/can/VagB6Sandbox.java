@@ -1,6 +1,6 @@
 package com.rusefi.can;
 
-import com.rusefi.can.analysis.ByteRateOfChangeReports;
+import com.rusefi.can.analysis.ByteUniqueValuesReports;
 import com.rusefi.can.reader.impl.ReadFullVagDbc;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ public class VagB6Sandbox {
 
         String inputFolderName = "C:\\stuff\\rusefi_documentation\\OEM-Docs\\VAG\\2006-Passat-B6\\";
 
-        ByteRateOfChangeReports.filter = dbcField -> {
+        ByteUniqueValuesReports.filter = dbcField -> {
             String name = dbcField.getName();
             return name.startsWith("CHECKSUM_") || name.startsWith("COUNTER_");
         };

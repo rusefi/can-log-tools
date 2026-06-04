@@ -11,6 +11,6 @@ public class IsoTpReaderSandbox {
 
         String folder = "C:\\Projects\\Rusefi\\8hp\\can-traces\\unit-1";
 
-        IsoTpFileDecoderFolderStrategy.main(new String[]{folder});
+        IsoTpFolderDecoderTool.main(new String[]{folder});
     }
 }

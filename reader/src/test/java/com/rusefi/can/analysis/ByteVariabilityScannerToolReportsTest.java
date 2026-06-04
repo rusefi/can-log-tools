@@ -1,7 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
-import com.rusefi.can.analysis.ByteRateOfChange.ByteStatistics;
+import com.rusefi.can.analysis.ByteVariabilityScannerTool.ByteStatistics;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.DbcPacket;
@@ -11,42 +11,42 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 
-public class ByteRateOfChangeReportsTest {
+public class ByteVariabilityScannerToolReportsTest {
 
     @Test
     public void hasVisualDifference_returnsFalseForIdenticalStats() {
         DbcField field = createDbcField();
-        ByteRateOfChange.TraceReport trace1 = createTraceReport("a", field, byteStats(1, 2), 1);
-        ByteRateOfChange.TraceReport trace2 = createTraceReport("b", field, byteStats(1, 2), 1);
+        ByteVariabilityScannerTool.TraceReport trace1 = createTraceReport("a", field, byteStats(1, 2), 1);
+        ByteVariabilityScannerTool.TraceReport trace2 = createTraceReport("b", field, byteStats(1, 2), 1);
 
-        assertFalse(ByteRateOfChangeReports.hasVisualDifference(trace1, trace2, field));
+        assertFalse(ByteUniqueValuesReports.hasVisualDifference(trace1, trace2, field));
     }
 
     @Test
     public void hasVisualDifference_returnsTrueForDifferentUniqueValueCount() {
         DbcField field = createDbcField();
-        ByteRateOfChange.TraceReport trace1 = createTraceReport("a", field, byteStats(1, 2, 3), 2);
-        ByteRateOfChange.TraceReport trace2 = createTraceReport("b", field, byteStats(1, 2), 2);
+        ByteVariabilityScannerTool.TraceReport trace1 = createTraceReport("a", field, byteStats(1, 2, 3), 2);
+        ByteVariabilityScannerTool.TraceReport trace2 = createTraceReport("b", field, byteStats(1, 2), 2);
 
-        assertTrue(ByteRateOfChangeReports.hasVisualDifference(trace1, trace2, field));
+        assertTrue(ByteUniqueValuesReports.hasVisualDifference(trace1, trace2, field));
     }
 
     @Test
     public void hasVisualDifference_returnsTrueForDifferentValueSets() {
         DbcField field = createDbcField();
-        ByteRateOfChange.TraceReport trace1 = createTraceReport("a", field, byteStats(1, 2), 1);
-        ByteRateOfChange.TraceReport trace2 = createTraceReport("b", field, byteStats(1, 3), 1);
+        ByteVariabilityScannerTool.TraceReport trace1 = createTraceReport("a", field, byteStats(1, 2), 1);
+        ByteVariabilityScannerTool.TraceReport trace2 = createTraceReport("b", field, byteStats(1, 3), 1);
 
-        assertTrue(ByteRateOfChangeReports.hasVisualDifference(trace1, trace2, field));
+        assertTrue(ByteUniqueValuesReports.hasVisualDifference(trace1, trace2, field));
     }
 
     @Test
     public void hasVisualDifference_returnsTrueForDifferentTransitions() {
         DbcField field = createDbcField();
-        ByteRateOfChange.TraceReport trace1 = createTraceReport("a", field, byteStats(1, 2), 1);
-        ByteRateOfChange.TraceReport trace2 = createTraceReport("b", field, byteStats(1, 2), 3);
+        ByteVariabilityScannerTool.TraceReport trace1 = createTraceReport("a", field, byteStats(1, 2), 1);
+        ByteVariabilityScannerTool.TraceReport trace2 = createTraceReport("b", field, byteStats(1, 2), 3);
 
-        assertTrue(ByteRateOfChangeReports.hasVisualDifference(trace1, trace2, field));
+        assertTrue(ByteUniqueValuesReports.hasVisualDifference(trace1, trace2, field));
     }
 
     private static DbcField createDbcField() {
@@ -57,7 +57,7 @@ public class ByteRateOfChangeReportsTest {
         return packet.getByName("FieldA");
     }
 
-    private static ByteRateOfChange.TraceReport createTraceReport(String name, DbcField field, ByteStatistics stats, int transitions) {
+    private static ByteVariabilityScannerTool.TraceReport createTraceReport(String name, DbcField field, ByteStatistics stats, int transitions) {
         List<Integer> values = new ArrayList<>(stats.getUniqueValues());
         if (values.isEmpty()) {
             values.add(0);
@@ -78,7 +78,7 @@ public class ByteRateOfChangeReportsTest {
         HashMap<DbcField, ByteStatistics> map = new HashMap<>();
         map.put(field, stats);
 
-        return new ByteRateOfChange.TraceReport(packets, name, map);
+        return new ByteVariabilityScannerTool.TraceReport(packets, name, map);
     }
 
     private static ByteStatistics byteStats(int... values) {

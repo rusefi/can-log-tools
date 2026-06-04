@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Computes per-byte rate-of-change statistics for a single CAN trace (transitions, unique values, etc).
  */
-public class ByteRateOfChange {
+public class ByteVariabilityScannerTool {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.out.println("Usage: ByteRateOfChange <dbcFile> <traceFile>");
@@ -140,7 +140,7 @@ public class ByteRateOfChange {
             this.packets = packets;
             this.simpleFileName = simpleFileName;
             this.statistics = statistics;
-            this.durationMs = ByteRateOfChange.getDurationMs(packets);
+            this.durationMs = ByteVariabilityScannerTool.getDurationMs(packets);
             this.minTimeMs = packets.isEmpty() ? 0 : packets.get(0).getTimeStampMs();
         }
 
