@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class GrowingValuesScanner {
+public class GrowingValuesScannerTool {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.out.println("Usage: GrowingValuesScanner <dbcFile> <traceFile> [delta]");

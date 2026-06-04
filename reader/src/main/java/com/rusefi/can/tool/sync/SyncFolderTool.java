@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SyncFolder {
+public class SyncFolderTool {
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length < 3) {
             System.out.println("Usage: SyncFolder <folder> <suffix1> <suffix2> [suffix3]");

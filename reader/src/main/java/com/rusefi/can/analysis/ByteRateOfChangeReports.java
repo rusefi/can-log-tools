@@ -1,12 +1,12 @@
 package com.rusefi.can.analysis;
 
-import com.rusefi.can.AlwaysSameScanner;
+import com.rusefi.can.AlwaysSameScannerTool;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.analysis.checksum.ChecksumScannerTool;
 import com.rusefi.can.analysis.filter.PerSidDumpTool;
 import com.rusefi.can.analysis.filter.ReportBySourceTool;
-import com.rusefi.can.analysis.groving_values.GrowingValuesScanner;
+import com.rusefi.can.analysis.groving_values.GrowingValuesScannerTool;
 import com.rusefi.can.core.ByteId;
 import com.rusefi.can.analysis.counter_scanner.CounterScannerTool;
 import com.rusefi.can.mlv.CanToMegaLogViewerConverterTool;
@@ -316,8 +316,8 @@ public class ByteRateOfChangeReports {
             CounterScannerTool.scanForCounters(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             ChecksumScannerTool.scanForChecksums(dbc, reportDestinationFolder, simpleFileName, logFileContent);
 
-            GrowingValuesScanner.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 1);
-            GrowingValuesScanner.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 20);
+            GrowingValuesScannerTool.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 1);
+            GrowingValuesScannerTool.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 20);
 
             CanToMegaLogViewerConverterTool.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
 
@@ -331,7 +331,7 @@ public class ByteRateOfChangeReports {
             reports.add(report);
         }, fileNameSuffix);
 
-        AlwaysSameScanner.run(reportDestinationFolder, inputFolderName, dbc);
+        AlwaysSameScannerTool.run(reportDestinationFolder, inputFolderName, dbc);
 
         System.out.println("ByteRateOfChangeReports: Processing " + reports.size() + " report(s)");
         compareEachReportAgainstAllOthers(dbc, reportDestinationFolder, reports, context);
