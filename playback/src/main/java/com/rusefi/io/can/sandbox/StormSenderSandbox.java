@@ -1,4 +1,7 @@
-package com.rusefi.io.can;
+package com.rusefi.io.can.sandbox;
+
+import com.rusefi.io.can.CanSender;
+import com.rusefi.io.can.CanTracePlayerTool;
 
 public class StormSenderSandbox {
     public static void main(String[] args) throws InterruptedException {

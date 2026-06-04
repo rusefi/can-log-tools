@@ -95,5 +95,5 @@ or via `ToolRepository`) and therefore accept any of the supported formats.
 | `com.rusefi.io.can.CanTracePlayerTool`                           | Replays a trace onto a live CAN bus (PCAN on Windows, SocketCAN on Linux). Built as `playback-all.jar`. |
 
 Tools without a `main()` that do not themselves read traces (e.g.
-`com.rusefi.can.tool.ValidateDbc`, which only validates DBC files) are
+`com.rusefi.can.tool.ValidateDbcTool`, which only validates DBC files) are
 intentionally omitted from the table above.

@@ -2,7 +2,7 @@ package com.rusefi.can.reader.dbc;
 
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcPacket;
-import com.rusefi.can.tool.ValidateDbc;
+import com.rusefi.can.tool.ValidateDbcTool;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -10,14 +10,14 @@ import java.util.BitSet;
 import java.util.List;
 import static org.junit.Assert.*;
 
-public class ValidateDbcTest {
+public class ValidateDbcToolTest {
     @Test
     public void testOverlap() {
         DbcField field1 = new DbcField(100, "F1", 0, 8, 1, 0, "", false, false);
         DbcField field2 = new DbcField(100, "F2", 7, 8, 1, 0, "", false, false);
 
         DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
-        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        List<String> errors = ValidateDbcTool.checkFieldsOverlap(packet);
         assertFalse("Should have errors", errors.isEmpty());
         assertTrue(errors.get(0).contains("Overlap"));
         assertTrue(errors.get(0).contains("uses bit 7"));
@@ -29,7 +29,7 @@ public class ValidateDbcTest {
         DbcField field2 = new DbcField(100, "F2", 8, 8, 1, 0, "", false, false);
 
         DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
-        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        List<String> errors = ValidateDbcTool.checkFieldsOverlap(packet);
         assertTrue("Should not have errors", errors.isEmpty());
     }
 
@@ -39,20 +39,20 @@ public class ValidateDbcTest {
         DbcField field2 = new DbcField(100, "some_gap_8", 0, 8, 1, 0, "", false, false);
 
         DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
-        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        List<String> errors = ValidateDbcTool.checkFieldsOverlap(packet);
         assertTrue("Should not have errors because gap is ignored", errors.isEmpty());
     }
 
     @Test
     public void testValidDbc() {
-        List<String> errors = ValidateDbc.checkPacket(1043, "MSG_1043_413");
+        List<String> errors = ValidateDbcTool.checkPacket(1043, "MSG_1043_413");
         assertTrue(errors.isEmpty());
     }
 
     @Test
     public void testValueMismatch() {
         // dec_suffix=413, hex_suffix=19E. 413 != 0x19E (which is 414).
-        List<String> errors = ValidateDbc.checkPacket(1043, "MSG_413_19E");
+        List<String> errors = ValidateDbcTool.checkPacket(1043, "MSG_413_19E");
         // This will have ID mismatch as well because 413 != 1043.
         assertEquals(2, errors.size());
         assertTrue(errors.stream().anyMatch(e -> e.contains("Value mismatch")));
@@ -60,21 +60,21 @@ public class ValidateDbcTest {
 
     @Test
     public void testIdMismatch() {
-        List<String> errors = ValidateDbc.checkPacket(1000, "MSG_413_19D");
+        List<String> errors = ValidateDbcTool.checkPacket(1000, "MSG_413_19D");
         assertEquals(1, errors.size());
         assertTrue(errors.get(0).contains("ID mismatch"));
     }
 
     @Test
     public void testReversedSuffix() {
-        List<String> errors = ValidateDbc.checkPacket(1043, "MSG_19D_413");
+        List<String> errors = ValidateDbcTool.checkPacket(1043, "MSG_19D_413");
         assertEquals(1, errors.size());
         assertTrue(errors.get(0).contains("REVERSED suffix: MSG_19D_413 should be MSG_413_19D"));
     }
 
     @Test
     public void testWrongOrderNoLetters() {
-        List<String> errors = ValidateDbc.checkPacket(22, "MSG_16_22"); // 0x16 is 22.
+        List<String> errors = ValidateDbcTool.checkPacket(22, "MSG_16_22"); // 0x16 is 22.
         assertEquals(1, errors.size());
         assertTrue(errors.get(0).contains("Wrong order: MSG_16_22 (hex before decimal) should be MSG_22_16"));
     }
@@ -91,7 +91,7 @@ public class ValidateDbcTest {
         DbcPacket packet = new DbcPacket(1417, "ETEI_Engine_Torque_Capability_1417_589", "src", 8,
                 Arrays.asList(field1, field2, field3), null);
 
-        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        List<String> errors = ValidateDbcTool.checkFieldsOverlap(packet);
         assertTrue("Should not have errors: " + errors, errors.isEmpty());
     }
 
@@ -117,7 +117,7 @@ public class ValidateDbcTest {
         DbcPacket packet = new DbcPacket(1417, "ETEI_Engine_Torque_Capability_1417_589", "src", 8,
                 Arrays.asList(field1, field2, field3, field4, field5, field6, field7, field8), null);
 
-        List<String> errors = ValidateDbc.checkFieldsOverlap(packet);
+        List<String> errors = ValidateDbcTool.checkFieldsOverlap(packet);
         assertTrue("Should not have errors: " + errors, errors.isEmpty());
     }
 
@@ -142,7 +142,7 @@ public class ValidateDbcTest {
         DbcField field2 = new DbcField(100, "F2", 8, 8, 1, 0, "", false, false);
 
         DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
-        List<String> errors = ValidateDbc.checkFieldsEndianness(packet);
+        List<String> errors = ValidateDbcTool.checkFieldsEndianness(packet);
         assertTrue("Should not have errors", errors.isEmpty());
     }
 
@@ -152,7 +152,7 @@ public class ValidateDbcTest {
         DbcField field2 = new DbcField(100, "F2", 8, 8, 1, 0, "", true, false);
 
         DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
-        List<String> errors = ValidateDbc.checkFieldsEndianness(packet);
+        List<String> errors = ValidateDbcTool.checkFieldsEndianness(packet);
         assertFalse("Should have errors", errors.isEmpty());
         assertTrue(errors.get(0).contains("Mixed endianness"));
     }
@@ -163,7 +163,7 @@ public class ValidateDbcTest {
         DbcField field2 = new DbcField(100, "some_gap_8", 8, 8, 1, 0, "", true, false);
 
         DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2), null);
-        List<String> errors = ValidateDbc.checkFieldsEndianness(packet);
+        List<String> errors = ValidateDbcTool.checkFieldsEndianness(packet);
         assertTrue("Should not have errors because gap is ignored", errors.isEmpty());
     }
 
@@ -174,7 +174,7 @@ public class ValidateDbcTest {
         DbcField field3 = new DbcField(100, "F2", 16, 8, 1, 0, "", false, false);
 
         DbcPacket packet = new DbcPacket(100, "MSG", "src", 8, Arrays.asList(field1, field2, field3), null);
-        List<String> errors = ValidateDbc.checkFieldsEndianness(packet);
+        List<String> errors = ValidateDbcTool.checkFieldsEndianness(packet);
         assertTrue("Should not have errors because gap is ignored and F1, F2 match", errors.isEmpty());
     }
 }

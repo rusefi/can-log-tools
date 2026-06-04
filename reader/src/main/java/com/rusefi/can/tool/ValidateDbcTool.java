@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ValidateDbc {
+public class ValidateDbcTool {
     private static final Pattern SUFFIX_PATTERN = Pattern.compile("_(\\d+)_([0-9A-F]+)$");
     private static final Pattern REVERSED_PATTERN = Pattern.compile("_([0-9A-F]+)_(\\d+)$");
 

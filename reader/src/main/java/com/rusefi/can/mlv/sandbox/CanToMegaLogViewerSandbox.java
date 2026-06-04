@@ -1,7 +1,8 @@
-package com.rusefi.can.mlv;
+package com.rusefi.can.mlv.sandbox;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.Launcher;
+import com.rusefi.can.mlv.CanToMegaLogViewerConverterTool;
 import com.rusefi.can.reader.impl.AutoFormatReader;
 
 import java.io.IOException;

@@ -12,7 +12,7 @@ import com.rusefi.can.analysis.growing_values.GrowingValuesScannerTool;
 import com.rusefi.can.mlv.CanToMegaLogViewerConverterTool;
 import com.rusefi.can.reader.isotp.IsoTpFolderDecoderTool;
 import com.rusefi.can.render.DbcImageTool;
-import com.rusefi.can.tool.ValidateDbc;
+import com.rusefi.can.tool.ValidateDbcTool;
 import com.rusefi.can.tool.sync.SyncFolderTool;
 import com.rusefi.can.tool.sync.SyncTraceFilesTool;
 
@@ -39,12 +39,12 @@ public class ToolRepository {
     }
 
     static {
-        registerTool(ValidateDbc.class,
+        registerTool(ValidateDbcTool.class,
                 IsoTpFolderDecoderTool.class,
                 TraceToMlqConverterTool.class,
                 SyncTraceFilesTool.class,
                 SyncFolderTool.class,
-                ValidateDbc.class,
+                ValidateDbcTool.class,
                 Launcher.class,
                 DbcImageTool.class,
                 PerSidDumpTool.class,
