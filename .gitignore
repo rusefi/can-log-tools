@@ -8,3 +8,6 @@ processed*
 
 
 match_report
+
+# Junie temp file
+.output.txt
