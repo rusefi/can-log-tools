@@ -3,6 +3,10 @@
 
 # CAN file processing
 
+Supported CAN-bus trace file formats and the reader classes that handle them
+are catalogued in [docs/can-trace-formats.md](docs/can-trace-formats.md).
+`AutoFormatReader` auto-detects the format from the first line of the file.
+
 * split trace file by packet ID
 * per-ID comparison of multiple trace files
 * counter bit region detection

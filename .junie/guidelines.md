@@ -4,7 +4,7 @@
 - `DbcFile` represents a DBC (Database CAN) file.
 - `DbcImageTool` renders time series of CANPacket into image
 - `ChartImage` encapsulates a BufferedImage for rendering charts
-- `AutoFormatReader` universal trace reader
+- `AutoFormatReader` universal trace reader (see [docs/can-trace-formats.md](../docs/can-trace-formats.md) for the full catalog of supported CAN trace formats and their readers)
 
 ### Code Style
 Always use curly braces for `if` statements.
