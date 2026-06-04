@@ -82,7 +82,7 @@ public class SyncFolderTool {
 
             if (allFound) {
                 System.out.println("Syncing group for prefix [" + prefix + "]: " + Arrays.toString(paths));
-                SyncTrcFiles.sync(paths);
+                SyncTraceFilesTool.sync(paths);
             }
         }
     }

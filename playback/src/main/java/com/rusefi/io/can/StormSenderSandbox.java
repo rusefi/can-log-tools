@@ -2,7 +2,7 @@ package com.rusefi.io.can;
 
 public class StormSenderSandbox {
     public static void main(String[] args) throws InterruptedException {
-        CanSender sender = SenderSandbox.create();
+        CanSender sender = CanTracePlayerTool.create();
         int[] ids = {640, 896};
 
         while (true) {

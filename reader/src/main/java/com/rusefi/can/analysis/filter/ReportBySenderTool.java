@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Groups CAN packets/fields by sender/source (per DBC) and writes a per-source report.
  */
-public class ReportBySourceTool {
+public class ReportBySenderTool {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
             System.out.println("Usage: ReportBySource <dbcFile> <traceFile>");

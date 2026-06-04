@@ -79,21 +79,21 @@ or via `ToolRepository`) and therefore accept any of the supported formats.
 | `com.rusefi.can.TrcToMlqConverterTool`                                   | Convert a trace file into an `.mlq` file for MegaLogViewer. |
 | `com.rusefi.can.analysis.PacketFrequencyTool`                   | Report per-ID packet frequency for a trace. |
 | `com.rusefi.can.analysis.filter.PerSidDumpTool`                 | Dump packets grouped per SID/arbitration ID. |
-| `com.rusefi.can.analysis.filter.ReportBySourceTool`             | Group packets/fields by sender/source and report. |
+| `com.rusefi.can.analysis.filter.ReportBySenderTool`             | Group packets/fields by sender/source and report. |
 | `com.rusefi.can.analysis.counter_scanner.CounterScannerTool`    | Detect rolling-counter bit regions in a trace. |
 | `com.rusefi.can.analysis.checksum.ChecksumScannerTool`          | Detect checksum bytes in a trace. |
-| `com.rusefi.can.analysis.groving_values.GrowingValuesScannerTool` | Detect monotonically growing byte values (optional `delta` arg). |
+| `com.rusefi.can.analysis.growing_values.GrowingValuesScannerTool` | Detect monotonically growing byte values (optional `delta` arg). |
 | `com.rusefi.can.mlv.CanToMegaLogViewerConverterTool`                     | Convert a trace into MegaLogViewer-compatible output. |
-| `com.rusefi.can.analysis.PacketRatioTool`                       | Report per-ID packet count distribution. |
-| `com.rusefi.can.analysis.FirstPacketTool`                       | Report the first occurrence of each packet ID. |
+| `com.rusefi.can.analysis.PacketCountDistributionTool`                       | Report per-ID packet count distribution. |
+| `com.rusefi.can.analysis.FirstOccurrencePerIdTool`                       | Report the first occurrence of each packet ID. |
 | `com.rusefi.can.analysis.ByteRateOfChange`                  | Per-byte rate-of-change statistics for a single trace. |
-| `com.rusefi.can.AlwaysSameScannerTool`                          | Scan a folder for DBC fields whose value never changes. |
+| `com.rusefi.can.analysis.NeverChangingFieldScannerTool`                          | Scan a folder for DBC fields whose value never changes. |
 | `com.rusefi.can.reader.isotp.IsoTpFileDecoderFolderStrategy`| ISO-TP reassembly across a folder of traces. |
 | `com.rusefi.can.render.DbcImageTool`                        | Render a time-series chart image of a trace using a DBC. |
 | `com.rusefi.can.tool.sync.SyncFolderTool`                       | Time-align/sync a folder of trace files. |
-| `com.rusefi.can.tool.sync.SyncTrcFiles`                     | Time-align/sync a pair of `.trc` files. |
+| `com.rusefi.can.tool.sync.SyncTraceFilesTool`                     | Time-align/sync a pair of `.trc` files. |
 | `com.rusefi.can.util.ToolRepository`                        | Shared trace-loading helper; also runnable to dump what it loads. |
-| `com.rusefi.io.can.SenderSandbox`                           | Replays a trace onto a live CAN bus (PCAN on Windows, SocketCAN on Linux). Built as `playback-all.jar`. |
+| `com.rusefi.io.can.CanTracePlayerTool`                           | Replays a trace onto a live CAN bus (PCAN on Windows, SocketCAN on Linux). Built as `playback-all.jar`. |
 
 Tools without a `main()` that do not themselves read traces (e.g.
 `com.rusefi.can.tool.ValidateDbc`, which only validates DBC files) are

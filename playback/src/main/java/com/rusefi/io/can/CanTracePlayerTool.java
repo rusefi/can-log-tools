@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Replays a CAN trace file onto a live CAN bus (PCAN on Windows, SocketCAN on Linux).
  * Built as {@code playback-all.jar} via {@code gradlew :playback:shadowJar}.
  */
-public class SenderSandbox {
+public class CanTracePlayerTool {
     public static void main(String[] args) throws Exception {
 //        String fileName = args.length > 0 ? args[0] : getFullResourceFileName("resources/atlas.trc");
         if (args.length == 0) {
@@ -87,7 +87,7 @@ public class SenderSandbox {
 
     @NotNull
     private static String getFullResourceFileName(String resourceName) throws URISyntaxException {
-        URL resource = SenderSandbox.class.getResource("/" + resourceName);
+        URL resource = CanTracePlayerTool.class.getResource("/" + resourceName);
         System.out.println(Objects.requireNonNull(resource, "URL for " + resourceName));
         String fullResourceFileName = Paths.get(resource.toURI()).toString();
         return fullResourceFileName;

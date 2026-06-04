@@ -1,12 +1,11 @@
 package com.rusefi.can.analysis;
 
-import com.rusefi.can.AlwaysSameScannerTool;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.analysis.checksum.ChecksumScannerTool;
 import com.rusefi.can.analysis.filter.PerSidDumpTool;
-import com.rusefi.can.analysis.filter.ReportBySourceTool;
-import com.rusefi.can.analysis.groving_values.GrowingValuesScannerTool;
+import com.rusefi.can.analysis.filter.ReportBySenderTool;
+import com.rusefi.can.analysis.growing_values.GrowingValuesScannerTool;
 import com.rusefi.can.core.ByteId;
 import com.rusefi.can.analysis.counter_scanner.CounterScannerTool;
 import com.rusefi.can.mlv.CanToMegaLogViewerConverterTool;
@@ -311,7 +310,7 @@ public class ByteRateOfChangeReports {
             List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
 
             PerSidDumpTool.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
-            ReportBySourceTool.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
+            ReportBySenderTool.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             // at the moment we overwrite counter detection report after we process each file
             CounterScannerTool.scanForCounters(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             ChecksumScannerTool.scanForChecksums(dbc, reportDestinationFolder, simpleFileName, logFileContent);
@@ -321,9 +320,9 @@ public class ByteRateOfChangeReports {
 
             CanToMegaLogViewerConverterTool.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
 
-            PacketRatioTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
+            PacketCountDistributionTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
             PacketFrequencyTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
-            FirstPacketTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
+            FirstOccurrencePerIdTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
 
             ByteRateOfChange.TraceReport report = ByteRateOfChange.process(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             report.save(reportDestinationFolder, simpleFileName + "-ByteRateOfChange.txt");
@@ -331,7 +330,7 @@ public class ByteRateOfChangeReports {
             reports.add(report);
         }, fileNameSuffix);
 
-        AlwaysSameScannerTool.run(reportDestinationFolder, inputFolderName, dbc);
+        NeverChangingFieldScannerTool.run(reportDestinationFolder, inputFolderName, dbc);
 
         System.out.println("ByteRateOfChangeReports: Processing " + reports.size() + " report(s)");
         compareEachReportAgainstAllOthers(dbc, reportDestinationFolder, reports, context);

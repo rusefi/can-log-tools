@@ -1,20 +1,20 @@
 package com.rusefi.can.util;
 
-import com.rusefi.can.AlwaysSameScannerTool;
+import com.rusefi.can.analysis.NeverChangingFieldScannerTool;
 import com.rusefi.can.Launcher;
 import com.rusefi.can.TrcToMlqConverterTool;
 import com.rusefi.can.analysis.*;
 import com.rusefi.can.analysis.checksum.ChecksumScannerTool;
 import com.rusefi.can.analysis.counter_scanner.CounterScannerTool;
 import com.rusefi.can.analysis.filter.PerSidDumpTool;
-import com.rusefi.can.analysis.filter.ReportBySourceTool;
-import com.rusefi.can.analysis.groving_values.GrowingValuesScannerTool;
+import com.rusefi.can.analysis.filter.ReportBySenderTool;
+import com.rusefi.can.analysis.growing_values.GrowingValuesScannerTool;
 import com.rusefi.can.mlv.CanToMegaLogViewerConverterTool;
 import com.rusefi.can.reader.isotp.IsoTpFileDecoderFolderStrategy;
 import com.rusefi.can.render.DbcImageTool;
 import com.rusefi.can.tool.ValidateDbc;
 import com.rusefi.can.tool.sync.SyncFolderTool;
-import com.rusefi.can.tool.sync.SyncTrcFiles;
+import com.rusefi.can.tool.sync.SyncTraceFilesTool;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -42,22 +42,22 @@ public class ToolRepository {
         registerTool(ValidateDbc.class,
                 IsoTpFileDecoderFolderStrategy.class,
                 TrcToMlqConverterTool.class,
-                SyncTrcFiles.class,
+                SyncTraceFilesTool.class,
                 SyncFolderTool.class,
                 ValidateDbc.class,
                 Launcher.class,
                 DbcImageTool.class,
                 PerSidDumpTool.class,
                 PacketFrequencyTool.class,
-                ReportBySourceTool.class,
+                ReportBySenderTool.class,
                 CounterScannerTool.class,
                 ChecksumScannerTool.class,
                 GrowingValuesScannerTool.class,
                 CanToMegaLogViewerConverterTool.class,
-                PacketRatioTool.class,
-                FirstPacketTool.class,
+                PacketCountDistributionTool.class,
+                FirstOccurrencePerIdTool.class,
                 ByteRateOfChange.class,
-                AlwaysSameScannerTool.class
+                NeverChangingFieldScannerTool.class
         );
     }
 

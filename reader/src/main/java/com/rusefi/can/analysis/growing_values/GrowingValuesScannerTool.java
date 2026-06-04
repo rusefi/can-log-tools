@@ -1,4 +1,4 @@
-package com.rusefi.can.analysis.groving_values;
+package com.rusefi.can.analysis.growing_values;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.core.ByteId;

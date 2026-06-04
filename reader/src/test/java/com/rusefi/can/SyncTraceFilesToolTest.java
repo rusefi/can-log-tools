@@ -1,6 +1,6 @@
 package com.rusefi.can;
 
-import com.rusefi.can.tool.sync.SyncTrcFiles;
+import com.rusefi.can.tool.sync.SyncTraceFilesTool;
 import org.junit.Test;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SyncTrcFilesTest {
+public class SyncTraceFilesToolTest {
 
     @Test
     public void testSyncTwoFiles() throws IOException, ParseException {
@@ -42,7 +42,7 @@ public class SyncTrcFilesTest {
             // SyncTrcFiles writes to a "synced" directory in the current working directory
             // This is a limitation of the current implementation of SyncTrcFiles.
             // For the test, we'll just run it and then check the "synced" directory.
-            SyncTrcFiles.sync(file1.toString(), file2.toString());
+            SyncTraceFilesTool.sync(file1.toString(), file2.toString());
 
             File synced1 = new File("synced/file1.trc");
             File synced2 = new File("synced/file2.trc");
@@ -98,7 +98,7 @@ public class SyncTrcFilesTest {
             // f3: 30 to 120
             // Max of starts: 30. Min of ends: 100.
             // Overlap: 30 to 100
-            SyncTrcFiles.sync(file1.toString(), file2.toString(), file3.toString());
+            SyncTraceFilesTool.sync(file1.toString(), file2.toString(), file3.toString());
 
             // f1: 60, 100 -> 2 packets
             // f2: 60 -> 1 packet
@@ -127,7 +127,7 @@ public class SyncTrcFilesTest {
             Files.write(file1, (header1 + "      1      10.000 RX  0123      8  01 02 03 04 05 06 07 08\n").getBytes());
             Files.write(file2, (header2 + "      1      10.000 RX  0123      8  01 02 03 04 05 06 07 08\n").getBytes());
 
-            SyncTrcFiles.sync(file1.toString(), file2.toString());
+            SyncTraceFilesTool.sync(file1.toString(), file2.toString());
 
             File syncedDir = new File("synced");
             // If no overlap, sync returns early and might not create files or might create empty ones depending on implementation.

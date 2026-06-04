@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Reports the per-ID packet count distribution (ratios) across a CAN trace.
  */
-public class PacketRatioTool {
+public class PacketCountDistributionTool {
 
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
