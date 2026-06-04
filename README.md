@@ -67,3 +67,26 @@ CAN log file utilities to help me work with https://github.com/brent-stone/CAN_R
 
 https://github.com/ElDominio/CANBUSlogs
 
+## Top-level tools that read CAN traces
+
+The following user-facing entry points (classes with `main()`) consume CAN trace
+files via the readers below. All of them go through `AutoFormatReader` (directly
+or via `ToolRepository`) and therefore accept any of the supported formats.
+
+| Tool (class with `main()`)                                  | Module     | Purpose |
+|-------------------------------------------------------------|------------|---------|
+| `com.rusefi.can.Launcher`                                   | `reader`   | Main CLI: split by packet ID, per-ID comparisons, charting, byte rate-of-change reports. Built as `reader-all.jar` (`gradlew :reader:shadowJar`). |
+| `com.rusefi.can.TrcToMlq`                                   | `reader`   | Convert a trace file into an `.mlq` file for MegaLogViewer. |
+| `com.rusefi.can.analysis.PacketFrequency`                   | `reader`   | Report per-ID packet frequency for a trace. |
+| `com.rusefi.can.analysis.filter.PerSidDump`                 | `reader`   | Dump packets grouped per SID/arbitration ID. |
+| `com.rusefi.can.mlv.CanToMegaLogViewerSandbox`              | `reader`   | Sandbox driver for the CAN → MegaLogViewer pipeline. |
+| `com.rusefi.can.reader.isotp.IsoTpFileDecoderFolderStrategy`| `reader`   | ISO-TP reassembly across a folder of traces. |
+| `com.rusefi.can.render.DbcImageTool`                        | `reader`   | Render a time-series chart image of a trace using a DBC. |
+| `com.rusefi.can.tool.sync.SyncFolder`                       | `reader`   | Time-align/sync a folder of trace files. |
+| `com.rusefi.can.tool.sync.SyncTrcFiles`                     | `reader`   | Time-align/sync a pair of `.trc` files. |
+| `com.rusefi.can.util.ToolRepository`                        | `reader`   | Shared trace-loading helper; also runnable to dump what it loads. |
+| `com.rusefi.io.can.SenderSandbox`                           | `playback` | Replays a trace onto a live CAN bus (PCAN on Windows, SocketCAN on Linux). Built as `playback-all.jar`. |
+
+Tools without a `main()` that do not themselves read traces (e.g.
+`com.rusefi.can.tool.ValidateDbc`, which only validates DBC files) are
+intentionally omitted from the table above.
