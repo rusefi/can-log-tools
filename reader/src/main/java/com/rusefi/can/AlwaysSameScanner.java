@@ -18,6 +18,16 @@ public class AlwaysSameScanner {
 
     private static final Map<DbcField, Integer> existingValue = new TreeMap<>();
 
+    public static void main(String[] args) throws IOException {
+        if (args.length < 2) {
+            System.out.println("Usage: AlwaysSameScanner <dbcFile> <inputFolder>");
+            com.rusefi.can.util.ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
+        }
+        DbcFile dbc = com.rusefi.can.dbc.reader.DbcFileReader.readFromFile(args[0]);
+        run(".", args[1], dbc);
+    }
+
     public static void run(String reportDestinationFolder, String inputFolderName, DbcFile dbc) throws IOException {
         runRecursion(inputFolderName, dbc);
         report(reportDestinationFolder, dbc);

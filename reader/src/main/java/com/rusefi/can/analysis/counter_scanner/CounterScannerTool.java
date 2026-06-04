@@ -3,15 +3,25 @@ package com.rusefi.can.analysis.counter_scanner;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.core.ByteId;
 import com.rusefi.can.dbc.DbcFile;
-import com.rusefi.can.dbc.DbcPacket;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.*;
 
-public class CounterScanner {
+public class CounterScannerTool {
 
     public static final String COUNTERS_YAML = "counters.yaml";
+
+    public static void main(String[] args) throws IOException {
+        if (args.length < 2) {
+            System.out.println("Usage: CounterScanner <dbcFile> <traceFile>");
+            com.rusefi.can.util.ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
+        }
+        DbcFile dbc = com.rusefi.can.dbc.reader.DbcFileReader.readFromFile(args[0]);
+        List<CANPacket> packets = com.rusefi.can.reader.impl.AutoFormatReader.INSTANCE.readFile(args[1]);
+        scanForCounters(dbc, ".", new File(args[1]).getName(), packets);
+    }
 
     public static void scanForCounters(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
 

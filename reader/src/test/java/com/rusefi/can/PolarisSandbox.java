@@ -1,6 +1,6 @@
 package com.rusefi.can;
 
-import com.rusefi.can.analysis.filter.PerSidDump;
+import com.rusefi.can.analysis.filter.PerSidDumpTool;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.reader.impl.PcanTrcReader2_0;
 
@@ -33,7 +33,7 @@ public class PolarisSandbox {
             replayed.add(packet.getId());
 
             String arrayName = "payload" + packet.getId();
-            replayLua.append(PerSidDump.asLua(packet, arrayName));
+            replayLua.append(PerSidDumpTool.asLua(packet, arrayName));
 
             replayLua.append(String.format("    txCan(1, 0x%x, 1, " + arrayName + ")\n", packet.getId()));
         }

@@ -22,7 +22,17 @@ import java.util.Set;
 /**
  * CanToMegaLogViewerSandbox
  */
-public class CanToMegaLogViewer {
+public class CanToMegaLogViewerConverterTool {
+    public static void main(String[] args) throws IOException {
+        if (args.length < 1) {
+            System.out.println("Usage: CanToMegaLogViewer <traceFile>");
+            com.rusefi.can.util.ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
+        }
+        List<CANPacket> packets = com.rusefi.can.reader.impl.AutoFormatReader.INSTANCE.readFile(args[0]);
+        createMegaLogViewer(".", packets, new java.io.File(args[0]).getName());
+    }
+
     public static void createMegaLogViewer(String reportDestinationFolder, List<CANPacket> canPackets, String simpleFileName) throws IOException {
 
         if (Launcher.dbcFileName != null) {

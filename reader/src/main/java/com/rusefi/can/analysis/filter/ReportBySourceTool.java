@@ -11,7 +11,18 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-public class ReportBySource {
+public class ReportBySourceTool {
+    public static void main(String[] args) throws IOException {
+        if (args.length < 2) {
+            System.out.println("Usage: ReportBySource <dbcFile> <traceFile>");
+            com.rusefi.can.util.ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
+        }
+        DbcFile dbc = com.rusefi.can.dbc.reader.DbcFileReader.readFromFile(args[0]);
+        List<CANPacket> packets = com.rusefi.can.reader.impl.AutoFormatReader.INSTANCE.readFile(args[1]);
+        handle(dbc, ".", new java.io.File(args[1]).getName(), packets);
+    }
+
     public static void handle(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> canPackets) throws IOException {
         String outputFileName = reportDestinationFolder + File.separator + simpleFileName + "_by_source.txt";
         PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName));

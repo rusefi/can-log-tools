@@ -10,6 +10,18 @@ import java.io.*;
 import java.util.*;
 
 public class ByteRateOfChange {
+    public static void main(String[] args) throws IOException {
+        if (args.length < 2) {
+            System.out.println("Usage: ByteRateOfChange <dbcFile> <traceFile>");
+            com.rusefi.can.util.ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
+        }
+        DbcFile dbc = com.rusefi.can.dbc.reader.DbcFileReader.readFromFile(args[0]);
+        List<CANPacket> packets = com.rusefi.can.reader.impl.AutoFormatReader.INSTANCE.readFile(args[1]);
+        String simpleFileName = new java.io.File(args[1]).getName();
+        TraceReport report = process(dbc, ".", simpleFileName, packets);
+        report.save(".", simpleFileName + "-ByteRateOfChange.txt");
+    }
 
     static class TraceFileMetaIndex {
         final HashMap<DbcField, ByteStatistics> statistics = new HashMap<>();

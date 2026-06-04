@@ -16,6 +16,6 @@ public class CanToMegaLogViewerSandbox {
 
         List<CANPacket> packets = AutoFormatReader.INSTANCE.readFile(trcFileName);
 
-        CanToMegaLogViewer.createMegaLogViewer(".", packets, "test_motorola");
+        CanToMegaLogViewerConverterTool.createMegaLogViewer(".", packets, "test_motorola");
     }
 }

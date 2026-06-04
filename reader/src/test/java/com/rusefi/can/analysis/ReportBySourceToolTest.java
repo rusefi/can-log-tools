@@ -1,7 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
-import com.rusefi.can.analysis.filter.ReportBySource;
+import com.rusefi.can.analysis.filter.ReportBySourceTool;
 import com.rusefi.can.dbc.DbcFile;
 import com.rusefi.can.dbc.reader.DbcFileReader;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-public class ReportBySourceTest {
+public class ReportBySourceToolTest {
 
     @Test
     public void testBySourceReport() throws IOException {
@@ -38,7 +38,7 @@ public class ReportBySourceTest {
                     new CANPacket(12, 200, new byte[]{5, 6})
             );
 
-            ReportBySource.handle(dbc, tempDir.toString(), "test_report", packets);
+            ReportBySourceTool.handle(dbc, tempDir.toString(), "test_report", packets);
 
             File reportFile = tempDir.resolve("test_report_by_source.txt").toFile();
             assertTrue("Report file should exist", reportFile.exists());

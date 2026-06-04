@@ -1,6 +1,6 @@
 package com.rusefi.can.reader;
 
-import com.rusefi.can.TrcToMlq;
+import com.rusefi.can.TrcToMlqConverterTool;
 
 public enum ReaderTypeHolder {
     INSTANCE;
@@ -9,7 +9,7 @@ public enum ReaderTypeHolder {
 
     public ReaderType getType() {
         if (type == null)
-            type = TrcToMlq.parseCurrentReaderTypeSetting();
+            type = TrcToMlqConverterTool.parseCurrentReaderTypeSetting();
         return type;
     }
 }

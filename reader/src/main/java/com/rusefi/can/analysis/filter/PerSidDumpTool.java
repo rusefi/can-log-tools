@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Write a separate file for each unique packet ID
  */
-public class PerSidDump {
+public class PerSidDumpTool {
     private static final String OUTPUT_SUBFOLDER_NAME = "filtered";
 
     public static void main(String[] args) throws IOException {

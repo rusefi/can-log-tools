@@ -10,9 +10,20 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ChecksumScanner {
+public class ChecksumScannerTool {
 
     public static final String CHECKSUM_YAML = "checksum.yaml";
+
+    public static void main(String[] args) throws IOException {
+        if (args.length < 2) {
+            System.out.println("Usage: ChecksumScanner <dbcFile> <traceFile>");
+            com.rusefi.can.util.ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
+        }
+        DbcFile dbc = com.rusefi.can.dbc.reader.DbcFileReader.readFromFile(args[0]);
+        List<CANPacket> packets = com.rusefi.can.reader.impl.AutoFormatReader.INSTANCE.readFile(args[1]);
+        scanForChecksums(dbc, ".", new java.io.File(args[1]).getName(), packets);
+    }
 
     public static void scanForChecksums(DbcFile dbc, String reportDestinationFolder, String simpleFileName, List<CANPacket> packets) throws IOException {
         Map<Integer, AtomicBoolean> isChecksumMap = new HashMap<>();

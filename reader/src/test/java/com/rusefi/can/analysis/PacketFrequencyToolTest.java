@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-public class PacketFrequencyTest {
+public class PacketFrequencyToolTest {
     @Test
     public void testPacketFrequency() throws IOException {
         List<CANPacket> packets = new ArrayList<>();
@@ -28,7 +28,7 @@ public class PacketFrequencyTest {
         packets.add(new CANPacket(150, 200, new byte[8]));
 
         String tempDir = Files.createTempDirectory("packet_frequency_test").toString();
-        PacketFrequency.write(new DbcFile(), tempDir, packets, "test");
+        PacketFrequencyTool.write(new DbcFile(), tempDir, packets, "test");
 
         File report = new File(tempDir, "frequency_test.txt");
         assertTrue(report.exists());

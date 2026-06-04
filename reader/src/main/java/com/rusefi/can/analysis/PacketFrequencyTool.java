@@ -2,7 +2,6 @@ package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.dbc.DbcFile;
-import com.rusefi.can.dbc.DbcPacket;
 
 import com.rusefi.can.reader.impl.AutoFormatReader;
 import com.rusefi.can.dbc.reader.DbcFileReader;
@@ -16,7 +15,7 @@ import java.util.*;
  * prints report of packet frequency
  * one way to calculate is: for each packet ID, divide time between first and last occurance, and divide by count of packets of this specific ID
  */
-public class PacketFrequency {
+public class PacketFrequencyTool {
     private static final String OUTPUT_FILE_PREFIX = "frequency_";
 
     private static final int[] WELL_KNOWN_FREQUENCIES = {10, 20, 50, 100, 200, 500, 1000, 2000};

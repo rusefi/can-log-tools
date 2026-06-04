@@ -12,6 +12,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class GrowingValuesScanner {
+    public static void main(String[] args) throws IOException {
+        if (args.length < 2) {
+            System.out.println("Usage: GrowingValuesScanner <dbcFile> <traceFile> [delta]");
+            com.rusefi.can.util.ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
+        }
+        DbcFile dbc = com.rusefi.can.dbc.reader.DbcFileReader.readFromFile(args[0]);
+        List<CANPacket> packets = com.rusefi.can.reader.impl.AutoFormatReader.INSTANCE.readFile(args[1]);
+        int delta = args.length >= 3 ? Integer.parseInt(args[2]) : 1;
+        scanForGrowing(dbc, new java.io.File(args[1]).getName(), packets, ".", delta);
+    }
+
     public static void scanForGrowing(DbcFile dbc, String simpleFileName, List<CANPacket> packets, String reportDestinationFolder, int delta) throws IOException {
         String outputFileName = reportDestinationFolder + File.separator + simpleFileName + "_" + delta + "_growing.txt";
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(outputFileName))) {

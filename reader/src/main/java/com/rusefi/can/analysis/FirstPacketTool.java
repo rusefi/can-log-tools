@@ -2,7 +2,6 @@ package com.rusefi.can.analysis;
 
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.dbc.DbcFile;
-import com.rusefi.can.dbc.DbcPacket;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,7 +11,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class FirstPacket {
+public class FirstPacketTool {
+    public static void main(String[] args) throws IOException {
+        if (args.length < 2) {
+            System.out.println("Usage: FirstPacket <dbcFile> <traceFile>");
+            com.rusefi.can.util.ToolRepository.exitWithErrorCodeUnlessToolRegistry();
+            return;
+        }
+        DbcFile dbc = com.rusefi.can.dbc.reader.DbcFileReader.readFromFile(args[0]);
+        List<CANPacket> packets = com.rusefi.can.reader.impl.AutoFormatReader.INSTANCE.readFile(args[1]);
+        write(dbc, ".", packets, new java.io.File(args[1]).getName());
+    }
+
     public static void write(DbcFile dbc, String reportDestinationFolder, List<CANPacket> logFileContent, String simpleFileName) throws IOException {
         if (logFileContent.isEmpty())
             return;

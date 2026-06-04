@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class CounterAggregator {
-    public static List<CounterWithWidth> scan(LinkedHashMap<CounterScanner.BitStateKey, Integer> counters) {
+    public static List<CounterWithWidth> scan(LinkedHashMap<CounterScannerTool.BitStateKey, Integer> counters) {
 
         ScanState state = new ScanState();
 
-        for (Map.Entry<CounterScanner.BitStateKey, Integer> e : counters.entrySet()) {
-            CounterScanner.BitStateKey currentState = e.getKey();
+        for (Map.Entry<CounterScannerTool.BitStateKey, Integer> e : counters.entrySet()) {
+            CounterScannerTool.BitStateKey currentState = e.getKey();
             int counterSize = e.getValue();
 
 //            System.out.println("currentState " + currentState + " counterSize " + counterSize);
@@ -39,11 +39,11 @@ public class CounterAggregator {
     }
 
     static class ScanState {
-        CounterScanner.BitStateKey prev = null;
+        CounterScannerTool.BitStateKey prev = null;
 
         List<CounterWithWidth> counters = new ArrayList<>();
 
-        CounterScanner.BitStateKey start;
+        CounterScannerTool.BitStateKey start;
         int totalNumberOfBits;
 
         void wrap() {

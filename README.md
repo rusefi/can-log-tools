@@ -75,11 +75,19 @@ or via `ToolRepository`) and therefore accept any of the supported formats.
 
 | Tool (class with `main()`)                                  | Purpose |
 |-------------------------------------------------------------|---------|
-| `com.rusefi.can.Launcher`                                   | Main CLI: split by packet ID, per-ID comparisons, charting, byte rate-of-change reports. Built as `reader-all.jar` (`gradlew :reader:shadowJar`). |
-| `com.rusefi.can.TrcToMlq`                                   | Convert a trace file into an `.mlq` file for MegaLogViewer. |
-| `com.rusefi.can.analysis.PacketFrequency`                   | Report per-ID packet frequency for a trace. |
-| `com.rusefi.can.analysis.filter.PerSidDump`                 | Dump packets grouped per SID/arbitration ID. |
-| `com.rusefi.can.mlv.CanToMegaLogViewerSandbox`              | Sandbox driver for the CAN → MegaLogViewer pipeline. |
+| `com.rusefi.can.Launcher`                                   | Main CLI: runs the full omnibus pipeline below over a folder of traces. Built as `reader-all.jar` (`gradlew :reader:shadowJar`). |
+| `com.rusefi.can.TrcToMlqConverterTool`                                   | Convert a trace file into an `.mlq` file for MegaLogViewer. |
+| `com.rusefi.can.analysis.PacketFrequencyTool`                   | Report per-ID packet frequency for a trace. |
+| `com.rusefi.can.analysis.filter.PerSidDumpTool`                 | Dump packets grouped per SID/arbitration ID. |
+| `com.rusefi.can.analysis.filter.ReportBySourceTool`             | Group packets/fields by sender/source and report. |
+| `com.rusefi.can.analysis.counter_scanner.CounterScannerTool`    | Detect rolling-counter bit regions in a trace. |
+| `com.rusefi.can.analysis.checksum.ChecksumScannerTool`          | Detect checksum bytes in a trace. |
+| `com.rusefi.can.analysis.groving_values.GrowingValuesScanner` | Detect monotonically growing byte values (optional `delta` arg). |
+| `com.rusefi.can.mlv.CanToMegaLogViewerConverterTool`                     | Convert a trace into MegaLogViewer-compatible output. |
+| `com.rusefi.can.analysis.PacketRatioTool`                       | Report per-ID packet count distribution. |
+| `com.rusefi.can.analysis.FirstPacketTool`                       | Report the first occurrence of each packet ID. |
+| `com.rusefi.can.analysis.ByteRateOfChange`                  | Per-byte rate-of-change statistics for a single trace. |
+| `com.rusefi.can.AlwaysSameScanner`                          | Scan a folder for DBC fields whose value never changes. |
 | `com.rusefi.can.reader.isotp.IsoTpFileDecoderFolderStrategy`| ISO-TP reassembly across a folder of traces. |
 | `com.rusefi.can.render.DbcImageTool`                        | Render a time-series chart image of a trace using a DBC. |
 | `com.rusefi.can.tool.sync.SyncFolder`                       | Time-align/sync a folder of trace files. |

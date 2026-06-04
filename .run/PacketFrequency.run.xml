@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="PacketFrequency" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="com.rusefi.can.analysis.PacketFrequency" />
+    <option name="MAIN_CLASS_NAME" value="com.rusefi.can.analysis.PacketFrequencyTool" />
     <module name="can-log-tools.reader.main" />
     <extension name="coverage">
       <pattern>

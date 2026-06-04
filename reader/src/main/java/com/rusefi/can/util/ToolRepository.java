@@ -1,9 +1,15 @@
 package com.rusefi.can.util;
 
+import com.rusefi.can.AlwaysSameScanner;
 import com.rusefi.can.Launcher;
-import com.rusefi.can.TrcToMlq;
-import com.rusefi.can.analysis.PacketFrequency;
-import com.rusefi.can.analysis.filter.PerSidDump;
+import com.rusefi.can.TrcToMlqConverterTool;
+import com.rusefi.can.analysis.*;
+import com.rusefi.can.analysis.checksum.ChecksumScannerTool;
+import com.rusefi.can.analysis.counter_scanner.CounterScannerTool;
+import com.rusefi.can.analysis.filter.PerSidDumpTool;
+import com.rusefi.can.analysis.filter.ReportBySourceTool;
+import com.rusefi.can.analysis.groving_values.GrowingValuesScanner;
+import com.rusefi.can.mlv.CanToMegaLogViewerConverterTool;
 import com.rusefi.can.reader.isotp.IsoTpFileDecoderFolderStrategy;
 import com.rusefi.can.render.DbcImageTool;
 import com.rusefi.can.tool.ValidateDbc;
@@ -34,14 +40,23 @@ public class ToolRepository {
     static {
         registerTool(ValidateDbc.class,
                 IsoTpFileDecoderFolderStrategy.class,
-                TrcToMlq.class,
+                TrcToMlqConverterTool.class,
                 SyncTrcFiles.class,
                 SyncFolder.class,
                 ValidateDbc.class,
                 Launcher.class,
                 DbcImageTool.class,
-                PerSidDump.class,
-                PacketFrequency.class
+                PerSidDumpTool.class,
+                PacketFrequencyTool.class,
+                ReportBySourceTool.class,
+                CounterScannerTool.class,
+                ChecksumScannerTool.class,
+                GrowingValuesScanner.class,
+                CanToMegaLogViewerConverterTool.class,
+                PacketRatioTool.class,
+                FirstPacketTool.class,
+                ByteRateOfChange.class,
+                AlwaysSameScanner.class
         );
     }
 

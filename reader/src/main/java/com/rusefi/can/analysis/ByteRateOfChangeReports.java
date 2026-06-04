@@ -3,13 +3,13 @@ package com.rusefi.can.analysis;
 import com.rusefi.can.AlwaysSameScanner;
 import com.rusefi.can.CANPacket;
 import com.rusefi.can.Launcher;
-import com.rusefi.can.analysis.checksum.ChecksumScanner;
-import com.rusefi.can.analysis.filter.PerSidDump;
-import com.rusefi.can.analysis.filter.ReportBySource;
+import com.rusefi.can.analysis.checksum.ChecksumScannerTool;
+import com.rusefi.can.analysis.filter.PerSidDumpTool;
+import com.rusefi.can.analysis.filter.ReportBySourceTool;
 import com.rusefi.can.analysis.groving_values.GrowingValuesScanner;
 import com.rusefi.can.core.ByteId;
-import com.rusefi.can.analysis.counter_scanner.CounterScanner;
-import com.rusefi.can.mlv.CanToMegaLogViewer;
+import com.rusefi.can.analysis.counter_scanner.CounterScannerTool;
+import com.rusefi.can.mlv.CanToMegaLogViewerConverterTool;
 import com.rusefi.can.reader.CANLineReader;
 import com.rusefi.can.dbc.DbcField;
 import com.rusefi.can.dbc.DbcFile;
@@ -310,20 +310,20 @@ public class ByteRateOfChangeReports {
 
             List<CANPacket> logFileContent = CANLineReader.getReader().readFile(fullInputFileName);
 
-            PerSidDump.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
-            ReportBySource.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
+            PerSidDumpTool.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
+            ReportBySourceTool.handle(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             // at the moment we overwrite counter detection report after we process each file
-            CounterScanner.scanForCounters(dbc, reportDestinationFolder, simpleFileName, logFileContent);
-            ChecksumScanner.scanForChecksums(dbc, reportDestinationFolder, simpleFileName, logFileContent);
+            CounterScannerTool.scanForCounters(dbc, reportDestinationFolder, simpleFileName, logFileContent);
+            ChecksumScannerTool.scanForChecksums(dbc, reportDestinationFolder, simpleFileName, logFileContent);
 
             GrowingValuesScanner.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 1);
             GrowingValuesScanner.scanForGrowing(dbc, simpleFileName, logFileContent, reportDestinationFolder, 20);
 
-            CanToMegaLogViewer.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
+            CanToMegaLogViewerConverterTool.createMegaLogViewer(reportDestinationFolder, logFileContent, simpleFileName);
 
-            PacketRatio.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
-            PacketFrequency.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
-            FirstPacket.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
+            PacketRatioTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
+            PacketFrequencyTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
+            FirstPacketTool.write(dbc, reportDestinationFolder, logFileContent, simpleFileName);
 
             ByteRateOfChange.TraceReport report = ByteRateOfChange.process(dbc, reportDestinationFolder, simpleFileName, logFileContent);
             report.save(reportDestinationFolder, simpleFileName + "-ByteRateOfChange.txt");

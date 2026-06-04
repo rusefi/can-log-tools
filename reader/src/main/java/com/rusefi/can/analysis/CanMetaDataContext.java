@@ -1,8 +1,8 @@
 package com.rusefi.can.analysis;
 
-import com.rusefi.can.analysis.checksum.ChecksumScanner;
+import com.rusefi.can.analysis.checksum.ChecksumScannerTool;
 import com.rusefi.can.core.ByteId;
-import com.rusefi.can.analysis.counter_scanner.CounterScanner;
+import com.rusefi.can.analysis.counter_scanner.CounterScannerTool;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -38,14 +38,14 @@ public class CanMetaDataContext {
 
     public static CanMetaDataContext read(String inputFolderName) throws FileNotFoundException {
         Yaml checksum = new Yaml();
-        String checkSumFileName = inputFolderName + File.separator + ChecksumScanner.CHECKSUM_YAML;
+        String checkSumFileName = inputFolderName + File.separator + ChecksumScannerTool.CHECKSUM_YAML;
         if (!new File(checkSumFileName).exists())
             return new CanMetaDataContext(new ArrayList<>(), new HashMap<>());
 
         List<String> withChecksum = checksum.load(new FileReader(checkSumFileName));
 
         Yaml countersYaml = new Yaml();
-        Map<Integer, Map<Integer, Integer>> countersMap = countersYaml.load(new FileReader(inputFolderName + File.separator + CounterScanner.COUNTERS_YAML));
+        Map<Integer, Map<Integer, Integer>> countersMap = countersYaml.load(new FileReader(inputFolderName + File.separator + CounterScannerTool.COUNTERS_YAML));
 
         return new CanMetaDataContext(withChecksum, countersMap);
     }

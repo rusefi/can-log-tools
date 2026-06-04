@@ -1,7 +1,7 @@
 package com.rusefi.can.analysis;
 
 import com.rusefi.can.analysis.counter_scanner.CounterAggregator;
-import com.rusefi.can.analysis.counter_scanner.CounterScanner;
+import com.rusefi.can.analysis.counter_scanner.CounterScannerTool;
 import com.rusefi.can.analysis.counter_scanner.CounterWithWidth;
 import org.junit.Test;
 
@@ -10,21 +10,21 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CounterScannerTest {
+public class CounterScannerToolTest {
     @Test
     public void testNotCounter() {
-        CounterScanner.BitState state = new CounterScanner.BitState();
+        CounterScannerTool.BitState state = new CounterScannerTool.BitState();
         state.handle(true);
-        assertEquals(state.state, CounterScanner.BitState.StateMachine.LOOKING_FOR_FIRST_SWITCHOVER);
+        assertEquals(state.state, CounterScannerTool.BitState.StateMachine.LOOKING_FOR_FIRST_SWITCHOVER);
 
         state.handle(false);
-        assertEquals(state.state, CounterScanner.BitState.StateMachine.FOUND_FIRST_SWITCHOVER);
+        assertEquals(state.state, CounterScannerTool.BitState.StateMachine.FOUND_FIRST_SWITCHOVER);
 
         state.handle(false);
-        assertEquals(CounterScanner.BitState.StateMachine.FOUND_FIRST_SWITCHOVER, state.state);
+        assertEquals(CounterScannerTool.BitState.StateMachine.FOUND_FIRST_SWITCHOVER, state.state);
 
         state.handle(true);
-        assertEquals(CounterScanner.BitState.StateMachine.HAPPY_COUNTER, state.state);
+        assertEquals(CounterScannerTool.BitState.StateMachine.HAPPY_COUNTER, state.state);
 
         state.handle(false);
         state.handle(false);
@@ -34,7 +34,7 @@ public class CounterScannerTest {
 
     @Test
     public void testCounterLen1() {
-        CounterScanner.BitState state = new CounterScanner.BitState();
+        CounterScannerTool.BitState state = new CounterScannerTool.BitState();
         state.handle(true);
         state.handle(false);
         state.handle(true);
@@ -47,7 +47,7 @@ public class CounterScannerTest {
 
     @Test
     public void testCounterLen2() {
-        CounterScanner.BitState state = new CounterScanner.BitState();
+        CounterScannerTool.BitState state = new CounterScannerTool.BitState();
         state.handle(true);
         state.handle(false);
         state.handle(false);
@@ -61,11 +61,11 @@ public class CounterScannerTest {
 
     @Test
     public void testAggregateCounterCandidatesPlain() {
-        LinkedHashMap<CounterScanner.BitStateKey, Integer> counters = new LinkedHashMap<>();
+        LinkedHashMap<CounterScannerTool.BitStateKey, Integer> counters = new LinkedHashMap<>();
 
-        counters.put(new CounterScanner.BitStateKey(1, 3, 6), 4);
+        counters.put(new CounterScannerTool.BitStateKey(1, 3, 6), 4);
 
-        counters.put(new CounterScanner.BitStateKey(0, 7, 6), 1);
+        counters.put(new CounterScannerTool.BitStateKey(0, 7, 6), 1);
 
         List<CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
 
@@ -77,18 +77,18 @@ public class CounterScannerTest {
 
     @Test
     public void testAggregateCounterCandidates() {
-        LinkedHashMap<CounterScanner.BitStateKey, Integer> counters = new LinkedHashMap<>();
+        LinkedHashMap<CounterScannerTool.BitStateKey, Integer> counters = new LinkedHashMap<>();
 
 
-        counters.put(new CounterScanner.BitStateKey(0, 7, 6), 1);
+        counters.put(new CounterScannerTool.BitStateKey(0, 7, 6), 1);
 
-        counters.put(new CounterScanner.BitStateKey(1, 3, 6), 4);
+        counters.put(new CounterScannerTool.BitStateKey(1, 3, 6), 4);
 
-        counters.put(new CounterScanner.BitStateKey(0, 3, 4), 1);
-        counters.put(new CounterScanner.BitStateKey(0, 3, 5), 2);
-        counters.put(new CounterScanner.BitStateKey(0, 3, 6), 4);
+        counters.put(new CounterScannerTool.BitStateKey(0, 3, 4), 1);
+        counters.put(new CounterScannerTool.BitStateKey(0, 3, 5), 2);
+        counters.put(new CounterScannerTool.BitStateKey(0, 3, 6), 4);
 
-        counters.put(new CounterScanner.BitStateKey(0, 5, 6), 4);
+        counters.put(new CounterScannerTool.BitStateKey(0, 5, 6), 4);
 
 
         List<CounterWithWidth> countersWithWidth = CounterAggregator.scan(counters);
