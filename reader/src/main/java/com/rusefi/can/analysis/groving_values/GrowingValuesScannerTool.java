@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Detects DBC fields whose values grow monotonically over time (e.g. odometers, runtime counters).
+ * Optional {@code delta} argument controls the minimum increment considered.
+ */
 public class GrowingValuesScannerTool {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {

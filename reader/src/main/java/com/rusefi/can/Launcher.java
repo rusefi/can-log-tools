@@ -8,6 +8,10 @@ import com.rusefi.can.util.ToolRepository;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Main CLI entry point: runs the full omnibus analysis pipeline over a folder of CAN trace files.
+ * Built as {@code reader-all.jar} via {@code gradlew :reader:shadowJar}.
+ */
 public class Launcher {
     public static final String FILENAME_SUFFIX_PROPERTY = "-suffix";
     public static String fileNameSuffixValue = ".trc"; // default value

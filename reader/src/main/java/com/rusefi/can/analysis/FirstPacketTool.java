@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Reports the first (earliest) occurrence of each packet ID in a CAN trace.
+ */
 public class FirstPacketTool {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {

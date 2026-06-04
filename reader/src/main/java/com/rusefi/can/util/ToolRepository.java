@@ -21,7 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
+ * Central registry of all top-level CAN trace tools (classes with {@code main()}).
+ * Running its own {@code main} invokes each registered tool with empty args as a smoke test.
  */
 public class ToolRepository {
     private static final Set<Class<?>> TOOLS = new HashSet<>();

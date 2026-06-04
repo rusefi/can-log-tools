@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
+/**
+ * Groups CAN packets/fields by sender/source (per DBC) and writes a per-source report.
+ */
 public class ReportBySourceTool {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {

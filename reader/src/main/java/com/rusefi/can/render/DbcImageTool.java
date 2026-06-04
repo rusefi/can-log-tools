@@ -16,6 +16,9 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Renders a time-series chart image (PNG) of a CAN trace using DBC-decoded signals.
+ */
 public class DbcImageTool {
 
     public static String escapeFileName(String name) {

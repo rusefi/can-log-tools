@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Scans a folder of CAN traces and reports DBC fields whose value never changes across the whole dataset.
+ */
 public class AlwaysSameScannerTool {
 
     private static final Map<DbcField, Integer> existingValue = new TreeMap<>();

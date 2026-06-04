@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * CanToMegaLogViewerSandbox
+ * Converts a CAN trace into MegaLogViewer-compatible output by decoding packets via the configured DBC.
+ * See also {@code CanToMegaLogViewerSandbox} for the sandbox driver.
  */
 public class CanToMegaLogViewerConverterTool {
     public static void main(String[] args) throws IOException {

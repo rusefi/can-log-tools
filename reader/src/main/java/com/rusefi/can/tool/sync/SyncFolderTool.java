@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Time-aligns/synchronises a folder of CAN trace files so that they share a common timebase.
+ */
 public class SyncFolderTool {
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length < 3) {

@@ -8,6 +8,9 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Detects rolling-counter bit regions inside CAN packet payloads and emits a report plus {@code counters.yaml}.
+ */
 public class CounterScannerTool {
 
     public static final String COUNTERS_YAML = "counters.yaml";

@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Heuristically detects checksum bytes within CAN packets and writes {@code checksum.yaml}.
+ */
 public class ChecksumScannerTool {
 
     public static final String CHECKSUM_YAML = "checksum.yaml";

@@ -11,6 +11,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * Time-aligns/synchronises a pair of {@code .trc} CAN trace files onto a shared timebase.
+ */
 public class SyncTrcFiles {
     private static final String START_TIME_HEADER = ";   Start time: ";
     public static final String PATHNAME = "synced";

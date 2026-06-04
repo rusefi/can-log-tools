@@ -9,6 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Performs ISO-TP (ISO 15765-2) reassembly of multi-frame messages across a folder of CAN trace files.
+ */
 public class IsoTpFileDecoderFolderStrategy {
 
     static private final List<Integer> isoTpIds = Arrays.asList(

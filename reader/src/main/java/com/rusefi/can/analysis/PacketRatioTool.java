@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Reports the per-ID packet count distribution (ratios) across a CAN trace.
+ */
 public class PacketRatioTool {
 
     public static void main(String[] args) throws IOException {

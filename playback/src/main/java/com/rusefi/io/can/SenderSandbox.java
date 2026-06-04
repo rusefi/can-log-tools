@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Replays a CAN trace file onto a live CAN bus (PCAN on Windows, SocketCAN on Linux).
+ * Built as {@code playback-all.jar} via {@code gradlew :playback:shadowJar}.
+ */
 public class SenderSandbox {
     public static void main(String[] args) throws Exception {
 //        String fileName = args.length > 0 ? args[0] : getFullResourceFileName("resources/atlas.trc");

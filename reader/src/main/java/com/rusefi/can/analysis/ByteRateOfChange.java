@@ -9,6 +9,9 @@ import com.rusefi.can.dbc.DbcPacket;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Computes per-byte rate-of-change statistics for a single CAN trace (transitions, unique values, etc).
+ */
 public class ByteRateOfChange {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
