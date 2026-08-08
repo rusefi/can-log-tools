@@ -22,7 +22,10 @@ import java.util.stream.Collectors;
 public class DbcImageTool {
 
     public static String escapeFileName(String name) {
-        return name.replaceAll("[\\\\/:*?\"<>|]", "_");
+        String escaped = name.replaceAll("[\\\\/:*?\"<>|]", "_");
+        // field names carry appended DBC comments; keep total path component under the 255-byte filesystem limit
+        int limit = 180;
+        return escaped.length() <= limit ? escaped : escaped.substring(0, limit);
     }
 
     public static void main(String[] args) throws IOException {
