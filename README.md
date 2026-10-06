@@ -42,6 +42,7 @@ Man-in-the-middle requires a device with at least two CAN buses and something al
 CAN log file utilities to help me work with https://github.com/brent-stone/CAN_Reverse_Engineering and https://github.com/HeinrichG-V12/E65_ReverseEngineering
 
 
+* TL,DR: basic 59 second trace: ignition_on->start->engage-D>drive 2 ft->drive 3ft in R->turn engine off
 * turning ignition on (wake up)
 * pull some fuses, record without fuses to identify packet sources
 * OEM ECU remove, turning ignition on (wake up)
