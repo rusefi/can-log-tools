@@ -31,6 +31,10 @@ gradlew :playback:shadowJar
 java -jar playback/build/libs/playback-all.jar playback/src/main/resources/atlas.trc
 ```
 
+Playback follows the trace timestamps and repeats until stopped. On Linux, it
+uses the SocketCAN interface named `can0` by default (override with
+`-DCAN_DEVICE_NAME=...` before `-jar`).
+
 # MIM
 
 Offline trace analysis would only get you that far: once/when you run out of luck guessting, you have to promote your efforts towards https://en.wikipedia.org/wiki/Man-in-the-middle_attack
